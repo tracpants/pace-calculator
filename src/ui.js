@@ -81,11 +81,30 @@ function setupInputValidation() {
 }
 
 function focusFirstInput() {
+	// Skip auto-focus on mobile devices to avoid jarring keyboard popup
+	if (isMobileDevice()) {
+		return;
+	}
+	
 	const activeSection = document.querySelector(`[data-section="${state.currentTab}"]`);
 	const firstInput = activeSection.querySelector('input');
 	if (firstInput) {
 		firstInput.focus();
 	}
+}
+
+function isMobileDevice() {
+	// Check for mobile devices using multiple methods
+	const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+	
+	// Check for touch capability and small screen
+	const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+	const isSmallScreen = window.matchMedia('(max-width: 768px)').matches;
+	
+	// Check user agent for mobile indicators
+	const isMobileUserAgent = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+	
+	return hasTouch && (isSmallScreen || isMobileUserAgent);
 }
 
 function handleKeyboardNavigation(e) {
@@ -416,7 +435,7 @@ function clearAll() {
 		error.textContent = '';
 	});
 	
-	// Focus first input
+	// Focus first input (only on non-mobile devices)
 	focusFirstInput();
 }
 
@@ -467,7 +486,7 @@ export function initUI() {
 			// Clear non-relevant fields when switching tabs
 			clearNonRelevantFields();
 			
-			// Focus first input in new tab after a short delay
+			// Focus first input in new tab after a short delay (only on non-mobile)
 			setTimeout(() => focusFirstInput(), 100);
 		});
 		
@@ -509,6 +528,6 @@ export function initUI() {
 		}
 	});
 	
-	// Focus first input on page load
+	// Focus first input on page load (only on non-mobile devices)
 	setTimeout(() => focusFirstInput(), 100);
 }
