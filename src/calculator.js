@@ -3,11 +3,85 @@ export function parseTime(timeStr) {
 	const trimmed = timeStr.trim();
 	if (!trimmed) return 0;
 	
-	const parts = trimmed.split(":").map((p) => parseInt(p) || 0);
-	if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
-	if (parts.length === 2) return parts[0] * 60 + parts[1];
-	if (parts.length === 1) return parts[0] * 60; // Handle single number as minutes
+	// Handle decimal format (e.g., "4.5" = 4:30)
+	if (/^\d+(\.\d+)?$/.test(trimmed)) {
+		const decimal = parseFloat(trimmed);
+		const minutes = Math.floor(decimal);
+		const seconds = Math.round((decimal - minutes) * 60);
+		return minutes * 60 + seconds;
+	}
+	
+	// Handle space-separated format (e.g., "4 30" = 4:30)
+	if (/^\d+\s+\d+(\s+\d+)?$/.test(trimmed)) {
+		const parts = trimmed.split(/\s+/).map(p => parseInt(p) || 0);
+		if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+		if (parts.length === 2) return parts[0] * 60 + parts[1];
+		return 0;
+	}
+	
+	// Handle colon-separated format (e.g., "4:30" or "1:23:45")
+	if (trimmed.includes(':')) {
+		const parts = trimmed.split(":").map((p) => parseInt(p) || 0);
+		if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+		if (parts.length === 2) return parts[0] * 60 + parts[1];
+		return 0;
+	}
+	
+	// Handle single number as minutes
+	const singleNumber = parseInt(trimmed);
+	if (!isNaN(singleNumber)) return singleNumber * 60;
+	
 	return 0;
+}
+
+export function validateTimeInput(timeStr) {
+	if (!timeStr || typeof timeStr !== 'string') return { valid: false, message: "Time is required" };
+	const trimmed = timeStr.trim();
+	if (!trimmed) return { valid: false, message: "Time is required" };
+	
+	// Check for valid formats
+	const validFormats = [
+		/^\d+(\.\d+)?$/, // Decimal: 4.5
+		/^\d+\s+\d+(\s+\d+)?$/, // Space: 4 30 or 1 23 45
+		/^\d+:\d+(:\d+)?$/, // Colon: 4:30 or 1:23:45
+		/^\d+$/ // Single number
+	];
+	
+	const isValidFormat = validFormats.some(format => format.test(trimmed));
+	if (!isValidFormat) {
+		return { valid: false, message: "Invalid format. Use MM:SS, H:MM:SS, or decimal minutes" };
+	}
+	
+	const parsed = parseTime(timeStr);
+	if (parsed <= 0) {
+		return { valid: false, message: "Time must be greater than 0" };
+	}
+	
+	// Check for reasonable limits (max 24 hours)
+	if (parsed > 86400) {
+		return { valid: false, message: "Time cannot exceed 24 hours" };
+	}
+	
+	return { valid: true, value: parsed };
+}
+
+export function validateDistanceInput(distanceStr) {
+	if (!distanceStr) return { valid: false, message: "Distance is required" };
+	const distance = parseFloat(distanceStr);
+	
+	if (isNaN(distance)) {
+		return { valid: false, message: "Please enter a valid number" };
+	}
+	
+	if (distance <= 0) {
+		return { valid: false, message: "Distance must be greater than 0" };
+	}
+	
+	if (distance > 1000) {
+		return { valid: false, message: "Distance seems unreasonably large" };
+	}
+	
+	return { valid: true, value: distance };
 }
 
 export function formatTime(seconds, includeHours = false) {

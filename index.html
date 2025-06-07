@@ -13,9 +13,11 @@
 		<div
 			id="app"
 			class="w-full max-w-md mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 sm:p-8"
+			role="main"
+			aria-label="Pace Calculator Application"
 		>
 			<!-- Header -->
-			<div class="text-center mb-6">
+			<header class="text-center mb-6">
 				<h1
 					class="text-4xl font-bold bg-gradient-to-r from-purple-500 to-indigo-600 dark:from-purple-400 dark:to-indigo-500 bg-clip-text text-transparent"
 				>
@@ -24,35 +26,39 @@
 				<p class="text-gray-500 dark:text-gray-400 mt-2">
 					Calculate running pace, time, or distance
 				</p>
-			</div>
+			</header>
 
 			<!-- Toggles: Theme and Units -->
 			<div class="flex justify-between items-center mb-6">
-				<div
+				<fieldset
 					class="flex items-center bg-gray-200 dark:bg-gray-700 rounded-full p-1"
+					aria-label="Distance unit selection"
 				>
-					<button data-unit="km" class="unit-toggle">KM</button>
-					<button data-unit="miles" class="unit-toggle">Miles</button>
-				</div>
-				<button id="theme-toggle" class="text-2xl text-gray-500">☀️</button>
+					<legend class="sr-only">Choose distance unit</legend>
+					<button data-unit="km" class="unit-toggle" aria-pressed="true" tabindex="0">KM</button>
+					<button data-unit="miles" class="unit-toggle" aria-pressed="false" tabindex="0">Miles</button>
+				</fieldset>
+				<button id="theme-toggle" class="text-3xl text-gray-500 p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" aria-label="Toggle dark mode" tabindex="0">☀️</button>
 			</div>
 
 			<!-- Tabs -->
 			<div
 				class="grid grid-cols-3 gap-2 bg-gray-200 dark:bg-gray-700 p-1 rounded-xl mb-8"
+				role="tablist"
+				aria-label="Calculator type selection"
 			>
-				<button data-tab="pace" class="tab">Pace</button>
-				<button data-tab="time" class="tab">Time</button>
-				<button data-tab="distance" class="tab">Distance</button>
+				<button data-tab="pace" class="tab" role="tab" id="pace-tab" aria-selected="true" aria-controls="pace-panel" tabindex="0">Pace</button>
+				<button data-tab="time" class="tab" role="tab" id="time-tab" aria-selected="false" aria-controls="time-panel" tabindex="-1">Time</button>
+				<button data-tab="distance" class="tab" role="tab" id="distance-tab" aria-selected="false" aria-controls="distance-panel" tabindex="-1">Distance</button>
 			</div>
 
 			<!-- Form Sections -->
 			<form id="calculator-form">
 				<div class="space-y-6">
 					<!-- Pace Section -->
-					<div data-section="pace" class="form-section space-y-4">
+					<div data-section="pace" class="form-section space-y-4" role="tabpanel" id="pace-panel" aria-labelledby="pace-tab">
 						<div>
-							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block"
+							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block" for="pace-time"
 								>Time</label
 							>
 							<input
@@ -61,10 +67,15 @@
 								class="input-base"
 								placeholder="e.g., 45:30"
 								value="45:30"
+								aria-describedby="pace-time-hint pace-time-error"
+								aria-required="true"
+								autocomplete="off"
 							/>
+							<div id="pace-time-hint" class="text-sm text-gray-500 dark:text-gray-400 mt-1">Formats: MM:SS, H:MM:SS, or decimal minutes (4.5)</div>
+							<div id="pace-time-error" class="text-sm text-red-600 dark:text-red-400 mt-1 hidden" role="alert"></div>
 						</div>
 						<div>
-							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block"
+							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block" for="pace-distance"
 								>Distance</label
 							>
 							<input
@@ -74,15 +85,21 @@
 								placeholder="e.g., 10"
 								step="any"
 								value="10"
+								aria-describedby="pace-distance-hint pace-distance-error"
+								aria-required="true"
+								inputmode="decimal"
+								list="distance-suggestions"
 							/>
-							<select id="pace-preset" class="input-base select-custom preset-select"></select>
+							<div id="pace-distance-hint" class="text-sm text-gray-500 dark:text-gray-400 mt-1">Enter distance in selected unit</div>
+							<div id="pace-distance-error" class="text-sm text-red-600 dark:text-red-400 mt-1 hidden" role="alert"></div>
+							<select id="pace-preset" class="input-base select-custom preset-select mt-2" aria-label="Quick distance presets"></select>
 						</div>
 					</div>
 
 					<!-- Time Section -->
-					<div data-section="time" class="form-section space-y-4 hidden">
+					<div data-section="time" class="form-section space-y-4 hidden" role="tabpanel" id="time-panel" aria-labelledby="time-tab">
 						<div>
-							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block"
+							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block" for="time-pace"
 								>Pace</label
 							>
 							<input
@@ -91,10 +108,15 @@
 								class="input-base"
 								placeholder="e.g., 04:30"
 								value="04:30"
+								aria-describedby="time-pace-hint time-pace-error"
+								aria-required="true"
+								autocomplete="off"
 							/>
+							<div id="time-pace-hint" class="text-sm text-gray-500 dark:text-gray-400 mt-1">Formats: MM:SS per unit, or decimal minutes (4.5)</div>
+							<div id="time-pace-error" class="text-sm text-red-600 dark:text-red-400 mt-1 hidden" role="alert"></div>
 						</div>
 						<div>
-							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block"
+							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block" for="time-distance"
 								>Distance</label
 							>
 							<input
@@ -104,15 +126,21 @@
 								placeholder="e.g., 21.1"
 								step="any"
 								value="21.1"
+								aria-describedby="time-distance-hint time-distance-error"
+								aria-required="true"
+								inputmode="decimal"
+								list="distance-suggestions"
 							/>
-							<select id="time-preset" class="input-base select-custom preset-select"></select>
+							<div id="time-distance-hint" class="text-sm text-gray-500 dark:text-gray-400 mt-1">Enter distance in selected unit</div>
+							<div id="time-distance-error" class="text-sm text-red-600 dark:text-red-400 mt-1 hidden" role="alert"></div>
+							<select id="time-preset" class="input-base select-custom preset-select mt-2" aria-label="Quick distance presets"></select>
 						</div>
 					</div>
 
 					<!-- Distance Section -->
-					<div data-section="distance" class="form-section space-y-4 hidden">
+					<div data-section="distance" class="form-section space-y-4 hidden" role="tabpanel" id="distance-panel" aria-labelledby="distance-tab">
 						<div>
-							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block"
+							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block" for="distance-time"
 								>Time</label
 							>
 							<input
@@ -121,10 +149,15 @@
 								class="input-base"
 								placeholder="e.g., 01:35:00"
 								value="01:35:00"
+								aria-describedby="distance-time-hint distance-time-error"
+								aria-required="true"
+								autocomplete="off"
 							/>
+							<div id="distance-time-hint" class="text-sm text-gray-500 dark:text-gray-400 mt-1">Formats: HH:MM:SS, MM:SS, or decimal minutes (95.5)</div>
+							<div id="distance-time-error" class="text-sm text-red-600 dark:text-red-400 mt-1 hidden" role="alert"></div>
 						</div>
 						<div>
-							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block"
+							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block" for="distance-pace"
 								>Pace</label
 							>
 							<input
@@ -133,32 +166,68 @@
 								class="input-base"
 								placeholder="e.g., 04:30"
 								value="04:30"
+								aria-describedby="distance-pace-hint distance-pace-error"
+								aria-required="true"
+								autocomplete="off"
 							/>
+							<div id="distance-pace-hint" class="text-sm text-gray-500 dark:text-gray-400 mt-1">Formats: MM:SS per unit, or decimal minutes (4.5)</div>
+							<div id="distance-pace-error" class="text-sm text-red-600 dark:text-red-400 mt-1 hidden" role="alert"></div>
 						</div>
 					</div>
 				</div>
 
 				<!-- Buttons -->
 				<div class="grid grid-cols-2 gap-4 mt-8">
-					<button type="submit" class="btn-primary">Calculate</button>
-					<button type="button" id="clear-btn" class="btn-secondary">
+					<button type="submit" class="btn-primary" aria-describedby="calculate-description">Calculate</button>
+					<button type="button" id="clear-btn" class="btn-secondary" aria-describedby="clear-description">
 						Clear
 					</button>
+				</div>
+				<div class="sr-only">
+					<div id="calculate-description">Calculate the result based on your inputs</div>
+					<div id="clear-description">Clear all input fields and reset the form</div>
 				</div>
 			</form>
 
 			<!-- Result -->
-			<div id="result" class="mt-6 p-4 rounded-lg hidden">
-				<p
-					id="result-label"
-					class="font-semibold text-gray-700 dark:text-gray-200"
-				></p>
+			<div id="result" class="mt-6 p-4 rounded-lg hidden transition-all duration-500 transform opacity-0 scale-95" role="region" aria-label="Calculation result" aria-live="polite">
+				<div class="flex justify-between items-start mb-2">
+					<p
+						id="result-label"
+						class="font-semibold text-gray-700 dark:text-gray-200"
+					></p>
+					<button
+						id="copy-result-btn"
+						class="ml-4 p-2 text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+						aria-label="Copy result to clipboard"
+						title="Copy result to clipboard"
+					>
+						<svg id="copy-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+						</svg>
+						<svg id="check-icon" class="w-5 h-5 hidden text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+						</svg>
+					</button>
+				</div>
 				<p
 					id="result-value"
 					class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 font-mono"
 				></p>
 			</div>
-		</div>
-		<script type="module" src="/src/main.js"></script>
+
+			<!-- Loading State -->
+			<div id="loading" class="mt-6 p-4 rounded-lg hidden">
+				<div class="flex items-center justify-center space-x-2">
+					<div class="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-600"></div>
+					<span class="text-gray-600 dark:text-gray-300">Calculating...</span>
+				</div>
+			</div>
+		<!-- Autocomplete suggestions for distances -->
+		<datalist id="distance-suggestions">
+			<!-- Will be populated dynamically based on selected unit -->
+		</datalist>
+	</div>
+	<script type="module" src="/src/main.js"></script>
 	</body>
 </html>
