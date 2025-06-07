@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pace Calculator Tests</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+        .pass { background-color: #d4edda; }
+        .fail { background-color: #f8d7da; }
+    </style>
+</head>
+<body>
+    <h1>Pace Calculator Function Tests</h1>
+    <div id="test-results"></div>
+
+    <script type="module">
+        import * as calc from './src/calculator.js';
+
+        function runTest(name, fn) {
+            try {
+                const result = fn();
+                if (result) {
+                    document.getElementById('test-results').innerHTML += 
+                        `<div class="test pass">✓ ${name}</div>`;
+                } else {
+                    document.getElementById('test-results').innerHTML += 
+                        `<div class="test fail">✗ ${name} - Test failed</div>`;
+                }
+            } catch (error) {
+                document.getElementById('test-results').innerHTML += 
+                    `<div class="test fail">✗ ${name} - Error: ${error.message}</div>`;
+            }
+        }
+
+        // Test parseTime function
+        runTest("parseTime('45:30') should return 2730", () => {
+            const result = calc.parseTime('45:30');
+            console.log("parseTime('45:30'):", result);
+            return result === 2730;
+        });
+
+        runTest("parseTime('04:30') should return 270", () => {
+            const result = calc.parseTime('04:30');
+            console.log("parseTime('04:30'):", result);
+            return result === 270;
+        });
+
+        runTest("parseTime('01:35:00') should return 5700", () => {
+            const result = calc.parseTime('01:35:00');
+            console.log("parseTime('01:35:00'):", result);
+            return result === 5700;
+        });
+
+        runTest("parseTime('') should return 0", () => {
+            const result = calc.parseTime('');
+            console.log("parseTime(''):", result);
+            return result === 0;
+        });
+
+        // Test calculatePace function
+        runTest("calculatePace with valid inputs should work", () => {
+            const result = calc.calculatePace(2730, 10, 'km');
+            console.log("calculatePace(2730, 10, 'km'):", result);
+            return result.pacePerKm > 0 && result.pacePerMile > 0;
+        });
+
+        // Test calculateTime function
+        runTest("calculateTime with valid inputs should work", () => {
+            const result = calc.calculateTime(270, 21.1, 'km', 'km');
+            console.log("calculateTime(270, 21.1, 'km', 'km'):", result);
+            return result > 0;
+        });
+
+        // Test calculateDistance function
+        runTest("calculateDistance with valid inputs should work", () => {
+            const result = calc.calculateDistance(5700, 270, 'km');
+            console.log("calculateDistance(5700, 270, 'km'):", result);
+            return result.km > 0 && result.miles > 0;
+        });
+
+        // Test validation scenarios
+        console.log("=== Validation Test Scenarios ===");
+        
+        // Simulate the exact validation logic from ui.js
+        function testValidation(timeStr, distStr, tab) {
+            console.log(`\nTesting ${tab} with time: '${timeStr}', dist: '${distStr}'`);
+            
+            if (tab === 'pace') {
+                const time = calc.parseTime(timeStr);
+                const dist = parseFloat(distStr);
+                console.log(`Parsed: time=${time}, dist=${dist}, isNaN(dist)=${isNaN(dist)}`);
+                const timeValid = time > 0;
+                const distValid = dist > 0 && !isNaN(dist);
+                const isValid = timeValid && distValid;
+                console.log(`Time valid: ${timeValid}, Dist valid: ${distValid}, Overall: ${isValid}`);
+                return isValid;
+            }
+            return false;
+        }
+
+        runTest("Validation test with default values '45:30' and '10'", () => {
+            return testValidation('45:30', '10', 'pace');
+        });
+
+        runTest("Validation test with empty time", () => {
+            return !testValidation('', '10', 'pace');
+        });
+
+        runTest("Validation test with zero distance", () => {
+            return !testValidation('45:30', '0', 'pace');
+        });
+
+        runTest("Validation test with invalid distance", () => {
+            return !testValidation('45:30', 'abc', 'pace');
+        });
+    </script>
+</body>
+</html>

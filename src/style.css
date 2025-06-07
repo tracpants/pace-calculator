@@ -3,6 +3,15 @@
 @tailwind utilities;
 
 @layer components {
+	/* Fix layout jumping by ensuring consistent heights */
+	.form-section {
+		@apply min-h-[200px];
+	}
+	
+	#result {
+		@apply min-h-[80px];
+	}
+
 	/* Base style for all text inputs and select dropdowns */
 	.input-base {
 		@apply w-full p-3 bg-gray-100 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 outline-none;

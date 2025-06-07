@@ -24,6 +24,7 @@ function updateUnitToggles() {
 		}
 	});
 	populatePresetSelects();
+	updateCalculatedResult();
 }
 
 function populatePresetSelects() {
@@ -51,9 +52,12 @@ function handleFormSubmit(e) {
 
 	try {
 		if (state.currentTab === "pace") {
-			const time = calc.parseTime(document.getElementById("pace-time").value);
-			const dist = parseFloat(document.getElementById("pace-distance").value);
-			if (!time || !dist) throw new Error("Missing inputs");
+			const timeValue = document.getElementById("pace-time").value;
+			const distValue = document.getElementById("pace-distance").value;
+			const time = calc.parseTime(timeValue);
+			const dist = parseFloat(distValue);
+			if (time <= 0) throw new Error("Please enter a valid time (e.g., 45:30)");
+			if (dist <= 0 || isNaN(dist)) throw new Error("Please enter a valid distance");
 			const { pacePerKm, pacePerMile } = calc.calculatePace(
 				time,
 				dist,
@@ -65,10 +69,18 @@ function handleFormSubmit(e) {
 			} else {
 				value = `${calc.formatTime(pacePerMile)} /mile`;
 			}
+			// Store the result for unit conversion
+			state.lastResult = {
+				type: state.currentTab,
+				data: { pacePerKm, pacePerMile }
+			};
 		} else if (state.currentTab === "time") {
-			const pace = calc.parseTime(document.getElementById("time-pace").value);
-			const dist = parseFloat(document.getElementById("time-distance").value);
-			if (!pace || !dist) throw new Error("Missing inputs");
+			const paceValue = document.getElementById("time-pace").value;
+			const distValue = document.getElementById("time-distance").value;
+			const pace = calc.parseTime(paceValue);
+			const dist = parseFloat(distValue);
+			if (pace <= 0) throw new Error("Please enter a valid pace (e.g., 04:30)");
+			if (dist <= 0 || isNaN(dist)) throw new Error("Please enter a valid distance");
 			const totalSeconds = calc.calculateTime(
 				pace,
 				dist,
@@ -77,14 +89,18 @@ function handleFormSubmit(e) {
 			);
 			label = "Your Time:";
 			value = calc.formatTime(totalSeconds, true);
+			// Store the result for unit conversion
+			state.lastResult = {
+				type: state.currentTab,
+				data: { totalSeconds }
+			};
 		} else if (state.currentTab === "distance") {
-			const time = calc.parseTime(
-				document.getElementById("distance-time").value
-			);
-			const pace = calc.parseTime(
-				document.getElementById("distance-pace").value
-			);
-			if (!time || !pace) throw new Error("Missing inputs");
+			const timeValue = document.getElementById("distance-time").value;
+			const paceValue = document.getElementById("distance-pace").value;
+			const time = calc.parseTime(timeValue);
+			const pace = calc.parseTime(paceValue);
+			if (time <= 0) throw new Error("Please enter a valid time (e.g., 01:35:00)");
+			if (pace <= 0) throw new Error("Please enter a valid pace (e.g., 04:30)");
 			const { km, miles } = calc.calculateDistance(
 				time,
 				pace,
@@ -96,10 +112,15 @@ function handleFormSubmit(e) {
 			} else {
 				value = `${miles.toFixed(2)} miles`;
 			}
+			// Store the result for unit conversion
+			state.lastResult = {
+				type: state.currentTab,
+				data: { km, miles }
+			};
 		}
 		showResult(label, value);
 	} catch (err) {
-		alert("Please check your inputs. All fields are required.");
+		alert(err.message || "Please check your inputs. All fields are required.");
 	}
 }
 
@@ -115,9 +136,38 @@ function showResult(label, value) {
 	);
 }
 
+function updateCalculatedResult() {
+	if (!state.lastResult || resultDiv.classList.contains("hidden")) return;
+	
+	const { type, data } = state.lastResult;
+	let label = "", value = "";
+	
+	if (type === "pace") {
+		label = "Your Pace:";
+		if (state.distanceUnit === "km") {
+			value = `${calc.formatTime(data.pacePerKm)} /km`;
+		} else {
+			value = `${calc.formatTime(data.pacePerMile)} /mile`;
+		}
+	} else if (type === "time") {
+		label = "Your Time:";
+		value = calc.formatTime(data.totalSeconds, true);
+	} else if (type === "distance") {
+		label = "Your Distance:";
+		if (state.distanceUnit === "km") {
+			value = `${data.km.toFixed(2)} km`;
+		} else {
+			value = `${data.miles.toFixed(2)} miles`;
+		}
+	}
+	
+	showResult(label, value);
+}
+
 function clearAll() {
 	form.reset();
 	resultDiv.classList.add("hidden");
+	state.lastResult = null;
 }
 
 export function initUI() {
@@ -145,6 +195,7 @@ export function initUI() {
 				.querySelector(`[data-section="${state.currentTab}"]`)
 				.classList.remove("hidden");
 			resultDiv.classList.add("hidden");
+			state.lastResult = null;
 		});
 	});
 

@@ -2,4 +2,5 @@
 export const state = {
 	currentTab: "pace", // 'pace', 'time', or 'distance'
 	distanceUnit: "km", // 'km' or 'miles'
+	lastResult: null, // Store last calculation result
 };

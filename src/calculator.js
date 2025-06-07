@@ -1,8 +1,12 @@
 export function parseTime(timeStr) {
-	if (!timeStr) return 0;
-	const parts = timeStr.split(":").map((p) => parseInt(p) || 0);
+	if (!timeStr || typeof timeStr !== 'string') return 0;
+	const trimmed = timeStr.trim();
+	if (!trimmed) return 0;
+	
+	const parts = trimmed.split(":").map((p) => parseInt(p) || 0);
 	if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
 	if (parts.length === 2) return parts[0] * 60 + parts[1];
+	if (parts.length === 1) return parts[0] * 60; // Handle single number as minutes
 	return 0;
 }
 
