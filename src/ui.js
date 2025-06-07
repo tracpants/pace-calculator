@@ -8,10 +8,10 @@ const resultLabel = document.getElementById("result-label");
 const resultValue = document.getElementById("result-value");
 
 const presets = {
-	marathon: { km: 42.195, miles: 26.219 },
-	"half-marathon": { km: 21.0975, miles: 13.109 },
-	"10k": { km: 10, miles: 6.214 },
 	"5k": { km: 5, miles: 3.107 },
+	"10k": { km: 10, miles: 6.214 },
+	"half-marathon": { km: 21.0975, miles: 13.109 },
+	"marathon": { km: 42.195, miles: 26.219 },
 	"1-mile": { km: 1.609, miles: 1 },
 };
 
@@ -33,8 +33,8 @@ function populatePresetSelects() {
 		Object.entries(presets)
 			.map(
 				([key, value]) =>
-					`<option value="${key}">${key.replace("-", " ")} (${
-						value[unit].toFixed(2)
+					`<option value="${key}">${key.replace("-", " ").toUpperCase()} (${
+						value[unit] % 1 === 0 ? value[unit] : value[unit].toFixed(3)
 					} ${unit})</option>`
 			)
 			.join("");
@@ -60,9 +60,11 @@ function handleFormSubmit(e) {
 				state.distanceUnit
 			);
 			label = "Your Pace:";
-			value = `${calc.formatTime(pacePerKm)} /km<br>${calc.formatTime(
-				pacePerMile
-			)} /mile`;
+			if (state.distanceUnit === "km") {
+				value = `${calc.formatTime(pacePerKm)} /km`;
+			} else {
+				value = `${calc.formatTime(pacePerMile)} /mile`;
+			}
 		} else if (state.currentTab === "time") {
 			const pace = calc.parseTime(document.getElementById("time-pace").value);
 			const dist = parseFloat(document.getElementById("time-distance").value);
@@ -89,7 +91,11 @@ function handleFormSubmit(e) {
 				state.distanceUnit
 			);
 			label = "Your Distance:";
-			value = `${km.toFixed(2)} km<br>${miles.toFixed(2)} miles`;
+			if (state.distanceUnit === "km") {
+				value = `${km.toFixed(2)} km`;
+			} else {
+				value = `${miles.toFixed(2)} miles`;
+			}
 		}
 		showResult(label, value);
 	} catch (err) {
