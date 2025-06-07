@@ -70,6 +70,7 @@
 								aria-describedby="pace-time-hint pace-time-error"
 								aria-required="true"
 								autocomplete="off"
+								enterkeyhint="done"
 							/>
 							<div id="pace-time-hint" class="text-sm text-gray-500 dark:text-gray-400 mt-1">Formats: MM:SS, H:MM:SS, or decimal minutes (4.5)</div>
 							<div id="pace-time-error" class="text-sm text-red-600 dark:text-red-400 mt-1 hidden" role="alert"></div>
@@ -79,16 +80,18 @@
 								>Distance</label
 							>
 							<input
-								type="number"
+								type="text"
 								id="pace-distance"
 								class="input-base mb-2"
 								placeholder="e.g., 10"
-								step="any"
 								value="10"
 								aria-describedby="pace-distance-hint pace-distance-error"
 								aria-required="true"
 								inputmode="decimal"
 								list="distance-suggestions"
+								pattern="[0-9]*\.?[0-9]*"
+								autocomplete="off"
+								enterkeyhint="done"
 							/>
 							<div id="pace-distance-hint" class="text-sm text-gray-500 dark:text-gray-400 mt-1">Enter distance in selected unit</div>
 							<div id="pace-distance-error" class="text-sm text-red-600 dark:text-red-400 mt-1 hidden" role="alert"></div>
@@ -111,6 +114,7 @@
 								aria-describedby="time-pace-hint time-pace-error"
 								aria-required="true"
 								autocomplete="off"
+								enterkeyhint="done"
 							/>
 							<div id="time-pace-hint" class="text-sm text-gray-500 dark:text-gray-400 mt-1">Formats: MM:SS per unit, or decimal minutes (4.5)</div>
 							<div id="time-pace-error" class="text-sm text-red-600 dark:text-red-400 mt-1 hidden" role="alert"></div>
@@ -120,16 +124,18 @@
 								>Distance</label
 							>
 							<input
-								type="number"
+								type="text"
 								id="time-distance"
 								class="input-base mb-2"
 								placeholder="e.g., 21.1"
-								step="any"
 								value="21.1"
 								aria-describedby="time-distance-hint time-distance-error"
 								aria-required="true"
 								inputmode="decimal"
 								list="distance-suggestions"
+								pattern="[0-9]*\.?[0-9]*"
+								autocomplete="off"
+								enterkeyhint="done"
 							/>
 							<div id="time-distance-hint" class="text-sm text-gray-500 dark:text-gray-400 mt-1">Enter distance in selected unit</div>
 							<div id="time-distance-error" class="text-sm text-red-600 dark:text-red-400 mt-1 hidden" role="alert"></div>
@@ -152,6 +158,7 @@
 								aria-describedby="distance-time-hint distance-time-error"
 								aria-required="true"
 								autocomplete="off"
+								enterkeyhint="done"
 							/>
 							<div id="distance-time-hint" class="text-sm text-gray-500 dark:text-gray-400 mt-1">Formats: HH:MM:SS, MM:SS, or decimal minutes (95.5)</div>
 							<div id="distance-time-error" class="text-sm text-red-600 dark:text-red-400 mt-1 hidden" role="alert"></div>
@@ -169,6 +176,7 @@
 								aria-describedby="distance-pace-hint distance-pace-error"
 								aria-required="true"
 								autocomplete="off"
+								enterkeyhint="done"
 							/>
 							<div id="distance-pace-hint" class="text-sm text-gray-500 dark:text-gray-400 mt-1">Formats: MM:SS per unit, or decimal minutes (4.5)</div>
 							<div id="distance-pace-error" class="text-sm text-red-600 dark:text-red-400 mt-1 hidden" role="alert"></div>

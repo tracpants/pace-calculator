@@ -150,7 +150,7 @@ function populateAutocomplete() {
 
 function clearNonRelevantFields() {
 	// Clear all input fields except those in the current tab
-	const allInputs = document.querySelectorAll('input[type="text"], input[type="number"]');
+	const allInputs = document.querySelectorAll('input[type="text"]');
 	allInputs.forEach(input => {
 		const isInCurrentTab = input.closest(`[data-section="${state.currentTab}"]`);
 		if (!isInCurrentTab) {

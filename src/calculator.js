@@ -66,8 +66,16 @@ export function validateTimeInput(timeStr) {
 }
 
 export function validateDistanceInput(distanceStr) {
-	if (!distanceStr) return { valid: false, message: "Distance is required" };
-	const distance = parseFloat(distanceStr);
+	if (!distanceStr || typeof distanceStr !== 'string') return { valid: false, message: "Distance is required" };
+	const trimmed = distanceStr.trim();
+	if (!trimmed) return { valid: false, message: "Distance is required" };
+	
+	// Check for valid number format (including decimals)
+	if (!/^\d*\.?\d+$/.test(trimmed)) {
+		return { valid: false, message: "Please enter a valid number (e.g., 10 or 10.5)" };
+	}
+	
+	const distance = parseFloat(trimmed);
 	
 	if (isNaN(distance)) {
 		return { valid: false, message: "Please enter a valid number" };
