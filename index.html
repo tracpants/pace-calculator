@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<!-- The 'dark' class will be toggled here -->
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<link rel="icon" type="image/svg+xml" href="/vite.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Modern Pace Calculator</title>
+	</head>
+	<body
+		class="bg-gray-100 dark:bg-gray-900 flex items-center justify-center min-h-screen p-4 font-sans transition-colors duration-300"
+	>
+		<div
+			id="app"
+			class="w-full max-w-md mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 sm:p-8"
+		>
+			<!-- Header -->
+			<div class="text-center mb-6">
+				<h1
+					class="text-4xl font-bold bg-gradient-to-r from-purple-500 to-indigo-600 dark:from-purple-400 dark:to-indigo-500 bg-clip-text text-transparent"
+				>
+					Pace Calculator
+				</h1>
+				<p class="text-gray-500 dark:text-gray-400 mt-2">
+					Modern, fast, and precise.
+				</p>
+			</div>
+
+			<!-- Toggles: Theme and Units -->
+			<div class="flex justify-between items-center mb-6">
+				<div
+					class="flex items-center bg-gray-200 dark:bg-gray-700 rounded-full p-1"
+				>
+					<button data-unit="km" class="unit-toggle">KM</button>
+					<button data-unit="miles" class="unit-toggle">Miles</button>
+				</div>
+				<button id="theme-toggle" class="text-2xl text-gray-500">☀️</button>
+			</div>
+
+			<!-- Tabs -->
+			<div
+				class="grid grid-cols-3 gap-2 bg-gray-200 dark:bg-gray-700 p-1 rounded-xl mb-8"
+			>
+				<button data-tab="pace" class="tab">Pace</button>
+				<button data-tab="time" class="tab">Time</button>
+				<button data-tab="distance" class="tab">Distance</button>
+			</div>
+
+			<!-- Form Sections -->
+			<form id="calculator-form">
+				<div class="space-y-6">
+					<!-- Pace Section -->
+					<div data-section="pace" class="form-section space-y-4">
+						<div>
+							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block"
+								>Time</label
+							>
+							<input
+								type="text"
+								id="pace-time"
+								class="input-base"
+								placeholder="e.g., 45:30"
+							/>
+						</div>
+						<div>
+							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block"
+								>Distance</label
+							>
+							<input
+								type="number"
+								id="pace-distance"
+								class="input-base mb-2"
+								placeholder="e.g., 10"
+								step="any"
+							/>
+							<select id="pace-preset" class="input-base select-custom"></select>
+						</div>
+					</div>
+
+					<!-- Time Section -->
+					<div data-section="time" class="form-section space-y-4 hidden">
+						<div>
+							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block"
+								>Pace</label
+							>
+							<input
+								type="text"
+								id="time-pace"
+								class="input-base"
+								placeholder="e.g., 04:30"
+							/>
+						</div>
+						<div>
+							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block"
+								>Distance</label
+							>
+							<input
+								type="number"
+								id="time-distance"
+								class="input-base mb-2"
+								placeholder="e.g., 21.1"
+								step="any"
+							/>
+							<select id="time-preset" class="input-base select-custom"></select>
+						</div>
+					</div>
+
+					<!-- Distance Section -->
+					<div data-section="distance" class="form-section space-y-4 hidden">
+						<div>
+							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block"
+								>Time</label
+							>
+							<input
+								type="text"
+								id="distance-time"
+								class="input-base"
+								placeholder="e.g., 01:35:00"
+							/>
+						</div>
+						<div>
+							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block"
+								>Pace</label
+							>
+							<input
+								type="text"
+								id="distance-pace"
+								class="input-base"
+								placeholder="e.g., 04:30"
+							/>
+						</div>
+					</div>
+				</div>
+
+				<!-- Buttons -->
+				<div class="grid grid-cols-2 gap-4 mt-8">
+					<button type="submit" class="btn-primary">Calculate</button>
+					<button type="button" id="clear-btn" class="btn-secondary">
+						Clear
+					</button>
+				</div>
+			</form>
+
+			<!-- Result -->
+			<div id="result" class="mt-6 p-4 rounded-lg hidden">
+				<p
+					id="result-label"
+					class="font-semibold text-gray-700 dark:text-gray-200"
+				></p>
+				<p
+					id="result-value"
+					class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 font-mono"
+				></p>
+			</div>
+		</div>
+		<script type="module" src="/src/main.js"></script>
+	</body>
+</html>
