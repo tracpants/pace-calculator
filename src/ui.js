@@ -185,6 +185,49 @@ function clearNonRelevantFields() {
 	});
 }
 
+function generateComprehensiveResult() {
+	if (!state.lastResult) {
+		return `${resultLabel.textContent} ${resultValue.textContent}`;
+	}
+
+	const { type, data } = state.lastResult;
+	let result = '';
+
+	if (type === "pace") {
+		const timeInput = document.getElementById("pace-time");
+		const distInput = document.getElementById("pace-distance");
+		const time = calc.formatTime(calc.parseTime(timeInput.value), true);
+		const distance = `${distInput.value} ${state.distanceUnit}`;
+		
+		result = `Running Pace Calculation:\n`;
+		result += `Distance: ${distance}\n`;
+		result += `Time: ${time}\n`;
+		result += `Pace: ${calc.formatTime(data.pacePerKm)} /km (${calc.formatTime(data.pacePerMile)} /mile)`;
+	} else if (type === "time") {
+		const paceInput = document.getElementById("time-pace");
+		const distInput = document.getElementById("time-distance");
+		const pace = `${calc.formatTime(calc.parseTime(paceInput.value))} /${state.distanceUnit}`;
+		const distance = `${distInput.value} ${state.distanceUnit}`;
+		
+		result = `Running Time Calculation:\n`;
+		result += `Distance: ${distance}\n`;
+		result += `Pace: ${pace}\n`;
+		result += `Total Time: ${calc.formatTime(data.totalSeconds, true)}`;
+	} else if (type === "distance") {
+		const timeInput = document.getElementById("distance-time");
+		const paceInput = document.getElementById("distance-pace");
+		const time = calc.formatTime(calc.parseTime(timeInput.value), true);
+		const pace = `${calc.formatTime(calc.parseTime(paceInput.value))} /${state.distanceUnit}`;
+		
+		result = `Running Distance Calculation:\n`;
+		result += `Time: ${time}\n`;
+		result += `Pace: ${pace}\n`;
+		result += `Distance: ${data.km.toFixed(2)} km (${data.miles.toFixed(2)} miles)`;
+	}
+
+	return result;
+}
+
 async function copyToClipboard(text) {
 	try {
 		await navigator.clipboard.writeText(text);
@@ -216,6 +259,26 @@ async function copyToClipboard(text) {
 			return false;
 		}
 	}
+}
+
+async function shareContent(text) {
+	// Check if Web Share API is available (mainly on mobile)
+	if (navigator.share && isMobileDevice()) {
+		try {
+			await navigator.share({
+				title: 'Running Pace Calculation',
+				text: text
+			});
+			return true;
+		} catch (err) {
+			// User cancelled sharing or share failed
+			console.log('Share cancelled or failed:', err);
+			return false;
+		}
+	}
+	
+	// Fallback to clipboard
+	return await copyToClipboard(text);
 }
 
 function showLoading() {
@@ -519,12 +582,26 @@ export function initUI() {
 	form.addEventListener("submit", handleFormSubmit);
 	document.getElementById("clear-btn").addEventListener("click", clearAll);
 	
-	// Copy button functionality
+	// Copy/Share button functionality
 	copyBtn.addEventListener('click', async () => {
-		const resultText = `${resultLabel.textContent} ${resultValue.textContent}`;
-		const success = await copyToClipboard(resultText);
-		if (!success) {
-			alert('Failed to copy to clipboard');
+		const comprehensiveText = generateComprehensiveResult();
+		
+		if (isMobileDevice() && navigator.share) {
+			// Use native share sheet on mobile
+			const success = await shareContent(comprehensiveText);
+			if (!success) {
+				// Fallback to clipboard if share was cancelled or failed
+				const copySuccess = await copyToClipboard(comprehensiveText);
+				if (!copySuccess) {
+					alert('Failed to copy to clipboard');
+				}
+			}
+		} else {
+			// Desktop: copy to clipboard
+			const success = await copyToClipboard(comprehensiveText);
+			if (!success) {
+				alert('Failed to copy to clipboard');
+			}
 		}
 	});
 	
