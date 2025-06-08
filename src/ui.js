@@ -502,6 +502,8 @@ function clearAll() {
 	focusFirstInput();
 }
 
+export { populatePresetSelects, populateAutocomplete, updateCalculatedResult };
+
 export function initUI() {
 	// Initial setup
 	updateUnitToggles();
@@ -522,13 +524,7 @@ export function initUI() {
 		}
 	});
 
-	// Event Listeners
-	document.querySelectorAll("[data-unit]").forEach((btn) => {
-		btn.addEventListener("click", () => {
-			state.distanceUnit = btn.dataset.unit;
-			updateUnitToggles();
-		});
-	});
+	// Event Listeners (unit toggles are now handled by settings.js)
 
 	document.querySelectorAll("[data-tab]").forEach((tab) => {
 		tab.addEventListener("click", () => {

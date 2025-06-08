@@ -1,9 +1,9 @@
 import "./style.css";
-import { initTheme } from "./theme.js";
+import { initSettings } from "./settings.js";
 import { initUI } from "./ui.js";
 
 // Initialize all parts of the application
 document.addEventListener("DOMContentLoaded", () => {
-	initTheme();
+	initSettings();
 	initUI();
 });
