@@ -6,7 +6,8 @@ import * as calc from "./calculator.js";
 // Settings preferences with defaults
 const defaultSettings = {
 	distanceUnit: 'km',
-	theme: 'system' // 'light', 'dark', or 'system'
+	theme: 'system', // 'light', 'dark', or 'system'
+	accentColor: 'indigo' // default accent color
 };
 
 // DOM Elements
@@ -16,6 +17,7 @@ const closeSettingsBtn = document.getElementById("close-settings");
 const saveSettingsBtn = document.getElementById("save-settings");
 const themeRadios = document.querySelectorAll('.theme-radio');
 const unitToggles = document.querySelectorAll("[data-unit]");
+const accentColorOptions = document.querySelectorAll('.accent-color-option');
 
 // PR-related DOM elements
 const prModal = document.getElementById("pr-modal");
@@ -144,6 +146,38 @@ function applyTheme(themePreference) {
 	}
 }
 
+// Apply accent color
+function applyAccentColor(accentColor) {
+	// Apply the accent color data attribute to the document element
+	document.documentElement.setAttribute('data-accent-color', accentColor);
+}
+
+// Update accent color UI to show current selection
+function updateAccentColorUI(accentColor) {
+	accentColorOptions.forEach(option => {
+		if (option.dataset.accent === accentColor) {
+			option.classList.add('selected');
+		} else {
+			option.classList.remove('selected');
+		}
+	});
+}
+
+// Handle accent color selection
+function handleAccentColorSelect(e) {
+	const selectedColor = e.currentTarget.dataset.accent;
+	if (selectedColor) {
+		// Update UI immediately
+		updateAccentColorUI(selectedColor);
+		// Apply the color theme
+		applyAccentColor(selectedColor);
+		// Save to current session (will be saved when user clicks Save)
+		const currentSettings = loadSettings();
+		currentSettings.accentColor = selectedColor;
+		localStorage.setItem('pace-calculator-settings', JSON.stringify(currentSettings));
+	}
+}
+
 // Apply distance unit
 function applyDistanceUnit(unit) {
 	state.distanceUnit = unit;
@@ -177,6 +211,9 @@ function openSettings() {
 	
 	// Set current unit toggles
 	applyDistanceUnit(settings.distanceUnit);
+	
+	// Set current accent color
+	updateAccentColorUI(settings.accentColor);
 	
 	// Populate PR list
 	populatePRList();
@@ -212,9 +249,13 @@ function handleSaveSettings() {
 	const selectedTheme = document.querySelector('input[name="theme"]:checked')?.value || 'system';
 	const selectedUnit = state.distanceUnit; // Already updated by unit toggles
 	
+	// Get current accent color from settings
+	const currentSettings = loadSettings();
+	
 	const settings = {
 		theme: selectedTheme,
-		distanceUnit: selectedUnit
+		distanceUnit: selectedUnit,
+		accentColor: currentSettings.accentColor
 	};
 	
 	// Save to localStorage
@@ -447,6 +488,7 @@ export function initSettings() {
 	// Apply initial settings
 	applyTheme(settings.theme);
 	applyDistanceUnit(settings.distanceUnit);
+	applyAccentColor(settings.accentColor);
 	
 	// Event listeners
 	settingsBtn.addEventListener('click', openSettings);
@@ -456,6 +498,11 @@ export function initSettings() {
 	// Unit toggles in modal
 	unitToggles.forEach(toggle => {
 		toggle.addEventListener('click', handleUnitToggle);
+	});
+	
+	// Accent color event listeners
+	accentColorOptions.forEach(option => {
+		option.addEventListener('click', handleAccentColorSelect);
 	});
 	
 	// PR modal event listeners
