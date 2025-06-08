@@ -28,6 +28,7 @@ const prList = document.getElementById("pr-list");
 const prDistanceInput = document.getElementById("pr-distance");
 const prUnitSelect = document.getElementById("pr-unit");
 const prTimeInput = document.getElementById("pr-time");
+const prDateInput = document.getElementById("pr-date");
 
 // PR modal state
 let editingPR = null;
@@ -186,16 +187,22 @@ function populatePRList() {
 	prList.innerHTML = prs.map(prRecord => `
 		<div class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
 			<div>
-				<span class="font-medium text-gray-900 dark:text-white">
-					${prRecord.displayName || `${prRecord.distance} ${prRecord.unit}`}
-				</span>
-				<span class="text-gray-600 dark:text-gray-300 ml-2">${prRecord.timeFormatted}</span>
+				<div>
+					<span class="font-medium text-gray-900 dark:text-white">
+						${prRecord.displayName || `${prRecord.distance} ${prRecord.unit}`}
+					</span>
+					<span class="text-gray-600 dark:text-gray-300 ml-2">${prRecord.timeFormatted}</span>
+				</div>
+				${prRecord.dateSet ? `<div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+					${pr.formatDate(prRecord.dateSet)}
+				</div>` : ''}
 			</div>
 			<div class="flex gap-1">
 				<button class="edit-pr-btn text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 p-1" 
 						data-distance="${prRecord.distance}" 
 						data-unit="${prRecord.unit}" 
 						data-time="${prRecord.timeSeconds}"
+						data-date="${prRecord.dateSet || ''}"
 						title="Edit PR">
 					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
@@ -261,13 +268,15 @@ function handleEditPR(e) {
 	editingPR = {
 		distance: parseFloat(btn.dataset.distance),
 		unit: btn.dataset.unit,
-		timeSeconds: parseFloat(btn.dataset.time)
+		timeSeconds: parseFloat(btn.dataset.time),
+		dateSet: btn.dataset.date
 	};
 	
 	// Populate form
 	prDistanceInput.value = editingPR.distance;
 	prUnitSelect.value = editingPR.unit;
 	prTimeInput.value = calc.formatTime(editingPR.timeSeconds, true);
+	prDateInput.value = pr.getDateInputValue(editingPR.dateSet);
 	
 	openPRModal(true);
 }
@@ -331,7 +340,8 @@ function handlePRFormSubmit(e) {
 	}
 	
 	// Save the new/updated PR
-	const success = pr.setPR(validation.distance, validation.unit, validation.timeSeconds);
+	const date = prDateInput.value || null;
+	const success = pr.setPR(validation.distance, validation.unit, validation.timeSeconds, date);
 	
 	if (success) {
 		populatePRList();

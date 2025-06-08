@@ -66,7 +66,7 @@ export function getPRForDistance(distanceKm) {
 }
 
 // Set PR for a distance
-export function setPR(distance, unit, timeSeconds) {
+export function setPR(distance, unit, timeSeconds, date = null) {
 	const distanceKm = normalizeDistance(distance, unit);
 	const prs = loadPRs();
 	
@@ -74,7 +74,8 @@ export function setPR(distance, unit, timeSeconds) {
 		distance: distance,
 		unit: unit,
 		timeSeconds: timeSeconds,
-		dateSet: new Date().toISOString()
+		dateSet: date ? new Date(date).toISOString() : new Date().toISOString(),
+		hasCustomDate: !!date
 	};
 	
 	return savePRs(prs);
@@ -185,4 +186,28 @@ export function getDistanceName(distance, unit) {
 	}
 	
 	return `${distance} ${unit}`;
+}
+
+// Format date for display
+export function formatDate(isoString) {
+	if (!isoString) return '';
+	
+	try {
+		const date = new Date(isoString);
+		return date.toLocaleDateString();
+	} catch (error) {
+		return '';
+	}
+}
+
+// Get date in YYYY-MM-DD format for date input
+export function getDateInputValue(isoString) {
+	if (!isoString) return '';
+	
+	try {
+		const date = new Date(isoString);
+		return date.toISOString().split('T')[0];
+	} catch (error) {
+		return '';
+	}
 }
