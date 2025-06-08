@@ -272,11 +272,64 @@
 						</label>
 					</div>
 				</div>
+
+				<!-- Personal Records Section -->
+				<div>
+					<div class="flex justify-between items-center mb-3">
+						<label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Personal Records</label>
+						<button id="add-pr-btn" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 text-sm font-medium" type="button">+ Add PR</button>
+					</div>
+					<div id="pr-list" class="space-y-2 max-h-32 overflow-y-auto">
+						<!-- PRs will be populated here -->
+					</div>
+				</div>
 			</div>
 
 			<div class="mt-8 flex justify-end">
 				<button id="save-settings" class="btn-primary">Save</button>
 			</div>
+		</div>
+	</div>
+
+	<!-- PR Add/Edit Modal -->
+	<div id="pr-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50" role="dialog" aria-modal="true" aria-labelledby="pr-modal-title">
+		<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6">
+			<div class="flex justify-between items-center mb-6">
+				<h2 id="pr-modal-title" class="text-xl font-bold text-gray-900 dark:text-white">Add Personal Record</h2>
+				<button id="close-pr-modal" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 p-1 rounded-lg transition-colors" aria-label="Close PR modal">
+					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+					</svg>
+				</button>
+			</div>
+
+			<form id="pr-form" class="space-y-4">
+				<div>
+					<label for="pr-distance" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Distance</label>
+					<input type="text" id="pr-distance" class="input-base" placeholder="e.g., 5 or 21.1" required>
+					<div id="pr-distance-error" class="text-sm text-red-600 dark:text-red-400 mt-1 hidden" role="alert"></div>
+				</div>
+
+				<div>
+					<label for="pr-unit" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unit</label>
+					<select id="pr-unit" class="input-base">
+						<option value="km">Kilometers</option>
+						<option value="miles">Miles</option>
+					</select>
+				</div>
+
+				<div>
+					<label for="pr-time" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Time</label>
+					<input type="text" id="pr-time" class="input-base" placeholder="e.g., 25:30 or 1:45:30" required>
+					<div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Formats: MM:SS, H:MM:SS, or decimal minutes</div>
+					<div id="pr-time-error" class="text-sm text-red-600 dark:text-red-400 mt-1 hidden" role="alert"></div>
+				</div>
+
+				<div class="flex gap-3 mt-6">
+					<button type="submit" class="btn-primary flex-1">Save PR</button>
+					<button type="button" id="cancel-pr" class="btn-secondary flex-1">Cancel</button>
+				</div>
+			</form>
 		</div>
 	</div>
 

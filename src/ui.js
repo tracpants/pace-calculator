@@ -1,5 +1,6 @@
 import { state } from "./state.js";
 import * as calc from "./calculator.js";
+import * as pr from "./pr.js";
 
 // DOM Elements
 const form = document.getElementById("calculator-form");
@@ -362,10 +363,18 @@ function handleFormSubmit(e) {
 			} else {
 				value = `${calc.formatTime(pacePerMile)} /mile`;
 			}
+			
+			// Check for PR comparison
+			const prComparison = pr.comparePaceWithPR(
+				timeValidation.value,
+				distValidation.value,
+				state.distanceUnit
+			);
+			
 			// Store the result for unit conversion
 			state.lastResult = {
 				type: state.currentTab,
-				data: { pacePerKm, pacePerMile }
+				data: { pacePerKm, pacePerMile, prComparison }
 			};
 		} else if (state.currentTab === "time") {
 			const paceInput = document.getElementById("time-pace");
@@ -433,6 +442,29 @@ function handleFormSubmit(e) {
 function showResult(label, value, type = 'success') {
 	resultLabel.textContent = label;
 	resultValue.innerHTML = value;
+	
+	// Add PR comparison if available for pace calculations
+	if (state.lastResult && state.lastResult.data && state.lastResult.data.prComparison) {
+		const comparison = state.lastResult.data.prComparison;
+		const comparisonHtml = `
+			<div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
+				<div class="text-sm text-gray-600 dark:text-gray-400">
+					<div class="flex justify-between items-center">
+						<span>PR (${pr.getDistanceName(comparison.prDistance, comparison.prUnit)}):</span>
+						<span class="font-mono">${comparison.prPaceFormatted} /${comparison.prUnit}</span>
+					</div>
+					<div class="flex justify-between items-center mt-1">
+						<span>Difference:</span>
+						<span class="font-mono ${comparison.isFaster ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}">
+							${comparison.isFaster ? '-' : '+'}${comparison.paceDifferenceFormatted} 
+							(${comparison.isFaster ? 'faster' : 'slower'})
+						</span>
+					</div>
+				</div>
+			</div>
+		`;
+		resultValue.innerHTML += comparisonHtml;
+	}
 	
 	// Reset all classes
 	resultDiv.classList.remove('hidden', 'success', 'error', 'opacity-0', 'scale-95');
