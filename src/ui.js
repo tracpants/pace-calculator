@@ -204,6 +204,16 @@ function generateComprehensiveResult() {
 		result += `Distance: ${distance}\n`;
 		result += `Time: ${time}\n`;
 		result += `Pace: ${calc.formatTime(data.pacePerKm)} /km (${calc.formatTime(data.pacePerMile)} /mile)`;
+		
+		// Add PR comparison if available
+		if (data.prComparison) {
+			const comparison = data.prComparison;
+			result += `\n\nPersonal Record Comparison:\n`;
+			result += `PR (${pr.getDistanceName(comparison.prDistance, comparison.prUnit)}): ${comparison.prTimeFormatted}\n`;
+			result += `PR Pace: ${comparison.prPaceFormatted} /${comparison.prUnit}\n`;
+			result += `Time Difference: ${comparison.isFaster ? '-' : '+'}${comparison.timeDifferenceFormatted} (${comparison.isFaster ? 'faster' : 'slower'})\n`;
+			result += `Pace Difference: ${comparison.isFaster ? '-' : '+'}${comparison.paceDifferenceFormatted} /km (${comparison.isFaster ? 'faster' : 'slower'})`;
+		}
 	} else if (type === "time") {
 		const paceInput = document.getElementById("time-pace");
 		const distInput = document.getElementById("time-distance");
@@ -451,13 +461,23 @@ function showResult(label, value, type = 'success') {
 				<div class="text-sm text-gray-600 dark:text-gray-400">
 					<div class="flex justify-between items-center">
 						<span>PR (${pr.getDistanceName(comparison.prDistance, comparison.prUnit)}):</span>
+						<span class="font-mono">${comparison.prTimeFormatted}</span>
+					</div>
+					<div class="flex justify-between items-center mt-1">
+						<span>PR Pace:</span>
 						<span class="font-mono">${comparison.prPaceFormatted} /${comparison.prUnit}</span>
 					</div>
 					<div class="flex justify-between items-center mt-1">
-						<span>Difference:</span>
+						<span>Time Difference:</span>
 						<span class="font-mono ${comparison.isFaster ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}">
-							${comparison.isFaster ? '-' : '+'}${comparison.paceDifferenceFormatted} 
+							${comparison.isFaster ? '-' : '+'}${comparison.timeDifferenceFormatted} 
 							(${comparison.isFaster ? 'faster' : 'slower'})
+						</span>
+					</div>
+					<div class="flex justify-between items-center mt-1">
+						<span>Pace Difference:</span>
+						<span class="font-mono ${comparison.isFaster ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}">
+							${comparison.isFaster ? '-' : '+'}${comparison.paceDifferenceFormatted} /km
 						</span>
 					</div>
 				</div>

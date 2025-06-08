@@ -134,6 +134,9 @@ export function comparePaceWithPR(currentTimeSeconds, distance, unit) {
 	const prPacePerKm = pr.timeSeconds / distanceKm;
 	const paceDifference = currentPacePerKm - prPacePerKm;
 	
+	// Calculate total time difference
+	const timeDifference = currentTimeSeconds - pr.timeSeconds;
+	
 	// Calculate percentage difference
 	const percentageDifference = (paceDifference / prPacePerKm) * 100;
 	
@@ -147,6 +150,8 @@ export function comparePaceWithPR(currentTimeSeconds, distance, unit) {
 		currentPaceFormatted: calc.formatTime(currentPacePerKm),
 		paceDifference: paceDifference,
 		paceDifferenceFormatted: calc.formatTime(Math.abs(paceDifference)),
+		timeDifference: timeDifference,
+		timeDifferenceFormatted: calc.formatTime(Math.abs(timeDifference), true),
 		percentageDifference: percentageDifference,
 		isFaster: paceDifference < 0,
 		isSlower: paceDifference > 0,
