@@ -232,8 +232,8 @@
 	</div>
 
 	<!-- Settings Modal -->
-	<div id="settings-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50" role="dialog" aria-modal="true" aria-labelledby="settings-title">
-		<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6">
+	<div id="settings-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+		<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6 my-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
 			<div class="flex justify-between items-center mb-6">
 				<h2 id="settings-title" class="text-xl font-bold text-gray-900 dark:text-white">Settings</h2>
 				<button id="close-settings" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 p-1 rounded-lg transition-colors" aria-label="Close settings">
@@ -292,8 +292,8 @@
 	</div>
 
 	<!-- PR Add/Edit Modal -->
-	<div id="pr-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50" role="dialog" aria-modal="true" aria-labelledby="pr-modal-title">
-		<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6">
+	<div id="pr-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="pr-modal-title">
+		<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6 my-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
 			<div class="flex justify-between items-center mb-6">
 				<h2 id="pr-modal-title" class="text-xl font-bold text-gray-900 dark:text-white">Add Personal Record</h2>
 				<button id="close-pr-modal" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 p-1 rounded-lg transition-colors" aria-label="Close PR modal">
@@ -329,6 +329,12 @@
 					<label for="pr-date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Date (Optional)</label>
 					<input type="date" id="pr-date" class="input-base">
 					<div class="text-sm text-gray-500 dark:text-gray-400 mt-1">When did you achieve this PR?</div>
+				</div>
+
+				<div>
+					<label for="pr-notes" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Notes (Optional)</label>
+					<textarea id="pr-notes" class="input-base" rows="3" placeholder="e.g., Great weather, felt strong, new PB!"></textarea>
+					<div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Add context about this performance</div>
 				</div>
 
 				<div class="flex gap-3 mt-6">

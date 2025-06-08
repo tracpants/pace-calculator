@@ -66,7 +66,7 @@ export function getPRForDistance(distanceKm) {
 }
 
 // Set PR for a distance
-export function setPR(distance, unit, timeSeconds, date = null) {
+export function setPR(distance, unit, timeSeconds, date = null, notes = null) {
 	const distanceKm = normalizeDistance(distance, unit);
 	const prs = loadPRs();
 	
@@ -75,7 +75,8 @@ export function setPR(distance, unit, timeSeconds, date = null) {
 		unit: unit,
 		timeSeconds: timeSeconds,
 		dateSet: date ? new Date(date).toISOString() : new Date().toISOString(),
-		hasCustomDate: !!date
+		hasCustomDate: !!date,
+		notes: notes || null
 	};
 	
 	return savePRs(prs);

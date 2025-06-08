@@ -29,6 +29,7 @@ const prDistanceInput = document.getElementById("pr-distance");
 const prUnitSelect = document.getElementById("pr-unit");
 const prTimeInput = document.getElementById("pr-time");
 const prDateInput = document.getElementById("pr-date");
+const prNotesInput = document.getElementById("pr-notes");
 
 // PR modal state
 let editingPR = null;
@@ -196,6 +197,9 @@ function populatePRList() {
 				${prRecord.dateSet ? `<div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
 					${pr.formatDate(prRecord.dateSet)}
 				</div>` : ''}
+				${prRecord.notes ? `<div class="text-xs text-gray-500 dark:text-gray-400 mt-1 italic">
+					"${prRecord.notes}"
+				</div>` : ''}
 			</div>
 			<div class="flex gap-1">
 				<button class="edit-pr-btn text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 p-1" 
@@ -203,6 +207,7 @@ function populatePRList() {
 						data-unit="${prRecord.unit}" 
 						data-time="${prRecord.timeSeconds}"
 						data-date="${prRecord.dateSet || ''}"
+						data-notes="${prRecord.notes || ''}"
 						title="Edit PR">
 					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
@@ -269,7 +274,8 @@ function handleEditPR(e) {
 		distance: parseFloat(btn.dataset.distance),
 		unit: btn.dataset.unit,
 		timeSeconds: parseFloat(btn.dataset.time),
-		dateSet: btn.dataset.date
+		dateSet: btn.dataset.date,
+		notes: btn.dataset.notes
 	};
 	
 	// Populate form
@@ -277,6 +283,7 @@ function handleEditPR(e) {
 	prUnitSelect.value = editingPR.unit;
 	prTimeInput.value = calc.formatTime(editingPR.timeSeconds, true);
 	prDateInput.value = pr.getDateInputValue(editingPR.dateSet);
+	prNotesInput.value = editingPR.notes || '';
 	
 	openPRModal(true);
 }
@@ -341,7 +348,8 @@ function handlePRFormSubmit(e) {
 	
 	// Save the new/updated PR
 	const date = prDateInput.value || null;
-	const success = pr.setPR(validation.distance, validation.unit, validation.timeSeconds, date);
+	const notes = prNotesInput.value.trim() || null;
+	const success = pr.setPR(validation.distance, validation.unit, validation.timeSeconds, date, notes);
 	
 	if (success) {
 		populatePRList();
