@@ -725,8 +725,14 @@
 		color: var(--color-text-inverse);
 	}
 	
-	.btn-primary:hover {
+	.btn-primary:hover:not(:disabled) {
 		background-color: var(--color-interactive-primary-hover);
+	}
+	
+	.btn-primary:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+		background-color: var(--color-interactive-primary);
 	}
 	
 	.btn-secondary {

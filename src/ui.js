@@ -180,11 +180,14 @@ function setupInputValidation() {
 					} else {
 						showSegmentedInputError(prefix, validation.message);
 					}
+					updateCalculateButtonState();
 				});
 				
 				input.addEventListener('input', () => {
 					// Clear errors on input for immediate feedback
 					clearSegmentedInputErrors(prefix);
+					// Update button state
+					updateCalculateButtonState();
 				});
 			}
 		});
@@ -203,11 +206,14 @@ function setupInputValidation() {
 					} else {
 						showSegmentedInputError(prefix, validation.message);
 					}
+					updateCalculateButtonState();
 				});
 				
 				input.addEventListener('input', () => {
 					// Clear errors on input for immediate feedback
 					clearSegmentedInputErrors(prefix);
+					// Update button state
+					updateCalculateButtonState();
 				});
 			}
 		});
@@ -217,7 +223,10 @@ function setupInputValidation() {
 	['pace-distance', 'time-distance'].forEach(id => {
 		const input = document.getElementById(id);
 		if (input) {
-			input.addEventListener('blur', () => validateInput(input, calc.validateDistanceInput));
+			input.addEventListener('blur', () => {
+				validateInput(input, calc.validateDistanceInput);
+				updateCalculateButtonState();
+			});
 			input.addEventListener('input', () => {
 				if (input.classList.contains('error')) {
 					input.classList.remove('error');
@@ -226,6 +235,8 @@ function setupInputValidation() {
 				}
 				// Reset preset dropdown when distance is manually changed
 				resetPresetDropdown(id);
+				// Update button state
+				updateCalculateButtonState();
 			});
 		}
 	});
@@ -258,6 +269,53 @@ function resetPresetDropdown(distanceInputId) {
 		} else {
 			// Empty input, reset dropdown
 			presetSelect.selectedIndex = 0;
+		}
+	}
+}
+
+function areRequiredFieldsFilled() {
+	const tab = state.currentTab;
+	
+	if (tab === 'pace') {
+		// Pace tab needs: time (hours, minutes, seconds) + distance
+		const timeValidation = validateSegmentedInput('pace-time', true);
+		const distanceInput = document.getElementById('pace-distance');
+		const distanceValidation = calc.validateDistanceInput(distanceInput.value);
+		
+		return timeValidation.valid && distanceValidation.valid;
+		
+	} else if (tab === 'time') {
+		// Time tab needs: pace (minutes, seconds) + distance
+		const paceValidation = validateSegmentedInput('time-pace', false);
+		const distanceInput = document.getElementById('time-distance');
+		const distanceValidation = calc.validateDistanceInput(distanceInput.value);
+		
+		return paceValidation.valid && distanceValidation.valid;
+		
+	} else if (tab === 'distance') {
+		// Distance tab needs: time (hours, minutes, seconds) + pace (minutes, seconds)
+		const timeValidation = validateSegmentedInput('distance-time', true);
+		const paceValidation = validateSegmentedInput('distance-pace', false);
+		
+		return timeValidation.valid && paceValidation.valid;
+	}
+	
+	return false;
+}
+
+function updateCalculateButtonState() {
+	const calculateButton = document.querySelector('button[type="submit"]');
+	const isFormValid = areRequiredFieldsFilled();
+	
+	if (calculateButton) {
+		calculateButton.disabled = !isFormValid;
+		
+		if (isFormValid) {
+			calculateButton.classList.remove('opacity-50', 'cursor-not-allowed');
+			calculateButton.classList.add('cursor-pointer');
+		} else {
+			calculateButton.classList.add('opacity-50', 'cursor-not-allowed');
+			calculateButton.classList.remove('cursor-pointer');
 		}
 	}
 }
@@ -759,6 +817,9 @@ function clearAll() {
 	
 	// Focus first input (only on non-mobile devices)
 	focusFirstInput();
+	
+	// Update button state after clearing
+	updateCalculateButtonState();
 }
 
 export { populatePresetSelects, populateAutocomplete, updateCalculatedResult };
@@ -771,6 +832,9 @@ export function initUI() {
 
 	// Setup input validation
 	setupInputValidation();
+	
+	// Initial button state check
+	updateCalculateButtonState();
 
 	// Global keyboard event listeners
 	document.addEventListener('keydown', handleKeyboardNavigation);
@@ -804,6 +868,9 @@ export function initUI() {
 			// Clear non-relevant fields when switching tabs
 			clearNonRelevantFields();
 			
+			// Update button state for new tab
+			updateCalculateButtonState();
+			
 			// Focus first input in new tab after a short delay (only on non-mobile)
 			setTimeout(() => focusFirstInput(), 100);
 		});
@@ -832,6 +899,9 @@ export function initUI() {
 			if (distanceInput) {
 				validateInput(distanceInput, calc.validateDistanceInput);
 			}
+			
+			// Update button state after preset selection
+			updateCalculateButtonState();
 		});
 	});
 
