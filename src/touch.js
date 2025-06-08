@@ -89,13 +89,13 @@ function handleTouchEnd(e) {
 	) {
 		// Determine swipe direction
 		if (deltaX > 0) {
-			// Swipe right - go to previous tab
-			const prevTab = getNextTab(state.currentTab, 'prev');
-			switchToTab(prevTab);
-		} else {
-			// Swipe left - go to next tab
+			// Swipe right - go to next tab
 			const nextTab = getNextTab(state.currentTab, 'next');
 			switchToTab(nextTab);
+		} else {
+			// Swipe left - go to previous tab
+			const prevTab = getNextTab(state.currentTab, 'prev');
+			switchToTab(prevTab);
 		}
 	}
 }
