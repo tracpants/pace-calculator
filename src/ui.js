@@ -26,6 +26,114 @@ const distanceSuggestions = {
 	miles: [0.5, 1, 1.5, 2, 3, 3.107, 5, 6.214, 8, 10, 13.109, 15, 20, 26.219, 31, 50, 100]
 };
 
+// Segmented input utility functions
+function getSegmentedTimeValue(prefix) {
+	const hoursInput = document.getElementById(`${prefix}-hours`);
+	const minutesInput = document.getElementById(`${prefix}-minutes`);
+	const secondsInput = document.getElementById(`${prefix}-seconds`);
+	
+	const hours = parseInt(hoursInput?.value || '0') || 0;
+	const minutes = parseInt(minutesInput?.value || '0') || 0;
+	const seconds = parseInt(secondsInput?.value || '0') || 0;
+	
+	// Convert to seconds
+	return hours * 3600 + minutes * 60 + seconds;
+}
+
+function getSegmentedPaceValue(prefix) {
+	const minutesInput = document.getElementById(`${prefix}-minutes`);
+	const secondsInput = document.getElementById(`${prefix}-seconds`);
+	
+	const minutes = parseInt(minutesInput?.value || '0') || 0;
+	const seconds = parseInt(secondsInput?.value || '0') || 0;
+	
+	// Convert to seconds
+	return minutes * 60 + seconds;
+}
+
+function validateSegmentedTimeInput(prefix) {
+	const totalSeconds = getSegmentedTimeValue(prefix);
+	
+	if (totalSeconds <= 0) {
+		return { valid: false, message: "Time must be greater than 0" };
+	}
+	
+	// Check for reasonable limits (max 24 hours)
+	if (totalSeconds > 86400) {
+		return { valid: false, message: "Time cannot exceed 24 hours" };
+	}
+	
+	return { valid: true, value: totalSeconds };
+}
+
+function validateSegmentedPaceInput(prefix) {
+	const totalSeconds = getSegmentedPaceValue(prefix);
+	
+	if (totalSeconds <= 0) {
+		return { valid: false, message: "Pace must be greater than 0" };
+	}
+	
+	// Check for reasonable limits (max 1 hour per unit)
+	if (totalSeconds > 3600) {
+		return { valid: false, message: "Pace cannot exceed 1 hour per unit" };
+	}
+	
+	return { valid: true, value: totalSeconds };
+}
+
+function validateSegmentedInput(prefix, isTimeInput = true) {
+	if (isTimeInput) {
+		return validateSegmentedTimeInput(prefix);
+	} else {
+		return validateSegmentedPaceInput(prefix);
+	}
+}
+
+function clearSegmentedInputErrors(prefix) {
+	const errorElement = document.getElementById(`${prefix}-error`);
+	if (errorElement) {
+		errorElement.classList.add('hidden');
+		errorElement.textContent = '';
+	}
+	
+	// Clear error styling from all segment inputs
+	['hours', 'minutes', 'seconds'].forEach(segment => {
+		const input = document.getElementById(`${prefix}-${segment}`);
+		if (input) {
+			input.classList.remove('error', 'valid');
+		}
+	});
+}
+
+function showSegmentedInputError(prefix, message) {
+	const errorElement = document.getElementById(`${prefix}-error`);
+	if (errorElement) {
+		errorElement.textContent = message;
+		errorElement.classList.remove('hidden');
+	}
+	
+	// Add error styling to all segment inputs
+	['hours', 'minutes', 'seconds'].forEach(segment => {
+		const input = document.getElementById(`${prefix}-${segment}`);
+		if (input) {
+			input.classList.add('error');
+			input.classList.remove('valid');
+		}
+	});
+}
+
+function markSegmentedInputValid(prefix) {
+	clearSegmentedInputErrors(prefix);
+	
+	// Add valid styling to all segment inputs
+	['hours', 'minutes', 'seconds'].forEach(segment => {
+		const input = document.getElementById(`${prefix}-${segment}`);
+		if (input) {
+			input.classList.add('valid');
+		}
+	});
+}
+
 // Input validation functions
 function validateInput(inputElement, validationFn) {
 	const value = inputElement.value;
@@ -49,20 +157,50 @@ function validateInput(inputElement, validationFn) {
 }
 
 function setupInputValidation() {
-	// Time inputs
-	['pace-time', 'time-pace', 'distance-time', 'distance-pace'].forEach(id => {
-		const input = document.getElementById(id);
-		if (input) {
-			input.addEventListener('blur', () => validateInput(input, calc.validateTimeInput));
-			input.addEventListener('input', () => {
-				// Clear error on input to provide immediate feedback
-				if (input.classList.contains('error')) {
-					input.classList.remove('error');
-					const errorElement = document.getElementById(input.id + '-error');
-					errorElement.classList.add('hidden');
-				}
-			});
-		}
+	// Segmented time inputs (HH:MM:SS)
+	const timeInputPrefixes = ['pace-time', 'distance-time'];
+	timeInputPrefixes.forEach(prefix => {
+		['hours', 'minutes', 'seconds'].forEach(segment => {
+			const input = document.getElementById(`${prefix}-${segment}`);
+			if (input) {
+				input.addEventListener('blur', () => {
+					const validation = validateSegmentedInput(prefix, true);
+					if (validation.valid) {
+						markSegmentedInputValid(prefix);
+					} else {
+						showSegmentedInputError(prefix, validation.message);
+					}
+				});
+				
+				input.addEventListener('input', () => {
+					// Clear errors on input for immediate feedback
+					clearSegmentedInputErrors(prefix);
+				});
+			}
+		});
+	});
+	
+	// Segmented pace inputs (MM:SS)
+	const paceInputPrefixes = ['time-pace', 'distance-pace'];
+	paceInputPrefixes.forEach(prefix => {
+		['minutes', 'seconds'].forEach(segment => {
+			const input = document.getElementById(`${prefix}-${segment}`);
+			if (input) {
+				input.addEventListener('blur', () => {
+					const validation = validateSegmentedInput(prefix, false);
+					if (validation.valid) {
+						markSegmentedInputValid(prefix);
+					} else {
+						showSegmentedInputError(prefix, validation.message);
+					}
+				});
+				
+				input.addEventListener('input', () => {
+					// Clear errors on input for immediate feedback
+					clearSegmentedInputErrors(prefix);
+				});
+			}
+		});
 	});
 	
 	// Distance inputs
@@ -195,9 +333,9 @@ function generateComprehensiveResult() {
 	let result = '';
 
 	if (type === "pace") {
-		const timeInput = document.getElementById("pace-time");
 		const distInput = document.getElementById("pace-distance");
-		const time = calc.formatTime(calc.parseTime(timeInput.value), true);
+		const timeSeconds = getSegmentedTimeValue('pace-time');
+		const time = calc.formatTime(timeSeconds, true);
 		const distance = `${distInput.value} ${state.distanceUnit}`;
 		
 		result = `Running Pace Calculation:\n`;
@@ -215,9 +353,9 @@ function generateComprehensiveResult() {
 			result += `Pace Difference: ${comparison.isFaster ? '-' : '+'}${comparison.paceDifferenceFormatted} /km (${comparison.isFaster ? 'faster' : 'slower'})`;
 		}
 	} else if (type === "time") {
-		const paceInput = document.getElementById("time-pace");
 		const distInput = document.getElementById("time-distance");
-		const pace = `${calc.formatTime(calc.parseTime(paceInput.value))} /${state.distanceUnit}`;
+		const paceSeconds = getSegmentedPaceValue('time-pace');
+		const pace = `${calc.formatTime(paceSeconds)} /${state.distanceUnit}`;
 		const distance = `${distInput.value} ${state.distanceUnit}`;
 		
 		result = `Running Time Calculation:\n`;
@@ -225,10 +363,10 @@ function generateComprehensiveResult() {
 		result += `Pace: ${pace}\n`;
 		result += `Total Time: ${calc.formatTime(data.totalSeconds, true)}`;
 	} else if (type === "distance") {
-		const timeInput = document.getElementById("distance-time");
-		const paceInput = document.getElementById("distance-pace");
-		const time = calc.formatTime(calc.parseTime(timeInput.value), true);
-		const pace = `${calc.formatTime(calc.parseTime(paceInput.value))} /${state.distanceUnit}`;
+		const timeSeconds = getSegmentedTimeValue('distance-time');
+		const paceSeconds = getSegmentedPaceValue('distance-pace');
+		const time = calc.formatTime(timeSeconds, true);
+		const pace = `${calc.formatTime(paceSeconds)} /${state.distanceUnit}`;
 		
 		result = `Running Distance Calculation:\n`;
 		result += `Time: ${time}\n`;
@@ -351,12 +489,18 @@ function handleFormSubmit(e) {
 
 		try {
 		if (state.currentTab === "pace") {
-			const timeInput = document.getElementById("pace-time");
 			const distInput = document.getElementById("pace-distance");
 			
 			// Validate inputs
-			const timeValidation = validateInput(timeInput, calc.validateTimeInput);
+			const timeValidation = validateSegmentedInput('pace-time', true);
 			const distValidation = validateInput(distInput, calc.validateDistanceInput);
+			
+			if (!timeValidation.valid) {
+				showSegmentedInputError('pace-time', timeValidation.message);
+			}
+			if (!distValidation.valid) {
+				// Distance validation error display handled by validateInput
+			}
 			
 			if (!timeValidation.valid || !distValidation.valid) {
 				throw new Error("Please fix the input errors before calculating.");
@@ -387,12 +531,18 @@ function handleFormSubmit(e) {
 				data: { pacePerKm, pacePerMile, prComparison }
 			};
 		} else if (state.currentTab === "time") {
-			const paceInput = document.getElementById("time-pace");
 			const distInput = document.getElementById("time-distance");
 			
 			// Validate inputs
-			const paceValidation = validateInput(paceInput, calc.validateTimeInput);
+			const paceValidation = validateSegmentedInput('time-pace', false);
 			const distValidation = validateInput(distInput, calc.validateDistanceInput);
+			
+			if (!paceValidation.valid) {
+				showSegmentedInputError('time-pace', paceValidation.message);
+			}
+			if (!distValidation.valid) {
+				// Distance validation error display handled by validateInput
+			}
 			
 			if (!paceValidation.valid || !distValidation.valid) {
 				throw new Error("Please fix the input errors before calculating.");
@@ -412,12 +562,16 @@ function handleFormSubmit(e) {
 				data: { totalSeconds }
 			};
 		} else if (state.currentTab === "distance") {
-			const timeInput = document.getElementById("distance-time");
-			const paceInput = document.getElementById("distance-pace");
-			
 			// Validate inputs
-			const timeValidation = validateInput(timeInput, calc.validateTimeInput);
-			const paceValidation = validateInput(paceInput, calc.validateTimeInput);
+			const timeValidation = validateSegmentedInput('distance-time', true);
+			const paceValidation = validateSegmentedInput('distance-pace', false);
+			
+			if (!timeValidation.valid) {
+				showSegmentedInputError('distance-time', timeValidation.message);
+			}
+			if (!paceValidation.valid) {
+				showSegmentedInputError('distance-pace', paceValidation.message);
+			}
 			
 			if (!timeValidation.valid || !paceValidation.valid) {
 				throw new Error("Please fix the input errors before calculating.");
@@ -548,6 +702,11 @@ function clearAll() {
 	document.querySelectorAll('[id$="-error"]').forEach(error => {
 		error.classList.add('hidden');
 		error.textContent = '';
+	});
+	
+	// Clear segmented input errors
+	['pace-time', 'time-pace', 'distance-time', 'distance-pace'].forEach(prefix => {
+		clearSegmentedInputErrors(prefix);
 	});
 	
 	// Focus first input (only on non-mobile devices)

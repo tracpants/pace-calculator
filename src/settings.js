@@ -27,12 +27,94 @@ const prForm = document.getElementById("pr-form");
 const prList = document.getElementById("pr-list");
 const prDistanceInput = document.getElementById("pr-distance");
 const prUnitSelect = document.getElementById("pr-unit");
-const prTimeInput = document.getElementById("pr-time");
 const prDateInput = document.getElementById("pr-date");
 const prNotesInput = document.getElementById("pr-notes");
 
 // PR modal state
 let editingPR = null;
+
+// Utility functions for segmented PR time input
+function getPRSegmentedTimeValue() {
+	const hoursInput = document.getElementById('pr-time-hours');
+	const minutesInput = document.getElementById('pr-time-minutes');
+	const secondsInput = document.getElementById('pr-time-seconds');
+	
+	const hours = parseInt(hoursInput?.value || '0') || 0;
+	const minutes = parseInt(minutesInput?.value || '0') || 0;
+	const seconds = parseInt(secondsInput?.value || '0') || 0;
+	
+	return hours * 3600 + minutes * 60 + seconds;
+}
+
+function setPRSegmentedTimeValue(totalSeconds) {
+	const hoursInput = document.getElementById('pr-time-hours');
+	const minutesInput = document.getElementById('pr-time-minutes');
+	const secondsInput = document.getElementById('pr-time-seconds');
+	
+	const hours = Math.floor(totalSeconds / 3600);
+	const minutes = Math.floor((totalSeconds % 3600) / 60);
+	const seconds = totalSeconds % 60;
+	
+	if (hoursInput) hoursInput.value = hours > 0 ? hours : '';
+	if (minutesInput) minutesInput.value = minutes;
+	if (secondsInput) secondsInput.value = seconds;
+}
+
+function validatePRSegmentedTime() {
+	const totalSeconds = getPRSegmentedTimeValue();
+	
+	if (totalSeconds <= 0) {
+		return { valid: false, message: "Time must be greater than 0" };
+	}
+	
+	if (totalSeconds > 86400) {
+		return { valid: false, message: "Time cannot exceed 24 hours" };
+	}
+	
+	return { valid: true, value: totalSeconds };
+}
+
+function clearPRTimeErrors() {
+	const errorElement = document.getElementById('pr-time-error');
+	if (errorElement) {
+		errorElement.classList.add('hidden');
+		errorElement.textContent = '';
+	}
+	
+	['hours', 'minutes', 'seconds'].forEach(segment => {
+		const input = document.getElementById(`pr-time-${segment}`);
+		if (input) {
+			input.classList.remove('error', 'valid');
+		}
+	});
+}
+
+function showPRTimeError(message) {
+	const errorElement = document.getElementById('pr-time-error');
+	if (errorElement) {
+		errorElement.textContent = message;
+		errorElement.classList.remove('hidden');
+	}
+	
+	['hours', 'minutes', 'seconds'].forEach(segment => {
+		const input = document.getElementById(`pr-time-${segment}`);
+		if (input) {
+			input.classList.add('error');
+			input.classList.remove('valid');
+		}
+	});
+}
+
+function markPRTimeValid() {
+	clearPRTimeErrors();
+	
+	['hours', 'minutes', 'seconds'].forEach(segment => {
+		const input = document.getElementById(`pr-time-${segment}`);
+		if (input) {
+			input.classList.add('valid');
+		}
+	});
+}
 
 // Load settings from localStorage
 function loadSettings() {
@@ -264,6 +346,9 @@ function closePRModal() {
 		error.textContent = '';
 	});
 	
+	// Clear segmented time input errors
+	clearPRTimeErrors();
+	
 	// Restore body scroll
 	document.body.style.overflow = '';
 }
@@ -281,7 +366,7 @@ function handleEditPR(e) {
 	// Populate form
 	prDistanceInput.value = editingPR.distance;
 	prUnitSelect.value = editingPR.unit;
-	prTimeInput.value = calc.formatTime(editingPR.timeSeconds, true);
+	setPRSegmentedTimeValue(editingPR.timeSeconds);
 	prDateInput.value = pr.getDateInputValue(editingPR.dateSet);
 	prNotesInput.value = editingPR.notes || '';
 	
@@ -316,16 +401,12 @@ function validatePRForm() {
 	}
 	
 	// Validate time
-	const timeValidation = pr.validatePRTime(prTimeInput.value);
-	const timeError = document.getElementById('pr-time-error');
+	const timeValidation = validatePRSegmentedTime();
 	if (!timeValidation.valid) {
-		timeError.textContent = timeValidation.message;
-		timeError.classList.remove('hidden');
-		prTimeInput.classList.add('error');
+		showPRTimeError(timeValidation.message);
 		isValid = false;
 	} else {
-		timeError.classList.add('hidden');
-		prTimeInput.classList.remove('error');
+		markPRTimeValid();
 	}
 	
 	return isValid ? {
@@ -382,6 +463,25 @@ export function initSettings() {
 	closePrModalBtn.addEventListener('click', closePRModal);
 	cancelPrBtn.addEventListener('click', closePRModal);
 	prForm.addEventListener('submit', handlePRFormSubmit);
+	
+	// PR segmented time input validation
+	['hours', 'minutes', 'seconds'].forEach(segment => {
+		const input = document.getElementById(`pr-time-${segment}`);
+		if (input) {
+			input.addEventListener('blur', () => {
+				const validation = validatePRSegmentedTime();
+				if (validation.valid) {
+					markPRTimeValid();
+				} else {
+					showPRTimeError(validation.message);
+				}
+			});
+			
+			input.addEventListener('input', () => {
+				clearPRTimeErrors();
+			});
+		}
+	});
 	
 	// Keyboard and modal interactions
 	document.addEventListener('keydown', handleKeyDown);
