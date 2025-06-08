@@ -3,7 +3,7 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<link rel="icon" type="image/svg+xml" href="/vite.svg" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Run Pace Calculator</title>
 	</head>
@@ -17,7 +17,7 @@
 			aria-label="Pace Calculator Application"
 		>
 			<!-- Header -->
-			<header class="text-center mb-4 sm:mb-6">
+			<header class="relative text-center mb-4 sm:mb-6">
 				<h1
 					class="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-purple-500 to-indigo-600 dark:from-purple-400 dark:to-indigo-500 bg-clip-text text-transparent"
 				>
@@ -26,17 +26,14 @@
 				<p class="text-gray-500 dark:text-gray-400 mt-1 sm:mt-2 text-sm sm:text-base">
 					Calculate running pace, time, or distance
 				</p>
-			</header>
-
-			<!-- Settings Button -->
-			<div class="flex justify-end items-center mb-4 sm:mb-6">
-				<button id="settings-btn" class="text-gray-500 dark:text-gray-400 p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" aria-label="Open settings" tabindex="0">
+				<!-- Settings Button -->
+				<button id="settings-btn" class="absolute top-0 right-0 text-gray-500 dark:text-gray-400 p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" aria-label="Open settings" tabindex="0">
 					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
 					</svg>
 				</button>
-			</div>
+			</header>
 
 			<!-- Tabs -->
 			<div
