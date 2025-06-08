@@ -152,6 +152,16 @@
 		@apply btn bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-white focus:ring-gray-400;
 	}
 
+	/* Touch gesture feedback */
+	[role="tablist"][data-swipe-enabled="true"] {
+		@apply relative overflow-hidden;
+	}
+	
+	[role="tablist"][data-swipe-enabled="true"]::after {
+		content: '';
+		@apply absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent via-indigo-300 to-transparent opacity-30;
+	}
+
 	/* Mobile improvements */
 	@media (max-width: 640px) {
 		.input-base {
