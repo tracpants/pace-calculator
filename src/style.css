@@ -11,7 +11,7 @@
 
 	/* Fix layout jumping by ensuring consistent heights */
 	.form-section {
-		@apply h-[280px];
+		@apply min-h-[280px];
 	}
 	
 	#result {
