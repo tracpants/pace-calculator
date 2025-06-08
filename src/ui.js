@@ -13,11 +13,21 @@ const copyIcon = document.getElementById("copy-icon");
 const checkIcon = document.getElementById("check-icon");
 
 const presets = {
-	"5k": { km: 5, miles: 3.107 },
-	"10k": { km: 10, miles: 6.214 },
-	"half-marathon": { km: 21.0975, miles: 13.109 },
-	"marathon": { km: 42.195, miles: 26.219 },
+	"1k": { km: 1, miles: 0.621 },
 	"1-mile": { km: 1.609, miles: 1 },
+	"2k": { km: 2, miles: 1.243 },
+	"3k": { km: 3, miles: 1.864 },
+	"5k": { km: 5, miles: 3.107 },
+	"8k": { km: 8, miles: 4.971 },
+	"10k": { km: 10, miles: 6.214 },
+	"12k": { km: 12, miles: 7.456 },
+	"15k": { km: 15, miles: 9.321 },
+	"10-mile": { km: 16.093, miles: 10 },
+	"half-marathon": { km: 21.0975, miles: 13.109 },
+	"25k": { km: 25, miles: 15.534 },
+	"30k": { km: 30, miles: 18.641 },
+	"marathon": { km: 42.195, miles: 26.219 },
+	"50k": { km: 50, miles: 31.069 },
 };
 
 // Extended distances for autocomplete
@@ -214,9 +224,42 @@ function setupInputValidation() {
 					const errorElement = document.getElementById(input.id + '-error');
 					errorElement.classList.add('hidden');
 				}
+				// Reset preset dropdown when distance is manually changed
+				resetPresetDropdown(id);
 			});
 		}
 	});
+}
+
+function resetPresetDropdown(distanceInputId) {
+	// Get the corresponding preset dropdown for the current tab
+	const currentTab = distanceInputId.split('-')[0]; // Extract 'pace' or 'time' from 'pace-distance'
+	const presetSelect = document.getElementById(`${currentTab}-preset`);
+	
+	if (presetSelect) {
+		// Check if the current distance matches any preset
+		const input = document.getElementById(distanceInputId);
+		const currentValue = parseFloat(input.value);
+		
+		if (currentValue) {
+			// Find matching preset
+			const matchingPreset = Object.entries(presets).find(([key, values]) => {
+				const presetValue = values[state.distanceUnit];
+				return Math.abs(currentValue - presetValue) < 0.001; // Small tolerance for floating point comparison
+			});
+			
+			if (matchingPreset) {
+				// Set the dropdown to the matching preset
+				presetSelect.value = matchingPreset[0];
+			} else {
+				// No match, reset to default option
+				presetSelect.selectedIndex = 0;
+			}
+		} else {
+			// Empty input, reset dropdown
+			presetSelect.selectedIndex = 0;
+		}
+	}
 }
 
 function focusFirstInput() {
@@ -709,6 +752,11 @@ function clearAll() {
 		clearSegmentedInputErrors(prefix);
 	});
 	
+	// Reset preset dropdowns
+	document.querySelectorAll('.preset-select').forEach(select => {
+		select.selectedIndex = 0;
+	});
+	
 	// Focus first input (only on non-mobile devices)
 	focusFirstInput();
 }
@@ -777,7 +825,8 @@ export function initUI() {
 				`${state.currentTab}-distance`
 			);
 			distanceInput.value = presets[presetKey][state.distanceUnit];
-			e.target.selectedIndex = 0;
+			// Keep the selected preset visible instead of resetting
+			// e.target.selectedIndex = 0; // Removed this line
 			
 			// Validate the new value
 			if (distanceInput) {
