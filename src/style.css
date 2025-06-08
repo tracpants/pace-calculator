@@ -808,6 +808,11 @@
 		opacity: 1;
 	}
 
+	/* Help button styling */
+	#help-btn:hover {
+		background-color: var(--color-interactive-secondary);
+	}
+
 	/* Mobile improvements */
 	@media (max-width: 640px) {
 		.input-base {
@@ -825,5 +830,6 @@
 		.unit-toggle {
 			@apply py-3 px-6 text-lg min-h-[48px];
 		}
+		
 	}
 }

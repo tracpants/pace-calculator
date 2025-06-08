@@ -320,6 +320,52 @@ function updateCalculateButtonState() {
 	}
 }
 
+function setupHelpModal() {
+	const helpBtn = document.getElementById('help-btn');
+	const helpModal = document.getElementById('help-modal');
+	const closeHelpBtn = document.getElementById('close-help');
+	
+	// Open help modal
+	helpBtn.addEventListener('click', () => {
+		helpModal.classList.remove('hidden');
+		helpModal.classList.add('flex');
+		
+		// Focus close button for accessibility
+		closeHelpBtn.focus();
+		
+		// Prevent body scroll
+		document.body.style.overflow = 'hidden';
+	});
+	
+	// Close help modal
+	function closeHelpModal() {
+		helpModal.classList.add('hidden');
+		helpModal.classList.remove('flex');
+		
+		// Restore body scroll
+		document.body.style.overflow = '';
+		
+		// Return focus to help button
+		helpBtn.focus();
+	}
+	
+	closeHelpBtn.addEventListener('click', closeHelpModal);
+	
+	// Close on backdrop click
+	helpModal.addEventListener('click', (e) => {
+		if (e.target === helpModal) {
+			closeHelpModal();
+		}
+	});
+	
+	// Close on escape key
+	document.addEventListener('keydown', (e) => {
+		if (e.key === 'Escape' && !helpModal.classList.contains('hidden')) {
+			closeHelpModal();
+		}
+	});
+}
+
 function focusFirstInput() {
 	// Skip auto-focus on mobile devices to avoid jarring keyboard popup
 	if (isMobileDevice()) {
@@ -835,6 +881,9 @@ export function initUI() {
 	
 	// Initial button state check
 	updateCalculateButtonState();
+	
+	// Setup help modal
+	setupHelpModal();
 
 	// Global keyboard event listeners
 	document.addEventListener('keydown', handleKeyboardNavigation);
