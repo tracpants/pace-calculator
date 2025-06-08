@@ -11,11 +11,15 @@
 
 	/* Fix layout jumping by ensuring consistent heights */
 	.form-section {
-		@apply min-h-[200px];
+		@apply h-[280px];
 	}
 	
 	#result {
-		@apply min-h-[80px];
+		@apply min-h-[100px];
+	}
+	
+	#loading {
+		@apply min-h-[100px];
 	}
 
 	/* Base style for all text inputs and select dropdowns */
@@ -135,7 +139,7 @@
 
 	/* Unit toggles (KM/Miles) - larger touch targets */
 	.unit-toggle {
-		@apply rounded-full px-6 py-3 text-base font-semibold text-gray-500 dark:text-gray-400 transition-all duration-300 min-h-[44px] flex items-center justify-center;
+		@apply rounded-full px-6 py-3 text-base font-semibold text-gray-500 dark:text-gray-400 transition-all duration-300 min-h-[44px] flex items-center justify-center flex-1;
 	}
 	.unit-toggle.active {
 		@apply bg-indigo-600 text-white shadow;
