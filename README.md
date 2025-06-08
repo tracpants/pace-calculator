@@ -37,8 +37,28 @@ A professional, accessible web application for calculating running pace, time, a
 
 - Node.js (v16 or higher)
 - npm
+- Git
 
-### Installation
+### Quick Start with Update Script
+
+We provide a convenient `update.sh` script for common development tasks:
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd pace-calculator
+
+# Make script executable (first time only)
+chmod +x update.sh
+
+# Full setup: pull, install dependencies, build, and test
+./update.sh
+
+# Start development server
+./update.sh --dev
+```
+
+### Manual Installation
 
 1. Clone the repository:
 ```bash
@@ -62,6 +82,8 @@ npm run dev
 
 ```bash
 npm run build
+# or
+./update.sh --build
 ```
 
 The built files will be in the `dist` directory.
@@ -71,6 +93,41 @@ The built files will be in the `dist` directory.
 ```bash
 npm run preview
 ```
+
+## Development Tools
+
+### Update Script (`update.sh`)
+
+A comprehensive script for managing the repository and build process:
+
+```bash
+# Show all available options
+./update.sh --help
+
+# Full update (default): pull, install, build, test
+./update.sh
+
+# Individual operations
+./update.sh --pull          # Pull latest changes
+./update.sh --install       # Install/update dependencies  
+./update.sh --build         # Build the project
+./update.sh --test          # Test the build
+./update.sh --dev           # Start development server
+./update.sh --clean         # Clean install dependencies
+./update.sh --status        # Show project status
+
+# Combine operations
+./update.sh --pull --build  # Pull and build
+./update.sh --clean --build # Clean install and build
+```
+
+**Features:**
+- 🔄 Automatic git stashing/unstashing of uncommitted changes
+- 📦 Dependency management with clean install option
+- 🏗️ Build verification and testing
+- 📊 Project status overview
+- 🎨 Colored output for clear feedback
+- ⚡ Quick development server startup
 
 ## Enhanced Features
 
