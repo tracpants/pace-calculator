@@ -8,26 +8,29 @@
 		<title>Run Pace Calculator</title>
 	</head>
 	<body
-		class="bg-gray-100 dark:bg-gray-900 min-h-screen p-2 sm:px-4 font-sans transition-colors duration-300"
+		class="min-h-screen p-2 sm:px-4 font-sans transition-colors duration-300"
+		style="background-color: var(--color-background);"
 	>
 		<div
 			id="app"
-			class="w-full max-w-md mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 mt-8"
+			class="w-full max-w-md mx-auto rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 mt-8"
+			style="background-color: var(--color-surface);"
 			role="main"
 			aria-label="Pace Calculator Application"
 		>
 			<!-- Header -->
 			<header class="relative text-center mb-4 sm:mb-6">
 				<h1
-					class="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-purple-500 to-indigo-600 dark:from-purple-400 dark:to-indigo-500 bg-clip-text text-transparent"
+					class="text-3xl sm:text-4xl font-bold bg-clip-text text-transparent"
+					style="background-image: var(--gradient-brand);"
 				>
 					Pace Calculator
 				</h1>
-				<p class="text-gray-500 dark:text-gray-400 mt-1 sm:mt-2 text-sm sm:text-base">
+				<p class="mt-1 sm:mt-2 text-sm sm:text-base" style="color: var(--color-text-tertiary);">
 					Calculate running pace, time, or distance
 				</p>
 				<!-- Settings Button -->
-				<button id="settings-btn" class="absolute top-0 right-0 text-gray-500 dark:text-gray-400 p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" aria-label="Open settings" tabindex="0">
+				<button id="settings-btn" class="absolute top-0 right-0 p-2 rounded-lg transition-colors" style="color: var(--color-text-tertiary);" aria-label="Open settings" tabindex="0">
 					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -37,7 +40,8 @@
 
 			<!-- Tabs -->
 			<div
-				class="grid grid-cols-3 gap-2 bg-gray-200 dark:bg-gray-700 p-1 rounded-xl mb-6 sm:mb-8"
+				class="grid grid-cols-3 gap-2 p-1 rounded-xl mb-6 sm:mb-8"
+				style="background-color: var(--color-interactive-secondary);"
 				role="tablist"
 				aria-label="Calculator type selection"
 			>
@@ -52,7 +56,7 @@
 					<!-- Pace Section -->
 					<div data-section="pace" class="form-section space-y-4" role="tabpanel" id="pace-panel" aria-labelledby="pace-tab">
 						<div>
-							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block">Time</label>
+							<label class="font-medium mb-2 block" style="color: var(--color-text-secondary);">Time</label>
 							<div class="flex items-center space-x-2">
 								<div class="flex-1">
 									<input
@@ -66,9 +70,9 @@
 										autocomplete="off"
 										aria-label="Hours"
 									/>
-									<label class="text-xs text-gray-500 dark:text-gray-400 block text-center mt-1">HH</label>
+									<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">HH</label>
 								</div>
-								<span class="text-gray-500 dark:text-gray-400 font-bold">:</span>
+								<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
 								<div class="flex-1">
 									<input
 										type="number"
@@ -82,9 +86,9 @@
 										autocomplete="off"
 										aria-label="Minutes"
 									/>
-									<label class="text-xs text-gray-500 dark:text-gray-400 block text-center mt-1">MM</label>
+									<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">MM</label>
 								</div>
-								<span class="text-gray-500 dark:text-gray-400 font-bold">:</span>
+								<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
 								<div class="flex-1">
 									<input
 										type="number"
@@ -98,14 +102,14 @@
 										autocomplete="off"
 										aria-label="Seconds"
 									/>
-									<label class="text-xs text-gray-500 dark:text-gray-400 block text-center mt-1">SS</label>
+									<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">SS</label>
 								</div>
 							</div>
-							<div id="pace-time-hint" class="text-sm text-gray-500 dark:text-gray-400 mt-1">Enter your running time</div>
-							<div id="pace-time-error" class="text-sm text-red-600 dark:text-red-400 mt-1 hidden" role="alert"></div>
+							<div id="pace-time-hint" class="text-sm mt-1" style="color: var(--color-text-tertiary);">Enter your running time</div>
+							<div id="pace-time-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
 						</div>
 						<div>
-							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block" for="pace-distance"
+							<label class="font-medium mb-2 block" style="color: var(--color-text-secondary);" for="pace-distance"
 								>Distance</label
 							>
 							<input
@@ -122,8 +126,8 @@
 								autocomplete="off"
 								enterkeyhint="done"
 							/>
-							<div id="pace-distance-hint" class="text-sm text-gray-500 dark:text-gray-400 mt-1">Enter distance in selected unit</div>
-							<div id="pace-distance-error" class="text-sm text-red-600 dark:text-red-400 mt-1 hidden" role="alert"></div>
+							<div id="pace-distance-hint" class="text-sm mt-1" style="color: var(--color-text-tertiary);">Enter distance in selected unit</div>
+							<div id="pace-distance-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
 							<select id="pace-preset" class="input-base select-custom preset-select mt-2" aria-label="Quick distance presets"></select>
 						</div>
 					</div>
@@ -131,7 +135,7 @@
 					<!-- Time Section -->
 					<div data-section="time" class="form-section space-y-4 hidden" role="tabpanel" id="time-panel" aria-labelledby="time-tab">
 						<div>
-							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block">Pace</label>
+							<label class="font-medium mb-2 block" style="color: var(--color-text-secondary);">Pace</label>
 							<div class="flex items-center space-x-2">
 								<div class="flex-1">
 									<input
@@ -146,9 +150,9 @@
 										autocomplete="off"
 										aria-label="Minutes"
 									/>
-									<label class="text-xs text-gray-500 dark:text-gray-400 block text-center mt-1">MM</label>
+									<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">MM</label>
 								</div>
-								<span class="text-gray-500 dark:text-gray-400 font-bold">:</span>
+								<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
 								<div class="flex-1">
 									<input
 										type="number"
@@ -162,11 +166,11 @@
 										autocomplete="off"
 										aria-label="Seconds"
 									/>
-									<label class="text-xs text-gray-500 dark:text-gray-400 block text-center mt-1">SS</label>
+									<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">SS</label>
 								</div>
 							</div>
-							<div id="time-pace-hint" class="text-sm text-gray-500 dark:text-gray-400 mt-1">Enter your pace per unit</div>
-							<div id="time-pace-error" class="text-sm text-red-600 dark:text-red-400 mt-1 hidden" role="alert"></div>
+							<div id="time-pace-hint" class="text-sm mt-1" style="color: var(--color-text-tertiary);">Enter your pace per unit</div>
+							<div id="time-pace-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
 						</div>
 						<div>
 							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block" for="time-distance"
@@ -186,8 +190,8 @@
 								autocomplete="off"
 								enterkeyhint="done"
 							/>
-							<div id="time-distance-hint" class="text-sm text-gray-500 dark:text-gray-400 mt-1">Enter distance in selected unit</div>
-							<div id="time-distance-error" class="text-sm text-red-600 dark:text-red-400 mt-1 hidden" role="alert"></div>
+							<div id="time-distance-hint" class="text-sm mt-1" style="color: var(--color-text-tertiary);">Enter distance in selected unit</div>
+							<div id="time-distance-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
 							<select id="time-preset" class="input-base select-custom preset-select mt-2" aria-label="Quick distance presets"></select>
 						</div>
 					</div>
@@ -195,7 +199,7 @@
 					<!-- Distance Section -->
 					<div data-section="distance" class="form-section space-y-4 hidden" role="tabpanel" id="distance-panel" aria-labelledby="distance-tab">
 						<div>
-							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block">Time</label>
+							<label class="font-medium mb-2 block" style="color: var(--color-text-secondary);">Time</label>
 							<div class="flex items-center space-x-2">
 								<div class="flex-1">
 									<input
@@ -210,9 +214,9 @@
 										autocomplete="off"
 										aria-label="Hours"
 									/>
-									<label class="text-xs text-gray-500 dark:text-gray-400 block text-center mt-1">HH</label>
+									<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">HH</label>
 								</div>
-								<span class="text-gray-500 dark:text-gray-400 font-bold">:</span>
+								<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
 								<div class="flex-1">
 									<input
 										type="number"
@@ -226,9 +230,9 @@
 										autocomplete="off"
 										aria-label="Minutes"
 									/>
-									<label class="text-xs text-gray-500 dark:text-gray-400 block text-center mt-1">MM</label>
+									<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">MM</label>
 								</div>
-								<span class="text-gray-500 dark:text-gray-400 font-bold">:</span>
+								<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
 								<div class="flex-1">
 									<input
 										type="number"
@@ -242,14 +246,14 @@
 										autocomplete="off"
 										aria-label="Seconds"
 									/>
-									<label class="text-xs text-gray-500 dark:text-gray-400 block text-center mt-1">SS</label>
+									<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">SS</label>
 								</div>
 							</div>
-							<div id="distance-time-hint" class="text-sm text-gray-500 dark:text-gray-400 mt-1">Enter your running time</div>
-							<div id="distance-time-error" class="text-sm text-red-600 dark:text-red-400 mt-1 hidden" role="alert"></div>
+							<div id="distance-time-hint" class="text-sm mt-1" style="color: var(--color-text-tertiary);">Enter your running time</div>
+							<div id="distance-time-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
 						</div>
 						<div>
-							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block">Pace</label>
+							<label class="font-medium mb-2 block" style="color: var(--color-text-secondary);">Pace</label>
 							<div class="flex items-center space-x-2">
 								<div class="flex-1">
 									<input
@@ -264,9 +268,9 @@
 										autocomplete="off"
 										aria-label="Minutes"
 									/>
-									<label class="text-xs text-gray-500 dark:text-gray-400 block text-center mt-1">MM</label>
+									<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">MM</label>
 								</div>
-								<span class="text-gray-500 dark:text-gray-400 font-bold">:</span>
+								<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
 								<div class="flex-1">
 									<input
 										type="number"
@@ -280,11 +284,11 @@
 										autocomplete="off"
 										aria-label="Seconds"
 									/>
-									<label class="text-xs text-gray-500 dark:text-gray-400 block text-center mt-1">SS</label>
+									<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">SS</label>
 								</div>
 							</div>
-							<div id="distance-pace-hint" class="text-sm text-gray-500 dark:text-gray-400 mt-1">Enter your pace per unit</div>
-							<div id="distance-pace-error" class="text-sm text-red-600 dark:text-red-400 mt-1 hidden" role="alert"></div>
+							<div id="distance-pace-hint" class="text-sm mt-1" style="color: var(--color-text-tertiary);">Enter your pace per unit</div>
+							<div id="distance-pace-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
 						</div>
 					</div>
 				</div>
@@ -307,25 +311,28 @@
 				<div class="flex justify-between items-start mb-2">
 					<p
 						id="result-label"
-						class="font-semibold text-gray-700 dark:text-gray-200"
+						class="font-semibold"
+						style="color: var(--color-text-secondary);"
 					></p>
 					<button
 						id="copy-result-btn"
-						class="ml-4 p-2 text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+						class="ml-4 p-2 transition-colors rounded-lg copy-btn"
+						style="color: var(--color-text-tertiary);"
 						aria-label="Copy result to clipboard"
 						title="Copy result to clipboard"
 					>
 						<svg id="copy-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
 						</svg>
-						<svg id="check-icon" class="w-5 h-5 hidden text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<svg id="check-icon" class="w-5 h-5 hidden" style="color: var(--color-status-success);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
 						</svg>
 					</button>
 				</div>
 				<p
 					id="result-value"
-					class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 font-mono"
+					class="text-2xl font-bold font-mono"
+					style="color: var(--color-interactive-primary);"
 				></p>
 			</div>
 
@@ -344,10 +351,10 @@
 
 	<!-- Settings Modal -->
 	<div id="settings-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="settings-title">
-		<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6 my-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
+		<div class="modal-content rounded-2xl shadow-2xl w-full max-w-md p-6 my-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
 			<div class="flex justify-between items-center mb-6">
-				<h2 id="settings-title" class="text-xl font-bold text-gray-900 dark:text-white">Settings</h2>
-				<button id="close-settings" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 p-1 rounded-lg transition-colors" aria-label="Close settings">
+				<h2 id="settings-title" class="text-xl font-bold modal-title">Settings</h2>
+				<button id="close-settings" class="modal-text-tertiary p-1 rounded-lg transition-colors" aria-label="Close settings">
 					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 					</svg>
@@ -404,7 +411,7 @@
 
 	<!-- PR Add/Edit Modal -->
 	<div id="pr-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="pr-modal-title">
-		<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6 my-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
+		<div class="modal-content rounded-2xl shadow-2xl w-full max-w-md p-6 my-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
 			<div class="flex justify-between items-center mb-6">
 				<h2 id="pr-modal-title" class="text-xl font-bold text-gray-900 dark:text-white">Add Personal Record</h2>
 				<button id="close-pr-modal" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 p-1 rounded-lg transition-colors" aria-label="Close PR modal">
@@ -418,7 +425,7 @@
 				<div>
 					<label for="pr-distance" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Distance</label>
 					<input type="text" id="pr-distance" class="input-base" placeholder="e.g., 5 or 21.1" required inputmode="decimal" pattern="[0-9]*\.?[0-9]*">
-					<div id="pr-distance-error" class="text-sm text-red-600 dark:text-red-400 mt-1 hidden" role="alert"></div>
+					<div id="pr-distance-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
 				</div>
 
 				<div>
@@ -444,9 +451,9 @@
 								autocomplete="off"
 								aria-label="Hours"
 							/>
-							<label class="text-xs text-gray-500 dark:text-gray-400 block text-center mt-1">HH</label>
+							<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">HH</label>
 						</div>
-						<span class="text-gray-500 dark:text-gray-400 font-bold">:</span>
+						<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
 						<div class="flex-1">
 							<input
 								type="number"
@@ -460,9 +467,9 @@
 								aria-label="Minutes"
 								required
 							/>
-							<label class="text-xs text-gray-500 dark:text-gray-400 block text-center mt-1">MM</label>
+							<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">MM</label>
 						</div>
-						<span class="text-gray-500 dark:text-gray-400 font-bold">:</span>
+						<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
 						<div class="flex-1">
 							<input
 								type="number"
@@ -476,23 +483,23 @@
 								aria-label="Seconds"
 								required
 							/>
-							<label class="text-xs text-gray-500 dark:text-gray-400 block text-center mt-1">SS</label>
+							<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">SS</label>
 						</div>
 					</div>
-					<div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Enter your personal record time</div>
-					<div id="pr-time-error" class="text-sm text-red-600 dark:text-red-400 mt-1 hidden" role="alert"></div>
+					<div class="text-sm mt-1" style="color: var(--color-text-tertiary);">Enter your personal record time</div>
+					<div id="pr-time-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
 				</div>
 
 				<div>
 					<label for="pr-date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Date (Optional)</label>
 					<input type="date" id="pr-date" class="input-base">
-					<div class="text-sm text-gray-500 dark:text-gray-400 mt-1">When did you achieve this PR?</div>
+					<div class="text-sm mt-1" style="color: var(--color-text-tertiary);">When did you achieve this PR?</div>
 				</div>
 
 				<div>
 					<label for="pr-notes" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Notes (Optional)</label>
 					<textarea id="pr-notes" class="input-base" rows="3" placeholder="e.g., Great weather, felt strong, new PB!"></textarea>
-					<div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Add context about this performance</div>
+					<div class="text-sm mt-1" style="color: var(--color-text-tertiary);">Add context about this performance</div>
 				</div>
 
 				<div class="flex gap-3 mt-6">

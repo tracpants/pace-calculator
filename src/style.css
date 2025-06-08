@@ -2,6 +2,166 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ===========================================
+   COLOR TOKENS SYSTEM
+   =========================================== */
+
+:root {
+  /* Primary Brand Colors */
+  --color-primary-50: #eef2ff;
+  --color-primary-100: #e0e7ff;
+  --color-primary-200: #c7d2fe;
+  --color-primary-300: #a5b4fc;
+  --color-primary-400: #818cf8;
+  --color-primary-500: #6366f1;
+  --color-primary-600: #4f46e5;
+  --color-primary-700: #4338ca;
+  --color-primary-800: #3730a3;
+  --color-primary-900: #312e81;
+  --color-primary-950: #1e1b4b;
+
+  /* Secondary/Accent Colors */
+  --color-secondary-50: #faf5ff;
+  --color-secondary-100: #f3e8ff;
+  --color-secondary-200: #e9d5ff;
+  --color-secondary-300: #d8b4fe;
+  --color-secondary-400: #c084fc;
+  --color-secondary-500: #a855f7;
+  --color-secondary-600: #9333ea;
+  --color-secondary-700: #7c3aed;
+  --color-secondary-800: #6b21a8;
+  --color-secondary-900: #581c87;
+  --color-secondary-950: #3b0764;
+
+  /* Neutral Colors */
+  --color-neutral-50: #f9fafb;
+  --color-neutral-100: #f3f4f6;
+  --color-neutral-200: #e5e7eb;
+  --color-neutral-300: #d1d5db;
+  --color-neutral-400: #9ca3af;
+  --color-neutral-500: #6b7280;
+  --color-neutral-600: #4b5563;
+  --color-neutral-700: #374151;
+  --color-neutral-800: #1f2937;
+  --color-neutral-900: #111827;
+  --color-neutral-950: #030712;
+
+  /* Semantic Colors - Success */
+  --color-success-50: #f0fdf4;
+  --color-success-100: #dcfce7;
+  --color-success-200: #bbf7d0;
+  --color-success-300: #86efac;
+  --color-success-400: #4ade80;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+  --color-success-700: #15803d;
+  --color-success-800: #166534;
+  --color-success-900: #14532d;
+  --color-success-950: #052e16;
+
+  /* Semantic Colors - Error */
+  --color-error-50: #fef2f2;
+  --color-error-100: #fee2e2;
+  --color-error-200: #fecaca;
+  --color-error-300: #fca5a5;
+  --color-error-400: #f87171;
+  --color-error-500: #ef4444;
+  --color-error-600: #dc2626;
+  --color-error-700: #b91c1c;
+  --color-error-800: #991b1b;
+  --color-error-900: #7f1d1d;
+  --color-error-950: #450a0a;
+
+  /* Semantic Colors - Warning */
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-200: #fde68a;
+  --color-warning-300: #fcd34d;
+  --color-warning-400: #fbbf24;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+  --color-warning-800: #92400e;
+  --color-warning-900: #78350f;
+  --color-warning-950: #451a03;
+
+  /* Pure Colors */
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* ===========================================
+     SEMANTIC COLOR TOKENS
+     =========================================== */
+
+  /* Light Mode Semantic Tokens */
+  --color-background: var(--color-neutral-100);
+  --color-surface: var(--color-white);
+  --color-surface-secondary: var(--color-neutral-50);
+  --color-surface-tertiary: var(--color-neutral-100);
+  
+  --color-text-primary: var(--color-neutral-900);
+  --color-text-secondary: var(--color-neutral-700);
+  --color-text-tertiary: var(--color-neutral-500);
+  --color-text-inverse: var(--color-white);
+  
+  --color-border-default: var(--color-neutral-200);
+  --color-border-strong: var(--color-neutral-600);
+  --color-border-subtle: var(--color-neutral-100);
+  
+  --color-interactive-primary: var(--color-primary-600);
+  --color-interactive-primary-hover: var(--color-primary-700);
+  --color-interactive-primary-focus: var(--color-primary-500);
+  
+  --color-interactive-secondary: var(--color-neutral-200);
+  --color-interactive-secondary-hover: var(--color-neutral-300);
+  --color-interactive-secondary-text: var(--color-neutral-800);
+  
+  --color-status-success: var(--color-success-600);
+  --color-status-success-bg: var(--color-success-50);
+  --color-status-success-border: var(--color-success-500);
+  
+  --color-status-error: var(--color-error-600);
+  --color-status-error-bg: var(--color-error-50);
+  --color-status-error-border: var(--color-error-500);
+  
+  --color-status-warning: var(--color-warning-600);
+  --color-status-warning-bg: var(--color-warning-50);
+  --color-status-warning-border: var(--color-warning-500);
+
+  /* Gradient Colors */
+  --gradient-brand: linear-gradient(135deg, var(--color-secondary-500), var(--color-primary-600));
+  --gradient-brand-light: linear-gradient(135deg, var(--color-secondary-400), var(--color-primary-500));
+}
+
+/* Dark Mode Color Overrides */
+.dark {
+  --color-background: var(--color-neutral-900);
+  --color-surface: var(--color-neutral-800);
+  --color-surface-secondary: var(--color-neutral-900);
+  --color-surface-tertiary: var(--color-neutral-700);
+  
+  --color-text-primary: var(--color-white);
+  --color-text-secondary: var(--color-neutral-300);
+  --color-text-tertiary: var(--color-neutral-400);
+  --color-text-inverse: var(--color-neutral-900);
+  
+  --color-border-default: var(--color-neutral-600);
+  --color-border-strong: var(--color-neutral-300);
+  --color-border-subtle: var(--color-neutral-700);
+  
+  --color-interactive-secondary: var(--color-neutral-600);
+  --color-interactive-secondary-hover: var(--color-neutral-500);
+  --color-interactive-secondary-text: var(--color-white);
+  
+  --color-status-success-bg: rgba(34, 197, 94, 0.1);
+  --color-status-error-bg: rgba(239, 68, 68, 0.1);
+  --color-status-warning-bg: rgba(245, 158, 11, 0.1);
+
+  /* Dark mode gradients */
+  --gradient-brand: linear-gradient(135deg, var(--color-secondary-400), var(--color-primary-500));
+  --gradient-brand-light: linear-gradient(135deg, var(--color-secondary-300), var(--color-primary-400));
+}
+
 @layer components {
 	/* Screen reader only text */
 	.sr-only {
@@ -24,16 +184,34 @@
 
 	/* Base style for all text inputs and select dropdowns */
 	.input-base {
-		@apply w-full p-4 bg-gray-100 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 outline-none text-base;
+		@apply w-full p-4 rounded-lg focus:ring-2 transition duration-200 outline-none text-base;
+		background-color: var(--color-surface-tertiary);
+		border: 2px solid var(--color-border-default);
+		color: var(--color-text-primary);
+	}
+
+	.input-base:focus {
+		border-color: var(--color-interactive-primary-focus);
+		box-shadow: 0 0 0 2px var(--color-interactive-primary-focus);
 	}
 
 	/* Input validation states */
 	.input-base.error {
-		@apply border-red-500 dark:border-red-400 focus:ring-red-500 focus:border-red-500;
+		border-color: var(--color-status-error-border);
+	}
+
+	.input-base.error:focus {
+		border-color: var(--color-status-error-border);
+		box-shadow: 0 0 0 2px var(--color-status-error-border);
 	}
 
 	.input-base.valid {
-		@apply border-green-500 dark:border-green-400 focus:ring-green-500 focus:border-green-500;
+		border-color: var(--color-status-success-border);
+	}
+
+	.input-base.valid:focus {
+		border-color: var(--color-status-success-border);
+		box-shadow: 0 0 0 2px var(--color-status-success-border);
 	}
 
 	/* Animation utilities */
@@ -94,10 +272,11 @@
 
 	@keyframes pulseSuccess {
 		0% {
-			background-color: rgb(34 197 94 / 0.1);
+			background-color: var(--color-status-success-bg);
 		}
 		50% {
-			background-color: rgb(34 197 94 / 0.3);
+			background-color: var(--color-status-success);
+			opacity: 0.3;
 		}
 		100% {
 			background-color: transparent;
@@ -110,11 +289,13 @@
 	}
 
 	#result.error {
-		@apply border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20;
+		border-left: 4px solid var(--color-status-error-border);
+		background-color: var(--color-status-error-bg);
 	}
 
 	#result.success {
-		@apply border-l-4 border-green-500 bg-green-50 dark:bg-green-900/20;
+		border-left: 4px solid var(--color-status-success-border);
+		background-color: var(--color-status-success-bg);
 	}
 
 	/* Custom styling for the select dropdown arrow */
@@ -131,29 +312,64 @@
 
 	/* Main navigation tabs - larger touch targets */
 	.tab {
-		@apply w-full rounded-lg py-4 text-base font-semibold text-gray-500 dark:text-gray-400 hover:bg-gray-300/50 dark:hover:bg-gray-600/50 transition-all duration-300 min-h-[44px] flex items-center justify-center;
+		@apply w-full rounded-lg py-4 text-base font-semibold transition-all duration-300 min-h-[44px] flex items-center justify-center;
+		color: var(--color-text-tertiary);
 	}
+	
+	.tab:hover {
+		background-color: var(--color-interactive-secondary-hover);
+	}
+	
 	.tab.active {
-		@apply bg-white dark:bg-gray-900/75 text-indigo-600 dark:text-white shadow-md;
+		@apply shadow-md;
+		background-color: var(--color-surface);
+		color: var(--color-interactive-primary);
+	}
+	
+	.dark .tab.active {
+		color: var(--color-text-primary);
 	}
 
 	/* Unit toggles (KM/Miles) - larger touch targets */
 	.unit-toggle {
-		@apply rounded-full px-6 py-3 text-base font-semibold text-gray-500 dark:text-gray-400 transition-all duration-300 min-h-[44px] flex items-center justify-center flex-1;
+		@apply rounded-full px-6 py-3 text-base font-semibold transition-all duration-300 min-h-[44px] flex items-center justify-center flex-1;
+		color: var(--color-text-tertiary);
 	}
+	
 	.unit-toggle.active {
-		@apply bg-indigo-600 text-white shadow;
+		@apply shadow;
+		background-color: var(--color-interactive-primary);
+		color: var(--color-text-inverse);
 	}
 
 	/* Primary and Secondary Buttons - larger touch targets */
 	.btn {
-		@apply w-full font-bold py-4 px-6 rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 text-base min-h-[52px] flex items-center justify-center;
+		@apply w-full font-bold py-4 px-6 rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 text-base min-h-[52px] flex items-center justify-center;
+		--focus-ring-offset-color: var(--color-background);
 	}
+	
+	.btn:focus {
+		box-shadow: 0 0 0 2px var(--focus-ring-offset-color), 0 0 0 4px var(--color-interactive-primary-focus);
+	}
+	
 	.btn-primary {
-		@apply btn bg-indigo-600 hover:bg-indigo-700 text-white focus:ring-indigo-500;
+		@apply btn;
+		background-color: var(--color-interactive-primary);
+		color: var(--color-text-inverse);
 	}
+	
+	.btn-primary:hover {
+		background-color: var(--color-interactive-primary-hover);
+	}
+	
 	.btn-secondary {
-		@apply btn bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-white focus:ring-gray-400;
+		@apply btn;
+		background-color: var(--color-interactive-secondary);
+		color: var(--color-interactive-secondary-text);
+	}
+	
+	.btn-secondary:hover {
+		background-color: var(--color-interactive-secondary-hover);
 	}
 
 	/* Touch gesture feedback */
@@ -163,7 +379,35 @@
 	
 	[role="tablist"][data-swipe-enabled="true"]::after {
 		content: '';
-		@apply absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent via-indigo-300 to-transparent opacity-30;
+		@apply absolute inset-x-0 bottom-0 h-0.5 opacity-30;
+		background: linear-gradient(to right, transparent, var(--color-primary-300), transparent);
+	}
+
+	/* Interactive element hover states */
+	#settings-btn:hover {
+		background-color: var(--color-interactive-secondary);
+	}
+	
+	.copy-btn:hover {
+		color: var(--color-interactive-primary);
+		background-color: var(--color-surface-secondary);
+	}
+	
+	/* Modal backgrounds */
+	.modal-content {
+		background-color: var(--color-surface);
+	}
+	
+	.modal-title {
+		color: var(--color-text-primary);
+	}
+	
+	.modal-text {
+		color: var(--color-text-secondary);
+	}
+	
+	.modal-text-tertiary {
+		color: var(--color-text-tertiary);
 	}
 
 	/* Mobile improvements */
