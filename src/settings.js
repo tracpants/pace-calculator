@@ -6,7 +6,7 @@ import * as calc from "./calculator.js";
 // Settings preferences with defaults
 const defaultSettings = {
 	distanceUnit: 'km',
-	theme: 'system', // 'light', 'dark', or 'system'
+	theme: 'system', // 'light', 'dark', 'system', 'amoled', 'high-contrast', or 'monochrome'
 	accentColor: 'indigo' // default accent color
 };
 
@@ -131,6 +131,9 @@ function saveSettings(settings) {
 
 // Apply theme based on preference
 function applyTheme(themePreference) {
+	// Remove all theme classes first
+	document.documentElement.classList.remove("dark", "amoled", "high-contrast", "monochrome");
+	
 	let actualTheme;
 	
 	if (themePreference === 'system') {
@@ -139,11 +142,17 @@ function applyTheme(themePreference) {
 		actualTheme = themePreference;
 	}
 	
+	// Apply the appropriate theme class
 	if (actualTheme === 'dark') {
 		document.documentElement.classList.add("dark");
-	} else {
-		document.documentElement.classList.remove("dark");
+	} else if (actualTheme === 'amoled') {
+		document.documentElement.classList.add("amoled");
+	} else if (actualTheme === 'high-contrast') {
+		document.documentElement.classList.add("high-contrast");
+	} else if (actualTheme === 'monochrome') {
+		document.documentElement.classList.add("monochrome");
 	}
+	// Light theme is the default (no class needed)
 }
 
 // Apply accent color

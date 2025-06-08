@@ -382,6 +382,153 @@
   --color-secondary-950: #422006;
 }
 
+/* ===========================================
+   SPECIAL THEME VARIANTS
+   =========================================== */
+
+/* AMOLED theme - Pure black for OLED displays */
+.amoled {
+  --color-primary-50: #f8fafc;
+  --color-primary-100: #f1f5f9;
+  --color-primary-200: #e2e8f0;
+  --color-primary-300: #cbd5e1;
+  --color-primary-400: #94a3b8;
+  --color-primary-500: #64748b;
+  --color-primary-600: #475569;
+  --color-primary-700: #334155;
+  --color-primary-800: #1e293b;
+  --color-primary-900: #0f172a;
+  --color-primary-950: #020617;
+  
+  --color-secondary-50: #f8fafc;
+  --color-secondary-100: #f1f5f9;
+  --color-secondary-200: #e2e8f0;
+  --color-secondary-300: #cbd5e1;
+  --color-secondary-400: #94a3b8;
+  --color-secondary-500: #64748b;
+  --color-secondary-600: #475569;
+  --color-secondary-700: #334155;
+  --color-secondary-800: #1e293b;
+  --color-secondary-900: #0f172a;
+  --color-secondary-950: #020617;
+  
+  /* AMOLED-specific overrides for true black */
+  --color-background: #000000;
+  --color-surface: #000000;
+  --color-surface-secondary: #111111;
+  --color-surface-tertiary: #1a1a1a;
+  
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #e2e8f0;
+  --color-text-tertiary: #94a3b8;
+  --color-text-inverse: #000000;
+  
+  --color-border-default: #333333;
+  --color-border-strong: #666666;
+  --color-border-subtle: #1a1a1a;
+  
+  --color-interactive-primary: #64748b;
+  --color-interactive-primary-hover: #475569;
+  --color-interactive-primary-focus: #94a3b8;
+  
+  --color-interactive-secondary: #1a1a1a;
+  --color-interactive-secondary-hover: #333333;
+  --color-interactive-secondary-text: #ffffff;
+  
+  --color-status-success-bg: rgba(100, 116, 139, 0.1);
+  --color-status-error-bg: rgba(100, 116, 139, 0.1);
+  --color-status-warning-bg: rgba(100, 116, 139, 0.1);
+}
+
+/* High Contrast theme - Maximum contrast for accessibility */
+.high-contrast {
+  --color-primary-50: #ffffff;
+  --color-primary-100: #ffffff;
+  --color-primary-200: #ffffff;
+  --color-primary-300: #ffffff;
+  --color-primary-400: #ffffff;
+  --color-primary-500: #ffffff;
+  --color-primary-600: #000000;
+  --color-primary-700: #000000;
+  --color-primary-800: #000000;
+  --color-primary-900: #000000;
+  --color-primary-950: #000000;
+  
+  --color-secondary-50: #ffffff;
+  --color-secondary-100: #ffffff;
+  --color-secondary-200: #ffffff;
+  --color-secondary-300: #ffffff;
+  --color-secondary-400: #ffffff;
+  --color-secondary-500: #ffffff;
+  --color-secondary-600: #000000;
+  --color-secondary-700: #000000;
+  --color-secondary-800: #000000;
+  --color-secondary-900: #000000;
+  --color-secondary-950: #000000;
+  
+  /* High contrast overrides */
+  --color-background: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-secondary: #ffffff;
+  --color-surface-tertiary: #f5f5f5;
+  
+  --color-text-primary: #000000;
+  --color-text-secondary: #000000;
+  --color-text-tertiary: #000000;
+  --color-text-inverse: #ffffff;
+  
+  --color-border-default: #000000;
+  --color-border-strong: #000000;
+  --color-border-subtle: #000000;
+  
+  --color-interactive-primary: #000000;
+  --color-interactive-primary-hover: #333333;
+  --color-interactive-primary-focus: #000000;
+  
+  --color-interactive-secondary: #f5f5f5;
+  --color-interactive-secondary-hover: #e5e5e5;
+  --color-interactive-secondary-text: #000000;
+  
+  --color-status-success: #000000;
+  --color-status-success-bg: #ffffff;
+  --color-status-success-border: #000000;
+  
+  --color-status-error: #000000;
+  --color-status-error-bg: #ffffff;
+  --color-status-error-border: #000000;
+  
+  --color-status-warning: #000000;
+  --color-status-warning-bg: #ffffff;
+  --color-status-warning-border: #000000;
+}
+
+/* Monochrome theme - Grayscale for accessibility */
+.monochrome {
+  --color-primary-50: #fafafa;
+  --color-primary-100: #f4f4f5;
+  --color-primary-200: #e4e4e7;
+  --color-primary-300: #d4d4d8;
+  --color-primary-400: #a1a1aa;
+  --color-primary-500: #71717a;
+  --color-primary-600: #52525b;
+  --color-primary-700: #3f3f46;
+  --color-primary-800: #27272a;
+  --color-primary-900: #18181b;
+  --color-primary-950: #09090b;
+  
+  --color-secondary-50: #fafafa;
+  --color-secondary-100: #f4f4f5;
+  --color-secondary-200: #e4e4e7;
+  --color-secondary-300: #d4d4d8;
+  --color-secondary-400: #a1a1aa;
+  --color-secondary-500: #71717a;
+  --color-secondary-600: #52525b;
+  --color-secondary-700: #3f3f46;
+  --color-secondary-800: #27272a;
+  --color-secondary-900: #18181b;
+  --color-secondary-950: #09090b;
+}
+
 @layer components {
 	/* Screen reader only text */
 	.sr-only {
