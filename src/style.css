@@ -862,6 +862,7 @@
 	.accent-color-option {
 		position: relative;
 		cursor: pointer;
+		overflow: hidden;
 	}
 	
 	.accent-color-option:hover {
@@ -881,6 +882,39 @@
 	
 	.accent-color-option.selected .accent-color-check {
 		opacity: 1;
+	}
+	
+	/* Dual color display for gradient mode */
+	.accent-color-option.dual-color {
+		background: none !important;
+	}
+	
+	.accent-color-option .dual-color-display {
+		position: absolute;
+		inset: 0;
+		display: none;
+	}
+	
+	.accent-color-option.dual-color .dual-color-display {
+		display: block;
+	}
+	
+	.accent-color-primary,
+	.accent-color-secondary {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: 50%;
+	}
+	
+	.accent-color-primary {
+		left: 0;
+		border-radius: 0.5rem 0 0 0.5rem;
+	}
+	
+	.accent-color-secondary {
+		right: 0;
+		border-radius: 0 0.5rem 0.5rem 0;
 	}
 
 	/* Help button styling */

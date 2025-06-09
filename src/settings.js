@@ -246,6 +246,19 @@ function toggleIntensitySlider(show) {
 	}
 }
 
+// Toggle dual-color display in accent color picker
+function toggleDualColorDisplay(show) {
+	const accentColorOptions = document.querySelectorAll('.accent-color-option');
+	
+	accentColorOptions.forEach(option => {
+		if (show) {
+			option.classList.add('dual-color');
+		} else {
+			option.classList.remove('dual-color');
+		}
+	});
+}
+
 // Handle theme selection with auto-apply
 function handleThemeChange(e) {
 	const selectedTheme = e.target.value;
@@ -258,6 +271,14 @@ function handleThemeChange(e) {
 	const isAccessibilityTheme = isA11yTheme(selectedTheme);
 	toggleAccentPicker(!isAccessibilityTheme);
 	toggleGradientControl(!isAccessibilityTheme);
+	
+	// Hide dual-color display for A11Y themes
+	if (isAccessibilityTheme) {
+		toggleDualColorDisplay(false);
+	} else {
+		// Restore dual-color display based on gradient setting
+		toggleDualColorDisplay(currentSettings.backgroundGradient || false);
+	}
 	
 	// Disable gradient for A11Y themes
 	if (isAccessibilityTheme && currentSettings.backgroundGradient) {
@@ -286,6 +307,9 @@ function handleGradientToggle(e) {
 	
 	// Show/hide intensity slider
 	toggleIntensitySlider(enabled);
+	
+	// Show/hide dual-color display in accent picker
+	toggleDualColorDisplay(enabled);
 	
 	// Apply immediately with current intensity
 	applyBackgroundGradient(enabled, currentSettings.gradientIntensity);
@@ -385,6 +409,9 @@ function openSettings() {
 	
 	// Show/hide intensity slider based on gradient state
 	toggleIntensitySlider(settings.backgroundGradient || false);
+	
+	// Show/hide dual-color display based on gradient state
+	toggleDualColorDisplay(settings.backgroundGradient || false);
 	
 	// Handle A11Y theme UI state
 	const isAccessibilityTheme = isA11yTheme(settings.theme);
