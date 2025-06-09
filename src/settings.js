@@ -1,5 +1,5 @@
 import { state } from "./state.js";
-import { populatePresetSelects, populateAutocomplete, updateCalculatedResult } from "./ui.js";
+import { populatePresetSelects, populateAutocomplete, updateCalculatedResult, updateHintTexts } from "./ui.js";
 import * as pr from "./pr.js";
 import * as calc from "./calculator.js";
 
@@ -223,6 +223,7 @@ function applyDistanceUnit(unit) {
 	populatePresetSelects();
 	populateAutocomplete();
 	updateCalculatedResult();
+	updateHintTexts();
 }
 
 // Open settings modal

@@ -408,6 +408,32 @@ function populateAutocomplete() {
 		.join('');
 }
 
+function updateHintTexts() {
+	const unit = state.distanceUnit;
+	
+	// Update pace hint texts
+	const timePaceHint = document.getElementById('time-pace-hint');
+	const distancePaceHint = document.getElementById('distance-pace-hint');
+	
+	if (timePaceHint) {
+		timePaceHint.textContent = `Enter your pace per ${unit}`;
+	}
+	if (distancePaceHint) {
+		distancePaceHint.textContent = `Enter your pace per ${unit}`;
+	}
+	
+	// Update distance hint texts
+	const paceDistanceHint = document.getElementById('pace-distance-hint');
+	const timeDistanceHint = document.getElementById('time-distance-hint');
+	
+	if (paceDistanceHint) {
+		paceDistanceHint.textContent = `Enter distance in ${unit}`;
+	}
+	if (timeDistanceHint) {
+		timeDistanceHint.textContent = `Enter distance in ${unit}`;
+	}
+}
+
 function saveCurrentTabState() {
 	// Ensure tab state exists
 	if (!state.tabStates[state.currentTab]) {
@@ -753,10 +779,10 @@ function createSplitsAccordion() {
 		let splitLabel, splitClass = '';
 		
 		if (split.isFinish) {
-			splitLabel = `Finish (${split.distance} ${unit})`;
+			splitLabel = `Finish (${split.distance} ${state.distanceUnit})`;
 			splitClass = 'font-semibold border-t pt-2 mt-1';
 		} else {
-			splitLabel = `${split.distance} ${unit}`;
+			splitLabel = `${split.distance} ${state.distanceUnit}`;
 		}
 		
 		return `
@@ -778,7 +804,7 @@ function createSplitsAccordion() {
 				aria-controls="splits-content"
 			>
 				<span class="text-sm font-medium" style="color: var(--color-text-secondary);">
-					Show Splits (${totalDistance % 1 === 0 ? totalDistance : totalDistance.toFixed(2)} ${unit})
+					Show Splits (${totalDistance % 1 === 0 ? totalDistance : totalDistance.toFixed(2)} ${state.distanceUnit})
 				</span>
 				<svg id="splits-chevron" class="w-4 h-4 transition-transform duration-200" style="color: var(--color-text-tertiary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -796,7 +822,7 @@ function createSplitsAccordion() {
 				</div>
 				${splitsHtml}
 				<div class="text-xs mt-2 pt-2 border-t" style="border-color: var(--color-border-subtle); color: var(--color-text-tertiary);">
-					Pace: ${calc.formatTime(pacePerUnit)} /${unit}
+					Pace: ${calc.formatTime(pacePerUnit)} /${state.distanceUnit}
 				</div>
 			</div>
 		</div>
@@ -874,6 +900,7 @@ function updateUnitToggles() {
 	populatePresetSelects();
 	populateAutocomplete();
 	updateCalculatedResult();
+	updateHintTexts();
 }
 
 function populatePresetSelects() {
@@ -1160,7 +1187,7 @@ function clearAll() {
 	updateCalculateButtonState();
 }
 
-export { populatePresetSelects, populateAutocomplete, updateCalculatedResult };
+export { populatePresetSelects, populateAutocomplete, updateCalculatedResult, updateHintTexts };
 
 export function initUI() {
 	// Initial setup
