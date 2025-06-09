@@ -676,6 +676,176 @@ function scrollToResults() {
 	}
 }
 
+function generateRaceSplits() {
+	if (!state.lastResult) return null;
+	
+	const { type, data } = state.lastResult;
+	let distance, pacePerUnit;
+	
+	// Determine distance and pace based on calculation type
+	if (type === "pace") {
+		// Get distance from input
+		const distanceInput = document.getElementById("pace-distance");
+		distance = parseFloat(distanceInput.value);
+		pacePerUnit = state.distanceUnit === "km" ? data.pacePerKm : data.pacePerMile;
+	} else if (type === "time") {
+		// Get distance from input
+		const distanceInput = document.getElementById("time-distance");
+		distance = parseFloat(distanceInput.value);
+		pacePerUnit = getSegmentedPaceValue('time-pace');
+	} else if (type === "distance") {
+		// Use calculated distance
+		distance = state.distanceUnit === "km" ? data.km : data.miles;
+		pacePerUnit = getSegmentedPaceValue('distance-pace');
+	} else {
+		return null;
+	}
+	
+	// Don't show splits for very short distances
+	if (distance < 1) return null;
+	
+	const unit = state.distanceUnit;
+	const splits = [];
+	const totalSplits = Math.floor(distance);
+	
+	// Generate splits for each full unit (km/mile)
+	for (let i = 1; i <= totalSplits; i++) {
+		const cumulativeTime = pacePerUnit * i;
+		splits.push({
+			distance: i,
+			unit: unit,
+			time: calc.formatTime(cumulativeTime, true),
+			timeSeconds: cumulativeTime
+		});
+	}
+	
+	// Add final split if there's a remainder
+	if (distance > totalSplits) {
+		const remainderDistance = distance - totalSplits;
+		const cumulativeTime = pacePerUnit * distance;
+		splits.push({
+			distance: distance.toFixed(2),
+			unit: unit,
+			time: calc.formatTime(cumulativeTime, true),
+			timeSeconds: cumulativeTime,
+			isFinish: true
+		});
+	}
+	
+	return {
+		splits,
+		totalDistance: distance,
+		unit,
+		pacePerUnit
+	};
+}
+
+function createSplitsAccordion() {
+	const splitsData = generateRaceSplits();
+	if (!splitsData) return '';
+	
+	const { splits, totalDistance, unit, pacePerUnit } = splitsData;
+	
+	const splitsHtml = splits.map(split => `
+		<div class="splits-row flex justify-between items-center py-1 px-2 ${split.isFinish ? 'font-semibold border-t pt-2 mt-1' : ''}">
+			<span class="text-sm">
+				${split.isFinish ? 'Finish' : split.distance} ${unit}
+			</span>
+			<span class="font-mono text-sm">${split.time}</span>
+		</div>
+	`).join('');
+	
+	return `
+		<div class="mt-3 pt-3 border-t" style="border-color: var(--color-border-subtle);">
+			<button 
+				id="splits-toggle" 
+				class="w-full flex items-center justify-between py-2 text-left transition-colors rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50"
+				aria-expanded="false"
+				aria-controls="splits-content"
+			>
+				<span class="text-sm font-medium" style="color: var(--color-text-secondary);">
+					Show Splits (${totalDistance.toFixed(1)} ${unit})
+				</span>
+				<svg id="splits-chevron" class="w-4 h-4 transition-transform duration-200" style="color: var(--color-text-tertiary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+				</svg>
+			</button>
+			<div 
+				id="splits-content" 
+				class="hidden mt-2 space-y-1 px-3 py-2 rounded-lg" 
+				style="background-color: var(--color-surface-secondary);"
+				aria-hidden="true"
+			>
+				<div class="flex justify-between items-center pb-2 mb-2 border-b text-xs font-medium" style="border-color: var(--color-border-subtle); color: var(--color-text-tertiary);">
+					<span>Distance</span>
+					<span>Cumulative Time</span>
+				</div>
+				${splitsHtml}
+				<div class="text-xs mt-2 pt-2 border-t" style="border-color: var(--color-border-subtle); color: var(--color-text-tertiary);">
+					Pace: ${calc.formatTime(pacePerUnit)} /${unit}
+				</div>
+			</div>
+		</div>
+	`;
+}
+
+function setupSplitsAccordion() {
+	const splitsToggle = document.getElementById('splits-toggle');
+	const splitsContent = document.getElementById('splits-content');
+	const splitsChevron = document.getElementById('splits-chevron');
+	
+	if (!splitsToggle || !splitsContent || !splitsChevron) return;
+	
+	splitsToggle.addEventListener('click', () => {
+		const isExpanded = splitsToggle.getAttribute('aria-expanded') === 'true';
+		
+		if (isExpanded) {
+			// Collapse
+			splitsContent.classList.add('hidden');
+			splitsContent.setAttribute('aria-hidden', 'true');
+			splitsToggle.setAttribute('aria-expanded', 'false');
+			splitsChevron.style.transform = 'rotate(0deg)';
+		} else {
+			// Expand
+			splitsContent.classList.remove('hidden');
+			splitsContent.setAttribute('aria-hidden', 'false');
+			splitsToggle.setAttribute('aria-expanded', 'true');
+			splitsChevron.style.transform = 'rotate(180deg)';
+			
+			// Auto-scroll to ensure expanded content is visible
+			setTimeout(() => {
+				scrollToExpandedSplits();
+			}, 100); // Small delay to allow content to render
+		}
+	});
+}
+
+function scrollToExpandedSplits() {
+	const splitsContent = document.getElementById('splits-content');
+	if (!splitsContent || splitsContent.classList.contains('hidden')) return;
+	
+	// Get the splits content position and dimensions
+	const splitsRect = splitsContent.getBoundingClientRect();
+	const viewportHeight = window.innerHeight;
+	
+	// Check if the bottom of the expanded content is visible
+	const isBottomVisible = splitsRect.bottom <= viewportHeight;
+	
+	// Only scroll if the bottom is cut off
+	if (!isBottomVisible) {
+		// Calculate how much we need to scroll to show the bottom with some padding
+		const scrollOffset = splitsRect.bottom - viewportHeight + 20; // 20px padding
+		const currentScrollTop = window.pageYOffset;
+		const targetScrollTop = currentScrollTop + scrollOffset;
+		
+		// Smooth scroll to show the expanded content
+		window.scrollTo({
+			top: targetScrollTop,
+			behavior: 'smooth'
+		});
+	}
+}
+
 function updateUnitToggles() {
 	document.querySelectorAll("[data-unit]").forEach((btn) => {
 		const isActive = btn.dataset.unit === state.distanceUnit;
@@ -880,6 +1050,14 @@ function showResult(label, value, type = 'success') {
 		resultValue.innerHTML += comparisonHtml;
 	}
 	
+	// Add race splits accordion for successful calculations
+	if (type === 'success') {
+		const splitsHtml = createSplitsAccordion();
+		if (splitsHtml) {
+			resultValue.innerHTML += splitsHtml;
+		}
+	}
+	
 	// Reset all classes
 	resultDiv.classList.remove('hidden', 'success', 'error', 'opacity-0', 'scale-95');
 	resultDiv.classList.remove('bg-indigo-50', 'dark:bg-gray-700', 'border-l-4', 'border-indigo-500');
@@ -899,9 +1077,11 @@ function showResult(label, value, type = 'success') {
 		scrollToResults();
 	}, 200);
 	
-	// Remove animation class after animation completes
+	// Remove animation class and setup interactions after animation completes
 	setTimeout(() => {
 		resultDiv.classList.remove('animate-bounce-in');
+		// Setup splits accordion if present
+		setupSplitsAccordion();
 	}, 600);
 }
 

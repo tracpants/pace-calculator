@@ -858,6 +858,30 @@
 		background-color: var(--color-interactive-secondary);
 	}
 
+	/* Splits accordion styling */
+	#splits-toggle:hover {
+		background-color: var(--color-interactive-secondary);
+	}
+
+	#splits-toggle:focus {
+		outline: none;
+		background-color: var(--color-interactive-secondary);
+		box-shadow: 0 0 0 2px var(--color-interactive-primary-focus);
+	}
+
+	#splits-content {
+		transition: all 0.3s ease-in-out;
+	}
+
+	.splits-row {
+		transition: background-color 0.2s ease;
+	}
+
+	.splits-row:hover {
+		background-color: var(--color-surface-tertiary);
+		border-radius: 4px;
+	}
+
 	/* Mobile improvements */
 	@media (max-width: 640px) {
 		.input-base {
