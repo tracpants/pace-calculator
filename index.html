@@ -23,7 +23,7 @@
 				<div class="relative flex items-center justify-between px-0">
 					<!-- Menu Button -->
 					<div class="relative z-10">
-						<button id="menu-btn" class="p-2 rounded-lg transition-colors" style="color: var(--color-text-tertiary);" aria-label="Open menu" title="Menu" tabindex="0">
+						<button id="menu-btn" class="btn-icon" aria-label="Open menu" title="Menu" tabindex="0">
 							<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
 							</svg>
@@ -33,14 +33,14 @@
 						<div id="menu-dropdown" class="absolute top-full left-0 mt-2 w-48 hidden z-50">
 							<div class="modal-content rounded-lg shadow-lg overflow-hidden">
 								<div class="py-1">
-									<button id="pr-menu-item" class="menu-item w-full flex items-center px-4 py-3 text-left transition-colors">
+									<button id="pr-menu-item" class="btn-menu flex items-center">
 										<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
 										</svg>
 										<span>Personal Records</span>
 									</button>
 									
-									<button id="settings-menu-item" class="menu-item w-full flex items-center px-4 py-3 text-left transition-colors">
+									<button id="settings-menu-item" class="btn-menu flex items-center">
 										<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -58,7 +58,7 @@
 					</h1>
 					
 					<!-- Help Button -->
-					<button id="help-btn" class="relative z-10 p-2 rounded-lg transition-colors" style="color: var(--color-text-tertiary);" aria-label="Open help" title="Help" tabindex="0">
+					<button id="help-btn" class="relative z-10 btn-icon" aria-label="Open help" title="Help" tabindex="0">
 						<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
 						</svg>
@@ -77,9 +77,9 @@
 				role="tablist"
 				aria-label="Calculator type selection"
 			>
-				<button data-tab="pace" class="tab" role="tab" id="pace-tab" aria-selected="true" aria-controls="pace-panel" tabindex="0">Pace</button>
-				<button data-tab="time" class="tab" role="tab" id="time-tab" aria-selected="false" aria-controls="time-panel" tabindex="-1">Time</button>
-				<button data-tab="distance" class="tab" role="tab" id="distance-tab" aria-selected="false" aria-controls="distance-panel" tabindex="-1">Distance</button>
+				<button data-tab="pace" class="btn-tab active" role="tab" id="pace-tab" aria-selected="true" aria-controls="pace-panel" tabindex="0">Pace</button>
+				<button data-tab="time" class="btn-tab" role="tab" id="time-tab" aria-selected="false" aria-controls="time-panel" tabindex="-1">Time</button>
+				<button data-tab="distance" class="btn-tab" role="tab" id="distance-tab" aria-selected="false" aria-controls="distance-panel" tabindex="-1">Distance</button>
 			</div>
 
 			<!-- Form Sections -->
@@ -331,8 +331,8 @@
 
 				<!-- Buttons -->
 				<div class="grid grid-cols-2 gap-4 mt-6 sm:mt-8">
-					<button type="submit" class="btn-primary" aria-describedby="calculate-description">Calculate</button>
-					<button type="button" id="clear-btn" class="btn-secondary" aria-describedby="clear-description">
+					<button type="submit" class="btn-primary btn-full" aria-describedby="calculate-description">Calculate</button>
+					<button type="button" id="clear-btn" class="btn-secondary btn-full" aria-describedby="clear-description">
 						Clear
 					</button>
 				</div>
@@ -390,7 +390,7 @@
 		<div class="modal-content rounded-2xl shadow-2xl w-full max-w-lg p-6">
 			<div class="flex justify-between items-center mb-6">
 				<h2 id="help-title" class="text-heading-2">How to Use</h2>
-				<button id="close-help" class="modal-text-tertiary p-1 rounded-lg transition-colors" aria-label="Close help">
+				<button id="close-help" class="btn-icon modal-text-tertiary" aria-label="Close help">
 					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 					</svg>
@@ -439,7 +439,7 @@
 		<div class="modal-content rounded-2xl shadow-2xl w-full max-w-md p-6 my-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
 			<div class="flex justify-between items-center mb-6">
 				<h2 id="settings-title" class="text-heading-2">Settings</h2>
-				<button id="close-settings" class="modal-text-tertiary p-1 rounded-lg transition-colors" aria-label="Close settings">
+				<button id="close-settings" class="btn-icon modal-text-tertiary" aria-label="Close settings">
 					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 					</svg>
@@ -452,8 +452,8 @@
 					<label class="block text-sm font-medium modal-text mb-3">Distance Unit</label>
 					<fieldset class="flex items-center rounded-full p-1" style="background-color: var(--color-interactive-secondary);">
 						<legend class="sr-only">Choose distance unit</legend>
-						<button data-unit="km" class="unit-toggle" aria-pressed="true" tabindex="0">KM</button>
-						<button data-unit="miles" class="unit-toggle" aria-pressed="false" tabindex="0">Miles</button>
+						<button data-unit="km" class="btn-toggle active" aria-pressed="true" tabindex="0">KM</button>
+						<button data-unit="miles" class="btn-toggle" aria-pressed="false" tabindex="0">Miles</button>
 					</fieldset>
 				</div>
 
@@ -635,7 +635,7 @@
 		<div class="modal-content rounded-2xl shadow-2xl w-full max-w-md p-6 my-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
 			<div class="flex justify-between items-center mb-6">
 				<h2 id="pr-modal-title" class="text-heading-2">Add Personal Record</h2>
-				<button id="close-pr-modal" class="modal-text-tertiary p-1 rounded-lg transition-colors" aria-label="Close PR modal">
+				<button id="close-pr-modal" class="btn-icon modal-text-tertiary" aria-label="Close PR modal">
 					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 					</svg>
@@ -741,7 +741,7 @@
 					</svg>
 					Personal Records
 				</h2>
-				<button id="close-pr-management" class="modal-text-tertiary p-1 rounded-lg transition-colors" aria-label="Close personal records">
+				<button id="close-pr-management" class="btn-icon modal-text-tertiary" aria-label="Close personal records">
 					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 					</svg>
@@ -752,7 +752,7 @@
 				<!-- Add PR Button -->
 				<div class="flex justify-between items-center">
 					<p class="modal-text">Manage your personal running records</p>
-					<button id="add-pr-btn" class="btn-primary text-sm px-4 py-2">+ Add PR</button>
+					<button id="add-pr-btn" class="btn-primary btn-small">+ Add PR</button>
 				</div>
 
 				<!-- PR List -->

@@ -1283,10 +1283,29 @@ function clearCurrentTab() {
 export { populatePresetSelects, populateAutocomplete, updateCalculatedResult, updateHintTexts };
 
 export function initUI() {
+	// Validate critical DOM elements exist
+	const requiredElements = [
+		'calculator-form',
+		'result', 
+		'result-label',
+		'result-value',
+		'loading',
+		'copy-result-btn',
+		'clear-btn'
+	];
+	
+	for (const id of requiredElements) {
+		const element = document.getElementById(id);
+		if (!element) {
+			console.error(`Required element missing: ${id}`);
+			return;
+		}
+	}
+	
+	console.log('All required DOM elements found');
+	
 	// Initial setup
-	updateUnitToggles();
 	updateTabNavigation();
-	document.querySelector('.tab[data-tab="pace"]').classList.add("active");
 
 	// Setup input validation
 	setupInputValidation();
@@ -1308,12 +1327,14 @@ export function initUI() {
 	// Event Listeners (unit toggles are now handled by settings.js)
 
 	document.querySelectorAll("[data-tab]").forEach((tab) => {
+		console.log('Adding event listener to tab:', tab);
 		tab.addEventListener("click", () => {
+			console.log('Tab clicked:', tab.dataset.tab);
 			state.currentTab = tab.dataset.tab;
 			// Save current tab state before switching
 			saveCurrentTabState();
 			
-			document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
+			document.querySelectorAll(".btn-tab").forEach((t) => t.classList.remove("active"));
 			tab.classList.add("active");
 			updateTabNavigation();
 			document
@@ -1365,7 +1386,11 @@ export function initUI() {
 	});
 
 	form.addEventListener("submit", handleFormSubmit);
-	document.getElementById("clear-btn").addEventListener("click", clearCurrentTab);
+	console.log('Added form submit listener to:', form);
+	
+	const clearBtn = document.getElementById("clear-btn");
+	console.log('Clear button found:', clearBtn);
+	clearBtn.addEventListener("click", clearCurrentTab);
 	
 	// Copy/Share button functionality
 	copyBtn.addEventListener('click', async () => {
