@@ -99,68 +99,143 @@ function validateSegmentedInput(prefix, isTimeInput = true) {
 	}
 }
 
-function clearSegmentedInputErrors(prefix) {
-	const errorElement = document.getElementById(`${prefix}-error`);
-	if (errorElement) {
-		errorElement.classList.add('hidden');
-		errorElement.textContent = '';
-	}
+
+// Centralized error state management
+const ErrorManager = {
+	// Set error state for an input
+	setError(inputId, message) {
+		const input = document.getElementById(inputId);
+		const errorElement = document.getElementById(`${inputId}-error`);
+		
+		if (input) {
+			input.classList.remove('valid');
+			input.classList.add('error');
+		}
+		
+		if (errorElement && message) {
+			errorElement.textContent = message;
+			errorElement.classList.remove('hidden');
+		}
+	},
 	
-	// Clear error styling from all segment inputs
-	['hours', 'minutes', 'seconds'].forEach(segment => {
-		const input = document.getElementById(`${prefix}-${segment}`);
+	// Set valid state for an input
+	setValid(inputId) {
+		const input = document.getElementById(inputId);
+		const errorElement = document.getElementById(`${inputId}-error`);
+		
+		if (input) {
+			input.classList.remove('error');
+			input.classList.add('valid');
+		}
+		
+		if (errorElement) {
+			errorElement.textContent = '';
+			errorElement.classList.add('hidden');
+		}
+	},
+	
+	// Clear all validation states for an input
+	clearState(inputId) {
+		const input = document.getElementById(inputId);
+		const errorElement = document.getElementById(`${inputId}-error`);
+		
 		if (input) {
 			input.classList.remove('error', 'valid');
 		}
-	});
-}
-
-function showSegmentedInputError(prefix, message) {
-	const errorElement = document.getElementById(`${prefix}-error`);
-	if (errorElement) {
-		errorElement.textContent = message;
-		errorElement.classList.remove('hidden');
+		
+		if (errorElement) {
+			errorElement.textContent = '';
+			errorElement.classList.add('hidden');
+		}
+	},
+	
+	// Handle segmented input groups (like time inputs)
+	setSegmentedError(prefix, message) {
+		const errorElement = document.getElementById(`${prefix}-error`);
+		
+		// Apply error state to all segments
+		['hours', 'minutes', 'seconds'].forEach(segment => {
+			const input = document.getElementById(`${prefix}-${segment}`);
+			if (input) {
+				input.classList.remove('valid');
+				input.classList.add('error');
+			}
+		});
+		
+		if (errorElement && message) {
+			errorElement.textContent = message;
+			errorElement.classList.remove('hidden');
+		}
+	},
+	
+	setSegmentedValid(prefix) {
+		const errorElement = document.getElementById(`${prefix}-error`);
+		
+		// Apply valid state to all segments
+		['hours', 'minutes', 'seconds'].forEach(segment => {
+			const input = document.getElementById(`${prefix}-${segment}`);
+			if (input) {
+				input.classList.remove('error');
+				input.classList.add('valid');
+			}
+		});
+		
+		if (errorElement) {
+			errorElement.textContent = '';
+			errorElement.classList.add('hidden');
+		}
+	},
+	
+	clearSegmentedState(prefix) {
+		const errorElement = document.getElementById(`${prefix}-error`);
+		
+		// Clear all segments
+		['hours', 'minutes', 'seconds'].forEach(segment => {
+			const input = document.getElementById(`${prefix}-${segment}`);
+			if (input) {
+				input.classList.remove('error', 'valid');
+			}
+		});
+		
+		if (errorElement) {
+			errorElement.textContent = '';
+			errorElement.classList.add('hidden');
+		}
+	},
+	
+	// Clear all errors in current tab
+	clearCurrentTab() {
+		const currentTab = state.currentTab;
+		const currentSection = document.querySelector(`[data-section="${currentTab}"]`);
+		
+		if (!currentSection) return;
+		
+		// Clear regular inputs
+		currentSection.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
+			this.clearState(input.id);
+		});
+		
+		// Clear segmented inputs for current tab
+		if (currentTab === 'pace') {
+			this.clearSegmentedState('pace-time');
+		} else if (currentTab === 'time') {
+			this.clearSegmentedState('time-pace');
+		} else if (currentTab === 'distance') {
+			this.clearSegmentedState('distance-time');
+			this.clearSegmentedState('distance-pace');
+		}
 	}
-	
-	// Add error styling to all segment inputs
-	['hours', 'minutes', 'seconds'].forEach(segment => {
-		const input = document.getElementById(`${prefix}-${segment}`);
-		if (input) {
-			input.classList.add('error');
-			input.classList.remove('valid');
-		}
-	});
-}
-
-function markSegmentedInputValid(prefix) {
-	clearSegmentedInputErrors(prefix);
-	
-	// Add valid styling to all segment inputs
-	['hours', 'minutes', 'seconds'].forEach(segment => {
-		const input = document.getElementById(`${prefix}-${segment}`);
-		if (input) {
-			input.classList.add('valid');
-		}
-	});
-}
+};
 
 // Input validation functions
 function validateInput(inputElement, validationFn) {
 	const value = inputElement.value;
-	const errorElement = document.getElementById(inputElement.id + '-error');
 	const result = validationFn(value);
 	
-	// Remove existing validation classes
-	inputElement.classList.remove('error', 'valid');
-	
 	if (result.valid) {
-		inputElement.classList.add('valid');
-		errorElement.textContent = '';
-		errorElement.classList.add('hidden');
+		ErrorManager.setValid(inputElement.id);
 	} else {
-		inputElement.classList.add('error');
-		errorElement.textContent = result.message;
-		errorElement.classList.remove('hidden');
+		ErrorManager.setError(inputElement.id, result.message);
 	}
 	
 	return result;
@@ -176,16 +251,16 @@ function setupInputValidation() {
 				input.addEventListener('blur', () => {
 					const validation = validateSegmentedInput(prefix, true);
 					if (validation.valid) {
-						markSegmentedInputValid(prefix);
+						ErrorManager.setSegmentedValid(prefix);
 					} else {
-						showSegmentedInputError(prefix, validation.message);
+						ErrorManager.setSegmentedError(prefix, validation.message);
 					}
 					updateCalculateButtonState();
 				});
 				
 				input.addEventListener('input', () => {
 					// Clear errors on input for immediate feedback
-					clearSegmentedInputErrors(prefix);
+					ErrorManager.clearSegmentedState(prefix);
 					// Update button state
 					updateCalculateButtonState();
 				});
@@ -202,16 +277,16 @@ function setupInputValidation() {
 				input.addEventListener('blur', () => {
 					const validation = validateSegmentedInput(prefix, false);
 					if (validation.valid) {
-						markSegmentedInputValid(prefix);
+						ErrorManager.setSegmentedValid(prefix);
 					} else {
-						showSegmentedInputError(prefix, validation.message);
+						ErrorManager.setSegmentedError(prefix, validation.message);
 					}
 					updateCalculateButtonState();
 				});
 				
 				input.addEventListener('input', () => {
 					// Clear errors on input for immediate feedback
-					clearSegmentedInputErrors(prefix);
+					ErrorManager.clearSegmentedState(prefix);
 					// Update button state
 					updateCalculateButtonState();
 				});
@@ -228,11 +303,7 @@ function setupInputValidation() {
 				updateCalculateButtonState();
 			});
 			input.addEventListener('input', () => {
-				if (input.classList.contains('error')) {
-					input.classList.remove('error');
-					const errorElement = document.getElementById(input.id + '-error');
-					errorElement.classList.add('hidden');
-				}
+				ErrorManager.clearState(input.id);
 				// Reset preset dropdown when distance is manually changed
 				resetPresetDropdown(id);
 				// Update button state
@@ -941,7 +1012,7 @@ function handleFormSubmit(e) {
 			const distValidation = validateInput(distInput, calc.validateDistanceInput);
 			
 			if (!timeValidation.valid) {
-				showSegmentedInputError('pace-time', timeValidation.message);
+				ErrorManager.setSegmentedError('pace-time', timeValidation.message);
 			}
 			if (!distValidation.valid) {
 				// Distance validation error display handled by validateInput
@@ -985,7 +1056,7 @@ function handleFormSubmit(e) {
 			const distValidation = validateInput(distInput, calc.validateDistanceInput);
 			
 			if (!paceValidation.valid) {
-				showSegmentedInputError('time-pace', paceValidation.message);
+				ErrorManager.setSegmentedError('time-pace', paceValidation.message);
 			}
 			if (!distValidation.valid) {
 				// Distance validation error display handled by validateInput
@@ -1016,10 +1087,10 @@ function handleFormSubmit(e) {
 			const paceValidation = validateSegmentedInput('distance-pace', false);
 			
 			if (!timeValidation.valid) {
-				showSegmentedInputError('distance-time', timeValidation.message);
+				ErrorManager.setSegmentedError('distance-time', timeValidation.message);
 			}
 			if (!paceValidation.valid) {
-				showSegmentedInputError('distance-pace', paceValidation.message);
+				ErrorManager.setSegmentedError('distance-pace', paceValidation.message);
 			}
 			
 			if (!timeValidation.valid || !paceValidation.valid) {
@@ -1154,31 +1225,53 @@ function updateCalculatedResult() {
 	showResult(label, value);
 }
 
-function clearAll() {
-	form.reset();
-	resultDiv.classList.add("hidden");
-	resultDiv.classList.remove('show', 'success', 'error');
-	loadingDiv.classList.add("hidden");
-	state.lastResult = null;
+function clearCurrentTab() {
+	const currentTab = state.currentTab;
+	const currentSection = document.querySelector(`[data-section="${currentTab}"]`);
 	
-	// Clear validation states
-	document.querySelectorAll('.input-base').forEach(input => {
+	if (!currentSection) return;
+	
+	// Clear only inputs in the current tab (preserving placeholders)
+	currentSection.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
+		input.value = '';
 		input.classList.remove('error', 'valid');
 	});
-	document.querySelectorAll('[id$="-error"]').forEach(error => {
+	
+	// Clear validation errors for current tab only
+	currentSection.querySelectorAll('[id$="-error"]').forEach(error => {
 		error.classList.add('hidden');
 		error.textContent = '';
 	});
 	
-	// Clear segmented input errors
-	['pace-time', 'time-pace', 'distance-time', 'distance-pace'].forEach(prefix => {
-		clearSegmentedInputErrors(prefix);
-	});
+	// Clear segmented input errors for current tab only
+	if (currentTab === 'pace') {
+		ErrorManager.clearSegmentedState('pace-time');
+	} else if (currentTab === 'time') {
+		ErrorManager.clearSegmentedState('time-pace');
+	} else if (currentTab === 'distance') {
+		ErrorManager.clearSegmentedState('distance-time');
+		ErrorManager.clearSegmentedState('distance-pace');
+	}
 	
-	// Reset preset dropdowns
-	document.querySelectorAll('.preset-select').forEach(select => {
-		select.selectedIndex = 0;
-	});
+	// Reset preset dropdown for current tab only
+	const presetSelect = currentSection.querySelector('.preset-select');
+	if (presetSelect) {
+		presetSelect.selectedIndex = 0;
+	}
+	
+	// Clear result only if it belongs to current tab
+	if (state.lastResult && state.lastResult.type === currentTab) {
+		resultDiv.classList.add("hidden");
+		resultDiv.classList.remove('show', 'success', 'error');
+		state.lastResult = null;
+		// Also clear from tab state
+		if (state.tabStates[currentTab]) {
+			state.tabStates[currentTab].result = null;
+		}
+	}
+	
+	// Hide loading if visible
+	loadingDiv.classList.add("hidden");
 	
 	// Focus first input (only on non-mobile devices)
 	focusFirstInput();
@@ -1272,7 +1365,7 @@ export function initUI() {
 	});
 
 	form.addEventListener("submit", handleFormSubmit);
-	document.getElementById("clear-btn").addEventListener("click", clearAll);
+	document.getElementById("clear-btn").addEventListener("click", clearCurrentTab);
 	
 	// Copy/Share button functionality
 	copyBtn.addEventListener('click', async () => {
