@@ -649,6 +649,33 @@ function hideLoading() {
 	loadingDiv.classList.remove('animate-fade-in');
 }
 
+function scrollToResults() {
+	// Check if results are visible and if scrolling is needed
+	if (resultDiv.classList.contains('hidden')) return;
+	
+	// Get the results element position
+	const resultsRect = resultDiv.getBoundingClientRect();
+	const viewportHeight = window.innerHeight;
+	
+	// Check if results are already fully visible
+	const isFullyVisible = resultsRect.top >= 0 && resultsRect.bottom <= viewportHeight;
+	
+	// Only scroll if results are not fully visible
+	if (!isFullyVisible) {
+		// Calculate scroll position to center the results in viewport
+		const elementTop = resultsRect.top + window.pageYOffset;
+		const elementHeight = resultsRect.height;
+		const offset = (viewportHeight - elementHeight) / 2;
+		const targetPosition = elementTop - Math.max(offset, 60); // Minimum 60px from top
+		
+		// Smooth scroll to the calculated position
+		window.scrollTo({
+			top: Math.max(0, targetPosition), // Ensure we don't scroll above page top
+			behavior: 'smooth'
+		});
+	}
+}
+
 function updateUnitToggles() {
 	document.querySelectorAll("[data-unit]").forEach((btn) => {
 		const isActive = btn.dataset.unit === state.distanceUnit;
@@ -866,6 +893,11 @@ function showResult(label, value, type = 'success') {
 	
 	// Show with animation
 	resultDiv.classList.add('show', 'animate-bounce-in');
+	
+	// Auto-scroll to results after a brief delay to ensure element is visible
+	setTimeout(() => {
+		scrollToResults();
+	}, 200);
 	
 	// Remove animation class after animation completes
 	setTimeout(() => {
