@@ -649,7 +649,7 @@ function generateComprehensiveResult() {
 		result = `Running Distance Calculation:\n`;
 		result += `Time: ${time}\n`;
 		result += `Pace: ${pace}\n`;
-		result += `Distance: ${data.km.toFixed(2)} km (${data.miles.toFixed(2)} miles)`;
+		result += `Distance: ${calc.formatDistance(data.km)} km (${calc.formatDistance(data.miles)} miles)`;
 	}
 
 	return result;
@@ -822,7 +822,7 @@ function generateRaceSplits() {
 	if (remainder > 0.01) { // More than 0.01 units (10m for km, ~50ft for miles)
 		const cumulativeTime = pacePerUnit * distance;
 		splits.push({
-			distance: distance.toFixed(2),
+			distance: calc.formatDistance(distance),
 			unit: unit,
 			time: calc.formatTime(cumulativeTime, true),
 			timeSeconds: cumulativeTime,
@@ -875,7 +875,7 @@ function createSplitsAccordion() {
 				aria-controls="splits-content"
 			>
 				<span class="text-sm font-medium" style="color: var(--color-text-secondary);">
-					Show Splits (${totalDistance % 1 === 0 ? totalDistance : totalDistance.toFixed(2)} ${state.distanceUnit})
+					Show Splits (${calc.formatDistance(totalDistance)} ${state.distanceUnit})
 				</span>
 				<svg id="splits-chevron" class="w-4 h-4 transition-transform duration-200" style="color: var(--color-text-tertiary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -982,7 +982,7 @@ function populatePresetSelects() {
 			.map(
 				([key, value]) =>
 					`<option value="${key}">${key.replace("-", " ").toUpperCase()} (${
-						value[unit] % 1 === 0 ? value[unit] : value[unit].toFixed(3)
+						calc.formatDistance(value[unit], 3)
 					} ${unit})</option>`
 			)
 			.join("");
@@ -1104,9 +1104,9 @@ function handleFormSubmit(e) {
 			);
 			label = "Your Distance:";
 			if (state.distanceUnit === "km") {
-				value = `${km.toFixed(2)} km`;
+				value = `${calc.formatDistance(km)} km`;
 			} else {
-				value = `${miles.toFixed(2)} miles`;
+				value = `${calc.formatDistance(miles)} miles`;
 			}
 			// Store the result for unit conversion
 			const result = {
@@ -1216,9 +1216,9 @@ function updateCalculatedResult() {
 	} else if (type === "distance") {
 		label = "Your Distance:";
 		if (state.distanceUnit === "km") {
-			value = `${data.km.toFixed(2)} km`;
+			value = `${calc.formatDistance(data.km)} km`;
 		} else {
-			value = `${data.miles.toFixed(2)} miles`;
+			value = `${calc.formatDistance(data.miles)} miles`;
 		}
 	}
 	
