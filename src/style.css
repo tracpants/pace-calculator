@@ -135,7 +135,8 @@
   /* Background gradient (subtle) */
   --gradient-background: linear-gradient(135deg, 
     var(--color-background) 0%, 
-    color-mix(in srgb, var(--color-primary-50) 8%, var(--color-background)) 100%
+    color-mix(in srgb, var(--color-primary-200) 40%, var(--color-background)) 50%,
+    color-mix(in srgb, var(--color-primary-100) 35%, var(--color-background)) 100%
   );
 }
 
@@ -170,7 +171,8 @@
   /* Dark mode background gradient */
   --gradient-background: linear-gradient(135deg, 
     var(--color-background) 0%, 
-    color-mix(in srgb, var(--color-primary-700) 6%, var(--color-background)) 100%
+    color-mix(in srgb, var(--color-primary-600) 35%, var(--color-background)) 50%,
+    color-mix(in srgb, var(--color-primary-700) 30%, var(--color-background)) 100%
   );
 }
 
