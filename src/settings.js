@@ -468,23 +468,23 @@ function populatePRList() {
 	prEmptyState.classList.add('hidden');
 	
 	prList.innerHTML = prs.map(prRecord => `
-		<div class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+		<div class="flex justify-between items-center p-2 rounded-lg" style="background-color: var(--color-surface-secondary);">
 			<div>
 				<div>
-					<span class="font-medium text-gray-900 dark:text-white">
+					<span class="font-medium modal-title">
 						${prRecord.displayName || `${prRecord.distance} ${prRecord.unit}`}
 					</span>
-					<span class="text-gray-600 dark:text-gray-300 ml-2">${prRecord.timeFormatted}</span>
+					<span class="ml-2 modal-text">${prRecord.timeFormatted}</span>
 				</div>
-				${prRecord.dateSet ? `<div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+				${prRecord.dateSet ? `<div class="text-xs mt-1 modal-text-tertiary">
 					${pr.formatDate(prRecord.dateSet)}
 				</div>` : ''}
-				${prRecord.notes ? `<div class="text-xs text-gray-500 dark:text-gray-400 mt-1 italic">
+				${prRecord.notes ? `<div class="text-xs mt-1 italic modal-text-tertiary">
 					"${prRecord.notes}"
 				</div>` : ''}
 			</div>
 			<div class="flex gap-1">
-				<button class="edit-pr-btn text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 p-1" 
+				<button class="edit-pr-btn p-1 rounded" 
 						data-distance="${prRecord.distance}" 
 						data-unit="${prRecord.unit}" 
 						data-time="${prRecord.timeSeconds}"
@@ -495,7 +495,7 @@ function populatePRList() {
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
 					</svg>
 				</button>
-				<button class="delete-pr-btn text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 p-1" 
+				<button class="delete-pr-btn p-1 rounded" 
 						data-distance="${prRecord.distance}" 
 						data-unit="${prRecord.unit}"
 						title="Delete PR">

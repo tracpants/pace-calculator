@@ -450,6 +450,42 @@
 		clip: rect(0, 0, 0, 0);
 	}
 
+	/* Typography hierarchy - standardize text across all components */
+	.text-heading-1 {
+		@apply text-3xl sm:text-4xl font-bold;
+		color: var(--color-text-primary);
+	}
+	
+	.text-heading-2 {
+		@apply text-xl font-bold;
+		color: var(--color-text-primary);
+	}
+	
+	.text-heading-3 {
+		@apply text-lg font-semibold;
+		color: var(--color-text-primary);
+	}
+	
+	.text-body {
+		@apply text-base;
+		color: var(--color-text-secondary);
+	}
+	
+	.text-body-small {
+		@apply text-sm;
+		color: var(--color-text-secondary);
+	}
+	
+	.text-caption {
+		@apply text-xs;
+		color: var(--color-text-tertiary);
+	}
+	
+	.text-label {
+		@apply text-sm font-medium;
+		color: var(--color-text-secondary);
+	}
+
 
 	/* Fix layout jumping by ensuring consistent heights */
 	.form-section {
@@ -805,6 +841,25 @@
 	}
 	
 
+	/* PR management button styling */
+	.edit-pr-btn {
+		color: var(--color-interactive-primary);
+		transition: color 0.2s ease;
+	}
+	
+	.edit-pr-btn:hover {
+		color: var(--color-interactive-primary-hover);
+	}
+	
+	.delete-pr-btn {
+		color: var(--color-status-error);
+		transition: color 0.2s ease;
+	}
+	
+	.delete-pr-btn:hover {
+		color: var(--color-status-error-border);
+	}
+
 	/* Help button styling */
 	#help-btn:hover {
 		background-color: var(--color-interactive-secondary);
@@ -832,6 +887,41 @@
 	.splits-row:hover {
 		background-color: var(--color-surface-tertiary);
 		border-radius: 4px;
+	}
+
+	/* Theme radio button styling */
+	.theme-radio {
+		@apply w-4 h-4 rounded-full border-2 transition-all duration-200;
+		border-color: var(--color-border-default);
+		background-color: var(--color-surface);
+		appearance: none;
+		outline: none;
+		position: relative;
+	}
+	
+	.theme-radio:checked {
+		border-color: var(--color-interactive-primary);
+		background-color: var(--color-interactive-primary);
+	}
+	
+	.theme-radio:checked::before {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background-color: var(--color-text-inverse);
+	}
+	
+	.theme-radio:focus {
+		box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-interactive-primary-focus);
+	}
+	
+	.theme-radio:hover:not(:checked) {
+		border-color: var(--color-interactive-primary);
 	}
 
 	/* Toggle checkbox styling */

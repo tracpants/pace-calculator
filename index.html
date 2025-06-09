@@ -53,10 +53,7 @@
 					</div>
 					
 					<!-- Title -->
-					<h1
-						class="absolute inset-x-0 text-3xl sm:text-4xl font-bold text-center"
-						style="color: var(--color-text-primary);"
-					>
+					<h1 class="absolute inset-x-0 text-heading-1 text-center">
 						Pace Calculator
 					</h1>
 					
@@ -68,7 +65,7 @@
 					</button>
 				</div>
 				
-				<p class="mt-1 sm:mt-2 text-sm sm:text-base" style="color: var(--color-text-tertiary);">
+				<p class="mt-1 sm:mt-2 text-caption">
 					Calculate running pace, time, or distance
 				</p>
 			</header>
@@ -91,7 +88,7 @@
 					<!-- Pace Section -->
 					<div data-section="pace" class="form-section space-y-4" role="tabpanel" id="pace-panel" aria-labelledby="pace-tab">
 						<div>
-							<label class="font-medium mb-2 block" style="color: var(--color-text-secondary);">Time</label>
+							<label class="text-label mb-2 block">Time</label>
 							<div class="flex items-center space-x-2">
 								<div class="flex-1">
 									<input
@@ -105,7 +102,7 @@
 										autocomplete="off"
 										aria-label="Hours"
 									/>
-									<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">HH</label>
+									<label class="text-caption block text-center mt-1">HH</label>
 								</div>
 								<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
 								<div class="flex-1">
@@ -121,7 +118,7 @@
 										autocomplete="off"
 										aria-label="Minutes"
 									/>
-									<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">MM</label>
+									<label class="text-caption block text-center mt-1">MM</label>
 								</div>
 								<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
 								<div class="flex-1">
@@ -137,14 +134,14 @@
 										autocomplete="off"
 										aria-label="Seconds"
 									/>
-									<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">SS</label>
+									<label class="text-caption block text-center mt-1">SS</label>
 								</div>
 							</div>
-							<div id="pace-time-hint" class="text-sm mt-1" style="color: var(--color-text-tertiary);">Enter your running time</div>
+							<div id="pace-time-hint" class="text-body-small mt-1" style="color: var(--color-text-tertiary);">Enter your running time</div>
 							<div id="pace-time-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
 						</div>
 						<div>
-							<label class="font-medium mb-2 block" style="color: var(--color-text-secondary);" for="pace-distance"
+							<label class="text-label mb-2 block" for="pace-distance"
 								>Distance</label
 							>
 							<select id="pace-preset" class="input-base select-custom preset-select mb-3" aria-label="Pick an event">
@@ -164,7 +161,7 @@
 								autocomplete="off"
 								enterkeyhint="done"
 							/>
-							<div id="pace-distance-hint" class="text-sm mt-1" style="color: var(--color-text-tertiary);">Enter distance in selected unit</div>
+							<div id="pace-distance-hint" class="text-body-small mt-1" style="color: var(--color-text-tertiary);">Enter distance in selected unit</div>
 							<div id="pace-distance-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
 						</div>
 					</div>
@@ -172,7 +169,7 @@
 					<!-- Time Section -->
 					<div data-section="time" class="form-section space-y-4 hidden" role="tabpanel" id="time-panel" aria-labelledby="time-tab">
 						<div>
-							<label class="font-medium mb-2 block" style="color: var(--color-text-secondary);">Pace</label>
+							<label class="text-label mb-2 block">Pace</label>
 							<div class="flex items-center space-x-2">
 								<div class="flex-1">
 									<input
@@ -187,7 +184,7 @@
 										autocomplete="off"
 										aria-label="Minutes"
 									/>
-									<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">MM</label>
+									<label class="text-caption block text-center mt-1">MM</label>
 								</div>
 								<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
 								<div class="flex-1">
@@ -203,14 +200,14 @@
 										autocomplete="off"
 										aria-label="Seconds"
 									/>
-									<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">SS</label>
+									<label class="text-caption block text-center mt-1">SS</label>
 								</div>
 							</div>
-							<div id="time-pace-hint" class="text-sm mt-1" style="color: var(--color-text-tertiary);">Enter your pace per unit</div>
+							<div id="time-pace-hint" class="text-body-small mt-1" style="color: var(--color-text-tertiary);">Enter your pace per unit</div>
 							<div id="time-pace-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
 						</div>
 						<div>
-							<label class="font-medium mb-2 block" style="color: var(--color-text-secondary);" for="time-distance"
+							<label class="text-label mb-2 block" for="time-distance"
 								>Distance</label
 							>
 							<select id="time-preset" class="input-base select-custom preset-select mb-3" aria-label="Pick an event">
@@ -230,7 +227,7 @@
 								autocomplete="off"
 								enterkeyhint="done"
 							/>
-							<div id="time-distance-hint" class="text-sm mt-1" style="color: var(--color-text-tertiary);">Enter distance in selected unit</div>
+							<div id="time-distance-hint" class="text-body-small mt-1" style="color: var(--color-text-tertiary);">Enter distance in selected unit</div>
 							<div id="time-distance-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
 						</div>
 					</div>
@@ -238,7 +235,7 @@
 					<!-- Distance Section -->
 					<div data-section="distance" class="form-section space-y-4 hidden" role="tabpanel" id="distance-panel" aria-labelledby="distance-tab">
 						<div>
-							<label class="font-medium mb-2 block" style="color: var(--color-text-secondary);">Time</label>
+							<label class="text-label mb-2 block">Time</label>
 							<div class="flex items-center space-x-2">
 								<div class="flex-1">
 									<input
@@ -253,7 +250,7 @@
 										autocomplete="off"
 										aria-label="Hours"
 									/>
-									<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">HH</label>
+									<label class="text-caption block text-center mt-1">HH</label>
 								</div>
 								<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
 								<div class="flex-1">
@@ -269,7 +266,7 @@
 										autocomplete="off"
 										aria-label="Minutes"
 									/>
-									<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">MM</label>
+									<label class="text-caption block text-center mt-1">MM</label>
 								</div>
 								<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
 								<div class="flex-1">
@@ -285,14 +282,14 @@
 										autocomplete="off"
 										aria-label="Seconds"
 									/>
-									<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">SS</label>
+									<label class="text-caption block text-center mt-1">SS</label>
 								</div>
 							</div>
-							<div id="distance-time-hint" class="text-sm mt-1" style="color: var(--color-text-tertiary);">Enter your running time</div>
+							<div id="distance-time-hint" class="text-body-small mt-1" style="color: var(--color-text-tertiary);">Enter your running time</div>
 							<div id="distance-time-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
 						</div>
 						<div>
-							<label class="font-medium mb-2 block" style="color: var(--color-text-secondary);">Pace</label>
+							<label class="text-label mb-2 block">Pace</label>
 							<div class="flex items-center space-x-2">
 								<div class="flex-1">
 									<input
@@ -307,7 +304,7 @@
 										autocomplete="off"
 										aria-label="Minutes"
 									/>
-									<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">MM</label>
+									<label class="text-caption block text-center mt-1">MM</label>
 								</div>
 								<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
 								<div class="flex-1">
@@ -323,10 +320,10 @@
 										autocomplete="off"
 										aria-label="Seconds"
 									/>
-									<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">SS</label>
+									<label class="text-caption block text-center mt-1">SS</label>
 								</div>
 							</div>
-							<div id="distance-pace-hint" class="text-sm mt-1" style="color: var(--color-text-tertiary);">Enter your pace per unit</div>
+							<div id="distance-pace-hint" class="text-body-small mt-1" style="color: var(--color-text-tertiary);">Enter your pace per unit</div>
 							<div id="distance-pace-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
 						</div>
 					</div>
@@ -378,8 +375,8 @@
 			<!-- Loading State -->
 			<div id="loading" class="mt-6 p-4 rounded-lg hidden">
 				<div class="flex items-center justify-center space-x-2">
-					<div class="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-600"></div>
-					<span class="text-gray-600 dark:text-gray-300">Calculating...</span>
+					<div class="animate-spin rounded-full h-6 w-6 border-b-2" style="border-color: var(--color-interactive-primary);"></div>
+					<span style="color: var(--color-text-secondary);">Calculating...</span>
 				</div>
 			</div>
 		<!-- Autocomplete suggestions for distances -->
@@ -392,7 +389,7 @@
 	<div id="help-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50" role="dialog" aria-modal="true" aria-labelledby="help-title">
 		<div class="modal-content rounded-2xl shadow-2xl w-full max-w-lg p-6">
 			<div class="flex justify-between items-center mb-6">
-				<h2 id="help-title" class="text-xl font-bold modal-title">How to Use</h2>
+				<h2 id="help-title" class="text-heading-2">How to Use</h2>
 				<button id="close-help" class="modal-text-tertiary p-1 rounded-lg transition-colors" aria-label="Close help">
 					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -402,30 +399,30 @@
 			
 			<div class="space-y-6">
 				<div>
-					<h3 class="text-lg font-semibold modal-title mb-2 flex items-center">
+					<h3 class="text-heading-3 mb-2 flex items-center">
 						<span class="w-6 h-6 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">P</span>
 						Pace Calculator
 					</h3>
-					<p class="modal-text text-sm leading-relaxed">Calculate your running pace. Enter your time and distance to find your pace per mile/km.</p>
-					<p class="modal-text-tertiary text-xs mt-1"><strong>Example:</strong> 30 minutes for 5K = 6:00/km pace</p>
+					<p class="text-body-small leading-relaxed">Calculate your running pace. Enter your time and distance to find your pace per mile/km.</p>
+					<p class="text-caption mt-1"><strong>Example:</strong> 30 minutes for 5K = 6:00/km pace</p>
 				</div>
 				
 				<div>
-					<h3 class="text-lg font-semibold modal-title mb-2 flex items-center">
+					<h3 class="text-heading-3 mb-2 flex items-center">
 						<span class="w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">T</span>
 						Time Calculator
 					</h3>
-					<p class="modal-text text-sm leading-relaxed">Calculate your finish time. Enter your pace and distance to predict how long your run will take.</p>
-					<p class="modal-text-tertiary text-xs mt-1"><strong>Example:</strong> 6:00/km pace for 10K = 60 minutes</p>
+					<p class="text-body-small leading-relaxed">Calculate your finish time. Enter your pace and distance to predict how long your run will take.</p>
+					<p class="text-caption mt-1"><strong>Example:</strong> 6:00/km pace for 10K = 60 minutes</p>
 				</div>
 				
 				<div>
-					<h3 class="text-lg font-semibold modal-title mb-2 flex items-center">
+					<h3 class="text-heading-3 mb-2 flex items-center">
 						<span class="w-6 h-6 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">D</span>
 						Distance Calculator
 					</h3>
-					<p class="modal-text text-sm leading-relaxed">Calculate distance covered. Enter your time and pace to see how far you ran.</p>
-					<p class="modal-text-tertiary text-xs mt-1"><strong>Example:</strong> 45 minutes at 5:00/km pace = 9 kilometers</p>
+					<p class="text-body-small leading-relaxed">Calculate distance covered. Enter your time and pace to see how far you ran.</p>
+					<p class="text-caption mt-1"><strong>Example:</strong> 45 minutes at 5:00/km pace = 9 kilometers</p>
 				</div>
 			</div>
 			
@@ -441,7 +438,7 @@
 	<div id="settings-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="settings-title">
 		<div class="modal-content rounded-2xl shadow-2xl w-full max-w-md p-6 my-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
 			<div class="flex justify-between items-center mb-6">
-				<h2 id="settings-title" class="text-xl font-bold modal-title">Settings</h2>
+				<h2 id="settings-title" class="text-heading-2">Settings</h2>
 				<button id="close-settings" class="modal-text-tertiary p-1 rounded-lg transition-colors" aria-label="Close settings">
 					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -453,7 +450,7 @@
 				<!-- Distance Unit Setting -->
 				<div>
 					<label class="block text-sm font-medium modal-text mb-3">Distance Unit</label>
-					<fieldset class="flex items-center bg-gray-200 dark:bg-gray-700 rounded-full p-1">
+					<fieldset class="flex items-center rounded-full p-1" style="background-color: var(--color-interactive-secondary);">
 						<legend class="sr-only">Choose distance unit</legend>
 						<button data-unit="km" class="unit-toggle" aria-pressed="true" tabindex="0">KM</button>
 						<button data-unit="miles" class="unit-toggle" aria-pressed="false" tabindex="0">Miles</button>
@@ -466,34 +463,34 @@
 					
 					<!-- Basic Themes -->
 					<div class="space-y-2 mb-4">
-						<p class="text-xs modal-text-tertiary mb-2">Basic Themes</p>
+						<p class="text-caption mb-2">Basic Themes</p>
 						<label class="flex items-center">
-							<input type="radio" name="theme" value="light" class="theme-radio mr-3 text-indigo-600 focus:ring-indigo-500">
+							<input type="radio" name="theme" value="light" class="theme-radio mr-3" style="color: var(--color-interactive-primary); --tw-ring-color: var(--color-interactive-primary-focus);">
 							<span class="modal-text">Light</span>
 						</label>
 						<label class="flex items-center">
-							<input type="radio" name="theme" value="dark" class="theme-radio mr-3 text-indigo-600 focus:ring-indigo-500">
+							<input type="radio" name="theme" value="dark" class="theme-radio mr-3" style="color: var(--color-interactive-primary); --tw-ring-color: var(--color-interactive-primary-focus);">
 							<span class="modal-text">Dark</span>
 						</label>
 						<label class="flex items-center">
-							<input type="radio" name="theme" value="system" class="theme-radio mr-3 text-indigo-600 focus:ring-indigo-500">
+							<input type="radio" name="theme" value="system" class="theme-radio mr-3" style="color: var(--color-interactive-primary); --tw-ring-color: var(--color-interactive-primary-focus);">
 							<span class="modal-text">System</span>
 						</label>
 					</div>
 					
 					<!-- Accessibility Themes -->
 					<div class="space-y-2 border-t pt-3" style="border-color: var(--color-border-subtle);">
-						<p class="text-xs modal-text-tertiary mb-2">Accessibility</p>
+						<p class="text-caption mb-2">Accessibility</p>
 						<label class="flex items-center">
-							<input type="radio" name="theme" value="amoled" class="theme-radio mr-3 text-indigo-600 focus:ring-indigo-500">
+							<input type="radio" name="theme" value="amoled" class="theme-radio mr-3" style="color: var(--color-interactive-primary); --tw-ring-color: var(--color-interactive-primary-focus);">
 							<span class="modal-text">AMOLED</span>
 						</label>
 						<label class="flex items-center">
-							<input type="radio" name="theme" value="high-contrast" class="theme-radio mr-3 text-indigo-600 focus:ring-indigo-500">
+							<input type="radio" name="theme" value="high-contrast" class="theme-radio mr-3" style="color: var(--color-interactive-primary); --tw-ring-color: var(--color-interactive-primary-focus);">
 							<span class="modal-text">High Contrast</span>
 						</label>
 						<label class="flex items-center">
-							<input type="radio" name="theme" value="monochrome" class="theme-radio mr-3 text-indigo-600 focus:ring-indigo-500">
+							<input type="radio" name="theme" value="monochrome" class="theme-radio mr-3" style="color: var(--color-interactive-primary); --tw-ring-color: var(--color-interactive-primary-focus);">
 							<span class="modal-text">Monochrome</span>
 						</label>
 					</div>
@@ -616,12 +613,12 @@
 							</div>
 						</button>
 					</div>
-					<p class="text-xs modal-text-tertiary mt-2">Choose your preferred accent color for buttons and highlights</p>
+					<p class="text-caption mt-2">Choose your preferred accent color for buttons and highlights</p>
 				</div>
 
 				<!-- Accent Color Disabled Message -->
 				<div id="accent-disabled-message" style="display: none;" class="text-center py-4">
-					<p class="text-sm modal-text-tertiary">
+					<p class="text-body-small" style="color: var(--color-text-tertiary);">
 						<svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
 						</svg>
@@ -637,8 +634,8 @@
 	<div id="pr-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="pr-modal-title">
 		<div class="modal-content rounded-2xl shadow-2xl w-full max-w-md p-6 my-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
 			<div class="flex justify-between items-center mb-6">
-				<h2 id="pr-modal-title" class="text-xl font-bold text-gray-900 dark:text-white">Add Personal Record</h2>
-				<button id="close-pr-modal" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 p-1 rounded-lg transition-colors" aria-label="Close PR modal">
+				<h2 id="pr-modal-title" class="text-heading-2">Add Personal Record</h2>
+				<button id="close-pr-modal" class="modal-text-tertiary p-1 rounded-lg transition-colors" aria-label="Close PR modal">
 					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 					</svg>
@@ -647,13 +644,13 @@
 
 			<form id="pr-form" class="space-y-4">
 				<div>
-					<label for="pr-distance" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Distance</label>
+					<label for="pr-distance" class="text-label mb-2 block">Distance</label>
 					<input type="text" id="pr-distance" class="input-base" placeholder="e.g., 5 or 21.1" required inputmode="decimal" pattern="[0-9]*\.?[0-9]*">
 					<div id="pr-distance-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
 				</div>
 
 				<div>
-					<label for="pr-unit" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unit</label>
+					<label for="pr-unit" class="text-label mb-2 block">Unit</label>
 					<select id="pr-unit" class="input-base">
 						<option value="km">Kilometers</option>
 						<option value="miles">Miles</option>
@@ -661,7 +658,7 @@
 				</div>
 
 				<div>
-					<label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Time</label>
+					<label class="text-label mb-2 block">Time</label>
 					<div class="flex items-center space-x-2">
 						<div class="flex-1">
 							<input
@@ -675,7 +672,7 @@
 								autocomplete="off"
 								aria-label="Hours"
 							/>
-							<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">HH</label>
+							<label class="text-caption block text-center mt-1">HH</label>
 						</div>
 						<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
 						<div class="flex-1">
@@ -691,7 +688,7 @@
 								aria-label="Minutes"
 								required
 							/>
-							<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">MM</label>
+							<label class="text-caption block text-center mt-1">MM</label>
 						</div>
 						<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
 						<div class="flex-1">
@@ -707,23 +704,23 @@
 								aria-label="Seconds"
 								required
 							/>
-							<label class="text-xs block text-center mt-1" style="color: var(--color-text-tertiary);">SS</label>
+							<label class="text-caption block text-center mt-1">SS</label>
 						</div>
 					</div>
-					<div class="text-sm mt-1" style="color: var(--color-text-tertiary);">Enter your personal record time</div>
+					<div class="text-body-small mt-1" style="color: var(--color-text-tertiary);">Enter your personal record time</div>
 					<div id="pr-time-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
 				</div>
 
 				<div>
-					<label for="pr-date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Date (Optional)</label>
+					<label for="pr-date" class="text-label mb-2 block">Date (Optional)</label>
 					<input type="date" id="pr-date" class="input-base">
-					<div class="text-sm mt-1" style="color: var(--color-text-tertiary);">When did you achieve this PR?</div>
+					<div class="text-body-small mt-1" style="color: var(--color-text-tertiary);">When did you achieve this PR?</div>
 				</div>
 
 				<div>
-					<label for="pr-notes" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Notes (Optional)</label>
+					<label for="pr-notes" class="text-label mb-2 block">Notes (Optional)</label>
 					<textarea id="pr-notes" class="input-base" rows="3" placeholder="e.g., Great weather, felt strong, new PB!"></textarea>
-					<div class="text-sm mt-1" style="color: var(--color-text-tertiary);">Add context about this performance</div>
+					<div class="text-body-small mt-1" style="color: var(--color-text-tertiary);">Add context about this performance</div>
 				</div>
 
 				<div class="flex gap-3 mt-6">
