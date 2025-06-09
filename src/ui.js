@@ -702,13 +702,14 @@ function generateRaceSplits() {
 	}
 	
 	// Don't show splits for very short distances
-	if (distance < 1) return null;
+	if (distance < 0.5) return null;
 	
 	const unit = state.distanceUnit;
 	const splits = [];
+	
+	// Generate splits for each full unit (1km, 2km, 3km, etc.)
 	const totalSplits = Math.floor(distance);
 	
-	// Generate splits for each full unit (km/mile)
 	for (let i = 1; i <= totalSplits; i++) {
 		const cumulativeTime = pacePerUnit * i;
 		splits.push({
@@ -719,9 +720,9 @@ function generateRaceSplits() {
 		});
 	}
 	
-	// Add final split if there's a remainder
-	if (distance > totalSplits) {
-		const remainderDistance = distance - totalSplits;
+	// Add final split for fractional distance if needed
+	const remainder = distance - totalSplits;
+	if (remainder > 0.01) { // More than 0.01 units (10m for km, ~50ft for miles)
 		const cumulativeTime = pacePerUnit * distance;
 		splits.push({
 			distance: distance.toFixed(2),
@@ -740,20 +741,33 @@ function generateRaceSplits() {
 	};
 }
 
+
 function createSplitsAccordion() {
 	const splitsData = generateRaceSplits();
 	if (!splitsData) return '';
 	
 	const { splits, totalDistance, unit, pacePerUnit } = splitsData;
 	
-	const splitsHtml = splits.map(split => `
-		<div class="splits-row flex justify-between items-center py-1 px-2 ${split.isFinish ? 'font-semibold border-t pt-2 mt-1' : ''}">
-			<span class="text-sm">
-				${split.isFinish ? 'Finish' : split.distance} ${unit}
-			</span>
-			<span class="font-mono text-sm">${split.time}</span>
-		</div>
-	`).join('');
+	const splitsHtml = splits.map(split => {
+		// Determine split type styling and label
+		let splitLabel, splitClass = '';
+		
+		if (split.isFinish) {
+			splitLabel = `Finish (${split.distance} ${unit})`;
+			splitClass = 'font-semibold border-t pt-2 mt-1';
+		} else {
+			splitLabel = `${split.distance} ${unit}`;
+		}
+		
+		return `
+			<div class="splits-row flex justify-between items-center py-1 px-2 ${splitClass}">
+				<span class="text-sm">
+					${splitLabel}
+				</span>
+				<span class="font-mono text-sm">${split.time}</span>
+			</div>
+		`;
+	}).join('');
 	
 	return `
 		<div class="mt-3 pt-3 border-t" style="border-color: var(--color-border-subtle);">
@@ -764,7 +778,7 @@ function createSplitsAccordion() {
 				aria-controls="splits-content"
 			>
 				<span class="text-sm font-medium" style="color: var(--color-text-secondary);">
-					Show Splits (${totalDistance.toFixed(1)} ${unit})
+					Show Splits (${totalDistance % 1 === 0 ? totalDistance : totalDistance.toFixed(2)} ${unit})
 				</span>
 				<svg id="splits-chevron" class="w-4 h-4 transition-transform duration-200" style="color: var(--color-text-tertiary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
