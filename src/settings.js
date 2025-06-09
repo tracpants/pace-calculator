@@ -7,8 +7,13 @@ import * as calc from "./calculator.js";
 const defaultSettings = {
 	distanceUnit: 'km',
 	theme: 'system', // 'light', 'dark', 'system', 'amoled', 'high-contrast', or 'monochrome'
-	accentColor: 'indigo' // default accent color
+	accentColor: 'indigo', // default accent color
+	backgroundGradient: false // subtle background gradient
 };
+
+// Theme categorization
+const accessibilityThemes = ['amoled', 'high-contrast', 'monochrome'];
+const isA11yTheme = (theme) => accessibilityThemes.includes(theme);
 
 // DOM Elements
 const settingsModal = document.getElementById("settings-modal");
@@ -177,6 +182,16 @@ function applyAccentColor(accentColor) {
 	document.documentElement.setAttribute('data-accent-color', accentColor);
 }
 
+// Apply background gradient
+function applyBackgroundGradient(enabled) {
+	const body = document.body;
+	if (enabled) {
+		body.classList.add('gradient-background');
+	} else {
+		body.classList.remove('gradient-background');
+	}
+}
+
 // Update accent color UI to show current selection
 function updateAccentColorUI(accentColor) {
 	accentColorOptions.forEach(option => {
@@ -188,6 +203,74 @@ function updateAccentColorUI(accentColor) {
 	});
 }
 
+// Toggle accent color picker visibility
+function toggleAccentPicker(show) {
+	const accentSection = document.getElementById('accent-color-section');
+	const accentDisabledMessage = document.getElementById('accent-disabled-message');
+	
+	if (accentSection) {
+		accentSection.style.display = show ? 'block' : 'none';
+	}
+	if (accentDisabledMessage) {
+		accentDisabledMessage.style.display = show ? 'none' : 'block';
+	}
+}
+
+// Toggle background gradient control
+function toggleGradientControl(show) {
+	const gradientSection = document.getElementById('gradient-section');
+	
+	if (gradientSection) {
+		gradientSection.style.display = show ? 'block' : 'none';
+	}
+}
+
+// Handle theme selection with auto-apply
+function handleThemeChange(e) {
+	const selectedTheme = e.target.value;
+	const currentSettings = loadSettings();
+	
+	// Apply theme immediately
+	applyTheme(selectedTheme);
+	
+	// Handle A11Y themes
+	const isAccessibilityTheme = isA11yTheme(selectedTheme);
+	toggleAccentPicker(!isAccessibilityTheme);
+	toggleGradientControl(!isAccessibilityTheme);
+	
+	// Disable gradient for A11Y themes
+	if (isAccessibilityTheme && currentSettings.backgroundGradient) {
+		applyBackgroundGradient(false);
+		const gradientToggle = document.getElementById('gradient-toggle');
+		if (gradientToggle) gradientToggle.checked = false;
+		currentSettings.backgroundGradient = false;
+	}
+	
+	// Reset to neutral accent for A11Y themes
+	if (isAccessibilityTheme) {
+		applyAccentColor('indigo'); // Neutral default
+		updateAccentColorUI('indigo');
+		currentSettings.accentColor = 'indigo';
+	}
+	
+	// Save immediately
+	currentSettings.theme = selectedTheme;
+	saveSettings(currentSettings);
+}
+
+// Handle background gradient toggle
+function handleGradientToggle(e) {
+	const enabled = e.target.checked;
+	const currentSettings = loadSettings();
+	
+	// Apply immediately
+	applyBackgroundGradient(enabled);
+	
+	// Save immediately
+	currentSettings.backgroundGradient = enabled;
+	saveSettings(currentSettings);
+}
+
 // Handle accent color selection
 function handleAccentColorSelect(e) {
 	const selectedColor = e.currentTarget.dataset.accent;
@@ -196,10 +279,10 @@ function handleAccentColorSelect(e) {
 		updateAccentColorUI(selectedColor);
 		// Apply the color theme
 		applyAccentColor(selectedColor);
-		// Save to current session (will be saved when user clicks Save)
+		// Save immediately
 		const currentSettings = loadSettings();
 		currentSettings.accentColor = selectedColor;
-		localStorage.setItem('pace-calculator-settings', JSON.stringify(currentSettings));
+		saveSettings(currentSettings);
 	}
 }
 
@@ -243,6 +326,17 @@ function openSettings() {
 	// Set current accent color
 	updateAccentColorUI(settings.accentColor);
 	
+	// Set background gradient toggle
+	const gradientToggle = document.getElementById('gradient-toggle');
+	if (gradientToggle) {
+		gradientToggle.checked = settings.backgroundGradient || false;
+	}
+	
+	// Handle A11Y theme UI state
+	const isAccessibilityTheme = isA11yTheme(settings.theme);
+	toggleAccentPicker(!isAccessibilityTheme);
+	toggleGradientControl(!isAccessibilityTheme);
+	
 	// Show modal
 	settingsModal.classList.remove('hidden');
 	settingsModal.classList.add('flex');
@@ -269,30 +363,6 @@ function closeSettings() {
 	menuBtn.focus();
 }
 
-// Save and apply settings
-function handleSaveSettings() {
-	const selectedTheme = document.querySelector('input[name="theme"]:checked')?.value || 'system';
-	const selectedUnit = state.distanceUnit; // Already updated by unit toggles
-	
-	// Get current accent color from settings
-	const currentSettings = loadSettings();
-	
-	const settings = {
-		theme: selectedTheme,
-		distanceUnit: selectedUnit,
-		accentColor: currentSettings.accentColor
-	};
-	
-	// Save to localStorage
-	saveSettings(settings);
-	
-	// Apply settings
-	applyTheme(selectedTheme);
-	applyDistanceUnit(selectedUnit);
-	
-	// Close modal
-	closeSettings();
-}
 
 // Handle unit toggle clicks in modal
 function handleUnitToggle(e) {
@@ -624,10 +694,21 @@ export function initSettings() {
 	applyTheme(settings.theme);
 	applyDistanceUnit(settings.distanceUnit);
 	applyAccentColor(settings.accentColor);
+	applyBackgroundGradient(settings.backgroundGradient || false);
 	
 	// Event listeners
 	closeSettingsBtn.addEventListener('click', closeSettings);
-	saveSettingsBtn.addEventListener('click', handleSaveSettings);
+	
+	// Theme radio button listeners for auto-apply
+	themeRadios.forEach(radio => {
+		radio.addEventListener('change', handleThemeChange);
+	});
+	
+	// Background gradient toggle listener
+	const gradientToggle = document.getElementById('gradient-toggle');
+	if (gradientToggle) {
+		gradientToggle.addEventListener('change', handleGradientToggle);
+	}
 	
 	// Menu event listeners
 	menuBtn.addEventListener('click', handleMenuToggle);
@@ -700,4 +781,4 @@ export function initSettings() {
 }
 
 // Export functions for use in other modules
-export { loadSettings, saveSettings, applyTheme, applyDistanceUnit };
+export { loadSettings, saveSettings, applyTheme, applyDistanceUnit, applyBackgroundGradient };

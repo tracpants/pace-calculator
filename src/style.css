@@ -131,6 +131,12 @@
   /* Gradient Colors */
   --gradient-brand: linear-gradient(135deg, var(--color-secondary-500), var(--color-primary-600));
   --gradient-brand-light: linear-gradient(135deg, var(--color-secondary-400), var(--color-primary-500));
+  
+  /* Background gradient (subtle) */
+  --gradient-background: linear-gradient(135deg, 
+    var(--color-background) 0%, 
+    color-mix(in srgb, var(--color-primary-50) 8%, var(--color-background)) 100%
+  );
 }
 
 /* Dark Mode Color Overrides */
@@ -160,6 +166,12 @@
   /* Dark mode gradients */
   --gradient-brand: linear-gradient(135deg, var(--color-secondary-400), var(--color-primary-500));
   --gradient-brand-light: linear-gradient(135deg, var(--color-secondary-300), var(--color-primary-400));
+  
+  /* Dark mode background gradient */
+  --gradient-background: linear-gradient(135deg, 
+    var(--color-background) 0%, 
+    color-mix(in srgb, var(--color-primary-700) 6%, var(--color-background)) 100%
+  );
 }
 
 /* ===========================================
@@ -536,6 +548,11 @@
 		clip: rect(0, 0, 0, 0);
 	}
 
+	/* Background gradient class */
+	.gradient-background {
+		background: var(--gradient-background);
+	}
+
 	/* Fix layout jumping by ensuring consistent heights */
 	.form-section {
 		@apply min-h-[280px];
@@ -880,6 +897,32 @@
 	.splits-row:hover {
 		background-color: var(--color-surface-tertiary);
 		border-radius: 4px;
+	}
+
+	/* Toggle checkbox styling */
+	.toggle-checkbox {
+		@apply relative w-12 h-6 rounded-full transition-colors cursor-pointer;
+		background-color: var(--color-interactive-secondary);
+		appearance: none;
+		outline: none;
+	}
+	
+	.toggle-checkbox:checked {
+		background-color: var(--color-interactive-primary);
+	}
+	
+	.toggle-checkbox::before {
+		content: '';
+		@apply absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+	}
+	
+	.toggle-checkbox:checked::before {
+		transform: translateX(1.5rem);
+	}
+	
+	.toggle-checkbox:focus {
+		box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-interactive-primary-focus);
 	}
 
 	/* Mobile improvements */

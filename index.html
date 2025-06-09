@@ -452,7 +452,7 @@
 			<div class="space-y-6">
 				<!-- Distance Unit Setting -->
 				<div>
-					<label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Distance Unit</label>
+					<label class="block text-sm font-medium modal-text mb-3">Distance Unit</label>
 					<fieldset class="flex items-center bg-gray-200 dark:bg-gray-700 rounded-full p-1">
 						<legend class="sr-only">Choose distance unit</legend>
 						<button data-unit="km" class="unit-toggle" aria-pressed="true" tabindex="0">KM</button>
@@ -462,37 +462,56 @@
 
 				<!-- Theme Setting -->
 				<div>
-					<label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Theme</label>
-					<div class="space-y-2">
+					<label class="block text-sm font-medium modal-text mb-3">Appearance</label>
+					
+					<!-- Basic Themes -->
+					<div class="space-y-2 mb-4">
+						<p class="text-xs modal-text-tertiary mb-2">Basic Themes</p>
 						<label class="flex items-center">
 							<input type="radio" name="theme" value="light" class="theme-radio mr-3 text-indigo-600 focus:ring-indigo-500">
-							<span class="text-gray-700 dark:text-gray-300">Light</span>
+							<span class="modal-text">Light</span>
 						</label>
 						<label class="flex items-center">
 							<input type="radio" name="theme" value="dark" class="theme-radio mr-3 text-indigo-600 focus:ring-indigo-500">
-							<span class="text-gray-700 dark:text-gray-300">Dark</span>
+							<span class="modal-text">Dark</span>
 						</label>
 						<label class="flex items-center">
 							<input type="radio" name="theme" value="system" class="theme-radio mr-3 text-indigo-600 focus:ring-indigo-500">
-							<span class="text-gray-700 dark:text-gray-300">System</span>
+							<span class="modal-text">System</span>
 						</label>
+					</div>
+					
+					<!-- Accessibility Themes -->
+					<div class="space-y-2 border-t pt-3" style="border-color: var(--color-border-subtle);">
+						<p class="text-xs modal-text-tertiary mb-2">Accessibility</p>
 						<label class="flex items-center">
 							<input type="radio" name="theme" value="amoled" class="theme-radio mr-3 text-indigo-600 focus:ring-indigo-500">
-							<span class="text-gray-700 dark:text-gray-300">AMOLED</span>
+							<span class="modal-text">AMOLED</span>
 						</label>
 						<label class="flex items-center">
 							<input type="radio" name="theme" value="high-contrast" class="theme-radio mr-3 text-indigo-600 focus:ring-indigo-500">
-							<span class="text-gray-700 dark:text-gray-300">High Contrast</span>
+							<span class="modal-text">High Contrast</span>
 						</label>
 						<label class="flex items-center">
 							<input type="radio" name="theme" value="monochrome" class="theme-radio mr-3 text-indigo-600 focus:ring-indigo-500">
-							<span class="text-gray-700 dark:text-gray-300">Monochrome</span>
+							<span class="modal-text">Monochrome</span>
 						</label>
 					</div>
 				</div>
 
+				<!-- Background Gradient Setting -->
+				<div id="gradient-section">
+					<label class="flex items-center justify-between">
+						<div>
+							<span class="text-sm font-medium modal-text">Background Gradient</span>
+							<p class="text-xs modal-text-tertiary mt-1">Add subtle visual interest</p>
+						</div>
+						<input type="checkbox" id="gradient-toggle" class="toggle-checkbox">
+					</label>
+				</div>
+
 				<!-- Accent Color Setting -->
-				<div>
+				<div id="accent-color-section">
 					<label class="block text-sm font-medium modal-text mb-3">Accent Color</label>
 					<div class="grid grid-cols-4 gap-3">
 						<button 
@@ -610,10 +629,16 @@
 					<p class="text-xs modal-text-tertiary mt-2">Choose your preferred accent color for buttons and highlights</p>
 				</div>
 
-			</div>
+				<!-- Accent Color Disabled Message -->
+				<div id="accent-disabled-message" style="display: none;" class="text-center py-4">
+					<p class="text-sm modal-text-tertiary">
+						<svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+						</svg>
+						Accent colors are disabled for accessibility themes
+					</p>
+				</div>
 
-			<div class="mt-8 flex justify-end">
-				<button id="save-settings" class="btn-primary">Save</button>
 			</div>
 		</div>
 	</div>
