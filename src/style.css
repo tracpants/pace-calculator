@@ -128,9 +128,6 @@
   --color-status-warning-bg: var(--color-warning-50);
   --color-status-warning-border: var(--color-warning-500);
 
-  /* Gradient Colors */
-  --gradient-brand: linear-gradient(135deg, var(--color-secondary-500), var(--color-primary-600));
-  --gradient-brand-light: linear-gradient(135deg, var(--color-secondary-400), var(--color-primary-500));
 }
 
 /* Dark Mode Color Overrides */
@@ -157,9 +154,6 @@
   --color-status-error-bg: rgba(239, 68, 68, 0.1);
   --color-status-warning-bg: rgba(245, 158, 11, 0.1);
 
-  /* Dark mode gradients */
-  --gradient-brand: linear-gradient(135deg, var(--color-secondary-400), var(--color-primary-500));
-  --gradient-brand-light: linear-gradient(135deg, var(--color-secondary-300), var(--color-primary-400));
 }
 
 /* ===========================================
@@ -179,22 +173,6 @@
   --color-primary-800: #3730a3;
   --color-primary-900: #312e81;
   --color-primary-950: #1e1b4b;
-  
-  /* Dark desaturated background */
-  --color-themed-background: #1a1a2e;
-  
-  /* True complementary: Indigo → Orange */
-  --color-secondary-50: #fff7ed;
-  --color-secondary-100: #ffedd5;
-  --color-secondary-200: #fed7aa;
-  --color-secondary-300: #fdba74;
-  --color-secondary-400: #fb923c;
-  --color-secondary-500: #f97316;
-  --color-secondary-600: #ea580c;
-  --color-secondary-700: #c2410c;
-  --color-secondary-800: #9a3412;
-  --color-secondary-900: #7c2d12;
-  --color-secondary-950: #431407;
 }
 
 /* Blue theme */
@@ -210,22 +188,6 @@
   --color-primary-800: #1e40af;
   --color-primary-900: #1e3a8a;
   --color-primary-950: #172554;
-  
-  /* Dark desaturated background */
-  --color-themed-background: #1a1e2e;
-  
-  /* True complementary: Blue → Orange/Red-Orange */
-  --color-secondary-50: #fff7ed;
-  --color-secondary-100: #ffedd5;
-  --color-secondary-200: #fed7aa;
-  --color-secondary-300: #fdba74;
-  --color-secondary-400: #fb923c;
-  --color-secondary-500: #f97316;
-  --color-secondary-600: #ea580c;
-  --color-secondary-700: #c2410c;
-  --color-secondary-800: #9a3412;
-  --color-secondary-900: #7c2d12;
-  --color-secondary-950: #431407;
 }
 
 /* Emerald theme */
@@ -241,22 +203,6 @@
   --color-primary-800: #065f46;
   --color-primary-900: #064e3b;
   --color-primary-950: #022c22;
-  
-  /* Dark desaturated background */
-  --color-themed-background: #1a2e1e;
-  
-  /* True complementary: Emerald/Green → Red/Magenta */
-  --color-secondary-50: #fdf2f8;
-  --color-secondary-100: #fce7f3;
-  --color-secondary-200: #fbcfe8;
-  --color-secondary-300: #f9a8d4;
-  --color-secondary-400: #f472b6;
-  --color-secondary-500: #ec4899;
-  --color-secondary-600: #db2777;
-  --color-secondary-700: #be185d;
-  --color-secondary-800: #9d174d;
-  --color-secondary-900: #831843;
-  --color-secondary-950: #500724;
 }
 
 /* Amber theme */
@@ -272,22 +218,6 @@
   --color-primary-800: #92400e;
   --color-primary-900: #78350f;
   --color-primary-950: #451a03;
-  
-  /* Dark desaturated background */
-  --color-themed-background: #2e2a1a;
-  
-  /* True complementary: Amber/Yellow → Blue/Purple */
-  --color-secondary-50: #f5f3ff;
-  --color-secondary-100: #ede9fe;
-  --color-secondary-200: #ddd6fe;
-  --color-secondary-300: #c4b5fd;
-  --color-secondary-400: #a78bfa;
-  --color-secondary-500: #8b5cf6;
-  --color-secondary-600: #7c3aed;
-  --color-secondary-700: #6d28d9;
-  --color-secondary-800: #5b21b6;
-  --color-secondary-900: #4c1d95;
-  --color-secondary-950: #2e1065;
 }
 
 /* Rose theme */
@@ -303,22 +233,6 @@
   --color-primary-800: #9f1239;
   --color-primary-900: #881337;
   --color-primary-950: #4c0519;
-  
-  /* Dark desaturated background */
-  --color-themed-background: #2e1a1e;
-  
-  /* True complementary: Rose/Red → Green/Cyan */
-  --color-secondary-50: #f0fdf4;
-  --color-secondary-100: #dcfce7;
-  --color-secondary-200: #bbf7d0;
-  --color-secondary-300: #86efac;
-  --color-secondary-400: #4ade80;
-  --color-secondary-500: #22c55e;
-  --color-secondary-600: #16a34a;
-  --color-secondary-700: #15803d;
-  --color-secondary-800: #166534;
-  --color-secondary-900: #14532d;
-  --color-secondary-950: #052e16;
 }
 
 /* Violet theme */
@@ -334,22 +248,6 @@
   --color-primary-800: #5b21b6;
   --color-primary-900: #4c1d95;
   --color-primary-950: #2e1065;
-  
-  /* Dark desaturated background */
-  --color-themed-background: #261a2e;
-  
-  /* True complementary: Violet/Purple → Yellow/Lime */
-  --color-secondary-50: #fefce8;
-  --color-secondary-100: #fef9c3;
-  --color-secondary-200: #fef08a;
-  --color-secondary-300: #fde047;
-  --color-secondary-400: #facc15;
-  --color-secondary-500: #eab308;
-  --color-secondary-600: #ca8a04;
-  --color-secondary-700: #a16207;
-  --color-secondary-800: #854d0e;
-  --color-secondary-900: #713f12;
-  --color-secondary-950: #422006;
 }
 
 /* Cyan theme */
@@ -365,22 +263,6 @@
   --color-primary-800: #155e75;
   --color-primary-900: #164e63;
   --color-primary-950: #083344;
-  
-  /* Dark desaturated background */
-  --color-themed-background: #1a2a2e;
-  
-  /* True complementary: Cyan → Red/Orange */
-  --color-secondary-50: #fef2f2;
-  --color-secondary-100: #fee2e2;
-  --color-secondary-200: #fecaca;
-  --color-secondary-300: #fca5a5;
-  --color-secondary-400: #f87171;
-  --color-secondary-500: #ef4444;
-  --color-secondary-600: #dc2626;
-  --color-secondary-700: #b91c1c;
-  --color-secondary-800: #991b1b;
-  --color-secondary-900: #7f1d1d;
-  --color-secondary-950: #450a0a;
 }
 
 /* Orange theme */
@@ -396,31 +278,26 @@
   --color-primary-800: #9a3412;
   --color-primary-900: #7c2d12;
   --color-primary-950: #431407;
-  
-  /* Dark desaturated background */
-  --color-themed-background: #2e1e1a;
-  
-  /* True complementary: Orange → Blue */
-  --color-secondary-50: #eff6ff;
-  --color-secondary-100: #dbeafe;
-  --color-secondary-200: #bfdbfe;
-  --color-secondary-300: #93c5fd;
-  --color-secondary-400: #60a5fa;
-  --color-secondary-500: #3b82f6;
-  --color-secondary-600: #2563eb;
-  --color-secondary-700: #1d4ed8;
-  --color-secondary-800: #1e40af;
-  --color-secondary-900: #1e3a8a;
-  --color-secondary-950: #172554;
 }
 
 /* ===========================================
    SPECIAL THEME VARIANTS
    =========================================== */
 
-/* Themed background for normal themes */
-body.themed-background {
-  background-color: var(--color-themed-background, var(--color-background));
+/* Modern card styling */
+.modern-card {
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+}
+
+.dark .modern-card {
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.3),
+    0 2px 4px -1px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 /* AMOLED theme - Pure black for OLED displays */
@@ -452,7 +329,6 @@ body.themed-background {
   /* AMOLED-specific overrides for true black */
   --color-background: #000000;
   --color-surface: #000000;
-  --color-themed-background: #000000;
   --color-surface-secondary: #111111;
   --color-surface-tertiary: #1a1a1a;
   
@@ -507,7 +383,6 @@ body.themed-background {
   /* High contrast overrides */
   --color-background: #ffffff;
   --color-surface: #ffffff;
-  --color-themed-background: #ffffff;
   --color-surface-secondary: #ffffff;
   --color-surface-tertiary: #f5f5f5;
   
@@ -773,9 +648,10 @@ body.themed-background {
 	}
 	
 	.tab.active {
-		@apply shadow-md;
-		background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-600));
-		color: var(--color-text-inverse);
+		background-color: var(--color-surface);
+		color: var(--color-interactive-primary);
+		border: 1px solid var(--color-interactive-primary);
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	}
 
 	/* Unit toggles (KM/Miles) - larger touch targets */
@@ -802,18 +678,38 @@ body.themed-background {
 	
 	.btn-primary {
 		@apply btn;
-		background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-700));
+		background-color: var(--color-interactive-primary);
 		color: var(--color-text-inverse);
+		border: 1px solid var(--color-interactive-primary);
+		position: relative;
+		overflow: hidden;
+	}
+	
+	.btn-primary::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: -100%;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+		transition: left 0.5s;
+	}
+	
+	.btn-primary:hover:not(:disabled)::before {
+		left: 100%;
 	}
 	
 	.btn-primary:hover:not(:disabled) {
-		background: linear-gradient(135deg, var(--color-primary-700), var(--color-primary-800));
+		background-color: var(--color-interactive-primary-hover);
+		transform: translateY(-1px);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 	}
 	
 	.btn-primary:disabled {
-		opacity: 0.5;
+		opacity: 0.6;
 		cursor: not-allowed;
-		background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-700));
+		background-color: var(--color-interactive-primary);
 	}
 	
 	.btn-secondary {
@@ -869,59 +765,45 @@ body.themed-background {
 		position: relative;
 		cursor: pointer;
 		overflow: hidden;
+		border: 2px solid var(--color-border-default);
+		transition: all 0.2s ease;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	}
 	
 	.accent-color-option:hover {
 		border-color: var(--color-border-strong);
 		transform: scale(1.05);
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 	}
 	
 	.accent-color-option:focus {
 		border-color: var(--color-interactive-primary);
-		box-shadow: 0 0 0 2px var(--color-interactive-primary-focus);
+		box-shadow: 0 0 0 3px var(--color-interactive-primary-focus);
+		outline: none;
 	}
 	
 	.accent-color-option.selected {
 		border-color: var(--color-interactive-primary);
-		box-shadow: 0 0 0 2px var(--color-interactive-primary-focus);
+		box-shadow: 0 0 0 3px var(--color-interactive-primary-focus);
+		transform: scale(1.1);
 	}
 	
 	.accent-color-option.selected .accent-color-check {
 		opacity: 1;
 	}
 	
-	/* Dual color display for gradient mode */
-	.accent-color-option.dual-color {
-		background: none !important;
-	}
-	
-	.accent-color-option .dual-color-display {
+	.accent-color-check {
 		position: absolute;
 		inset: 0;
-		display: none;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: rgba(0, 0, 0, 0.3);
+		backdrop-filter: blur(4px);
+		opacity: 0;
+		transition: opacity 0.2s ease;
 	}
 	
-	.accent-color-option.dual-color .dual-color-display {
-		display: block;
-	}
-	
-	.accent-color-primary,
-	.accent-color-secondary {
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		width: 50%;
-	}
-	
-	.accent-color-primary {
-		left: 0;
-		border-radius: 0.5rem 0 0 0.5rem;
-	}
-	
-	.accent-color-secondary {
-		right: 0;
-		border-radius: 0 0.5rem 0.5rem 0;
-	}
 
 	/* Help button styling */
 	#help-btn:hover {

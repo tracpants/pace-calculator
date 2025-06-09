@@ -206,40 +206,6 @@ function toggleAccentPicker(show) {
 	}
 }
 
-// Toggle background gradient control
-function toggleGradientControl(show) {
-	const gradientSection = document.getElementById('gradient-section');
-	
-	if (gradientSection) {
-		gradientSection.style.display = show ? 'block' : 'none';
-	}
-}
-
-// Show/hide gradient intensity slider
-function toggleIntensitySlider(show) {
-	const intensityControl = document.getElementById('gradient-intensity-control');
-	
-	if (intensityControl) {
-		if (show) {
-			intensityControl.classList.remove('hidden');
-		} else {
-			intensityControl.classList.add('hidden');
-		}
-	}
-}
-
-// Toggle dual-color display in accent color picker
-function toggleDualColorDisplay(show) {
-	const accentColorOptions = document.querySelectorAll('.accent-color-option');
-	
-	accentColorOptions.forEach(option => {
-		if (show) {
-			option.classList.add('dual-color');
-		} else {
-			option.classList.remove('dual-color');
-		}
-	});
-}
 
 // Handle theme selection with auto-apply
 function handleThemeChange(e) {
@@ -321,30 +287,9 @@ function openSettings() {
 	// Set current accent color
 	updateAccentColorUI(settings.accentColor);
 	
-	// Set background gradient toggle
-	const gradientToggle = document.getElementById('gradient-toggle');
-	if (gradientToggle) {
-		gradientToggle.checked = settings.backgroundGradient || false;
-	}
-	
-	// Set gradient intensity slider
-	const gradientIntensity = document.getElementById('gradient-intensity');
-	const intensityValue = document.getElementById('intensity-value');
-	if (gradientIntensity && intensityValue) {
-		gradientIntensity.value = settings.gradientIntensity || 25;
-		intensityValue.textContent = settings.gradientIntensity || 25;
-	}
-	
-	// Show/hide intensity slider based on gradient state
-	toggleIntensitySlider(settings.backgroundGradient || false);
-	
-	// Show/hide dual-color display based on gradient state
-	toggleDualColorDisplay(settings.backgroundGradient || false);
-	
 	// Handle A11Y theme UI state
 	const isAccessibilityTheme = isA11yTheme(settings.theme);
 	toggleAccentPicker(!isAccessibilityTheme);
-	toggleGradientControl(!isAccessibilityTheme);
 	
 	// Show modal
 	settingsModal.classList.remove('hidden');
@@ -711,18 +656,6 @@ export function initSettings() {
 	themeRadios.forEach(radio => {
 		radio.addEventListener('change', handleThemeChange);
 	});
-	
-	// Background gradient toggle listener
-	const gradientToggle = document.getElementById('gradient-toggle');
-	if (gradientToggle) {
-		gradientToggle.addEventListener('change', handleGradientToggle);
-	}
-	
-	// Gradient intensity slider listener
-	const gradientIntensitySlider = document.getElementById('gradient-intensity');
-	if (gradientIntensitySlider) {
-		gradientIntensitySlider.addEventListener('input', handleGradientIntensity);
-	}
 	
 	// Menu event listeners
 	menuBtn.addEventListener('click', handleMenuToggle);
