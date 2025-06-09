@@ -453,22 +453,101 @@ function populateAutocomplete() {
 		.join('');
 }
 
-function clearNonRelevantFields() {
-	// Clear all input fields except those in the current tab
-	const allInputs = document.querySelectorAll('input[type="text"]');
-	allInputs.forEach(input => {
-		const isInCurrentTab = input.closest(`[data-section="${state.currentTab}"]`);
-		if (!isInCurrentTab) {
-			input.value = '';
-			// Clear validation states
+function saveCurrentTabState() {
+	// Ensure tab state exists
+	if (!state.tabStates[state.currentTab]) {
+		state.tabStates[state.currentTab] = {
+			inputs: {},
+			validationStates: {},
+			result: null,
+			presetSelection: ""
+		};
+	}
+	const currentTabState = state.tabStates[state.currentTab];
+	
+	// Save all input values for current tab
+	const currentSection = document.querySelector(`[data-section="${state.currentTab}"]`);
+	if (currentSection) {
+		const inputs = currentSection.querySelectorAll('input[type="text"]');
+		inputs.forEach(input => {
+			currentTabState.inputs[input.id] = input.value;
+			// Save validation states
+			currentTabState.validationStates[input.id] = {
+				hasError: input.classList.contains('error'),
+				hasValid: input.classList.contains('valid')
+			};
+		});
+		
+		// Save preset selection
+		const presetSelect = currentSection.querySelector('.preset-select');
+		if (presetSelect) {
+			currentTabState.presetSelection = presetSelect.value;
+		}
+	}
+	
+	// Save current result if it exists
+	if (state.lastResult && state.lastResult.type === state.currentTab) {
+		currentTabState.result = state.lastResult;
+	}
+}
+
+function restoreTabState(tabName) {
+	// Ensure tab state exists
+	if (!state.tabStates[tabName]) {
+		state.tabStates[tabName] = {
+			inputs: {},
+			validationStates: {},
+			result: null,
+			presetSelection: ""
+		};
+	}
+	const tabState = state.tabStates[tabName];
+	const targetSection = document.querySelector(`[data-section="${tabName}"]`);
+	
+	if (!targetSection) return;
+	
+	// Restore input values
+	Object.entries(tabState.inputs).forEach(([inputId, value]) => {
+		const input = document.getElementById(inputId);
+		if (input) {
+			input.value = value;
+		}
+	});
+	
+	// Restore validation states
+	Object.entries(tabState.validationStates).forEach(([inputId, validationState]) => {
+		const input = document.getElementById(inputId);
+		if (input) {
 			input.classList.remove('error', 'valid');
-			const errorElement = document.getElementById(input.id + '-error');
-			if (errorElement) {
-				errorElement.classList.add('hidden');
-				errorElement.textContent = '';
+			if (validationState.hasError) {
+				input.classList.add('error');
+			} else if (validationState.hasValid) {
+				input.classList.add('valid');
 			}
 		}
 	});
+	
+	// Restore preset selection
+	const presetSelect = targetSection.querySelector('.preset-select');
+	if (presetSelect && tabState.presetSelection) {
+		presetSelect.value = tabState.presetSelection;
+	}
+	
+	// Restore result if it exists
+	if (tabState.result) {
+		state.lastResult = tabState.result;
+		updateCalculatedResult();
+	} else {
+		// Clear result if no saved result for this tab
+		resultDiv.classList.add('hidden');
+		resultDiv.classList.remove('show', 'success', 'error');
+		state.lastResult = null;
+	}
+}
+
+function clearNonRelevantFields() {
+	// This function is now replaced by saveCurrentTabState and restoreTabState
+	// Keep for backward compatibility but make it empty
 }
 
 function generateComprehensiveResult() {
@@ -673,10 +752,12 @@ function handleFormSubmit(e) {
 			);
 			
 			// Store the result for unit conversion
-			state.lastResult = {
+			const result = {
 				type: state.currentTab,
 				data: { pacePerKm, pacePerMile, prComparison }
 			};
+			state.lastResult = result;
+			state.tabStates[state.currentTab].result = result;
 		} else if (state.currentTab === "time") {
 			const distInput = document.getElementById("time-distance");
 			
@@ -704,10 +785,12 @@ function handleFormSubmit(e) {
 			label = "Your Time:";
 			value = calc.formatTime(totalSeconds, true);
 			// Store the result for unit conversion
-			state.lastResult = {
+			const result = {
 				type: state.currentTab,
 				data: { totalSeconds }
 			};
+			state.lastResult = result;
+			state.tabStates[state.currentTab].result = result;
 		} else if (state.currentTab === "distance") {
 			// Validate inputs
 			const timeValidation = validateSegmentedInput('distance-time', true);
@@ -736,10 +819,12 @@ function handleFormSubmit(e) {
 				value = `${miles.toFixed(2)} miles`;
 			}
 			// Store the result for unit conversion
-			state.lastResult = {
+			const result = {
 				type: state.currentTab,
 				data: { km, miles }
 			};
+			state.lastResult = result;
+			state.tabStates[state.currentTab].result = result;
 		}
 		hideLoading();
 		showResult(label, value, 'success');
@@ -901,6 +986,9 @@ export function initUI() {
 	document.querySelectorAll("[data-tab]").forEach((tab) => {
 		tab.addEventListener("click", () => {
 			state.currentTab = tab.dataset.tab;
+			// Save current tab state before switching
+			saveCurrentTabState();
+			
 			document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
 			tab.classList.add("active");
 			updateTabNavigation();
@@ -910,12 +998,10 @@ export function initUI() {
 			document
 				.querySelector(`[data-section="${state.currentTab}"]`)
 				.classList.remove("hidden");
-			resultDiv.classList.add("hidden");
 			loadingDiv.classList.add("hidden");
-			state.lastResult = null;
 			
-			// Clear non-relevant fields when switching tabs
-			clearNonRelevantFields();
+			// Restore the target tab's state
+			restoreTabState(state.currentTab);
 			
 			// Update button state for new tab
 			updateCalculateButtonState();
@@ -941,8 +1027,8 @@ export function initUI() {
 				`${state.currentTab}-distance`
 			);
 			distanceInput.value = presets[presetKey][state.distanceUnit];
-			// Keep the selected preset visible instead of resetting
-			// e.target.selectedIndex = 0; // Removed this line
+			// Save preset selection to tab state
+			state.tabStates[state.currentTab].presetSelection = presetKey;
 			
 			// Validate the new value
 			if (distanceInput) {
