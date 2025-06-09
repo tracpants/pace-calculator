@@ -7,9 +7,7 @@ import * as calc from "./calculator.js";
 const defaultSettings = {
 	distanceUnit: 'km',
 	theme: 'system', // 'light', 'dark', 'system', 'amoled', 'high-contrast', or 'monochrome'
-	accentColor: 'indigo', // default accent color
-	backgroundGradient: false, // subtle background gradient
-	gradientIntensity: 25 // gradient intensity percentage (5-60)
+	accentColor: 'indigo' // default accent color
 };
 
 // Theme categorization
@@ -183,22 +181,6 @@ function applyAccentColor(accentColor) {
 	document.documentElement.setAttribute('data-accent-color', accentColor);
 }
 
-// Apply background gradient
-function applyBackgroundGradient(enabled, intensity = 25) {
-	const body = document.body;
-	if (enabled) {
-		// Update CSS custom property for intensity
-		document.documentElement.style.setProperty('--gradient-intensity', intensity);
-		body.classList.add('gradient-background');
-	} else {
-		body.classList.remove('gradient-background');
-	}
-}
-
-// Apply gradient intensity
-function applyGradientIntensity(intensity) {
-	document.documentElement.style.setProperty('--gradient-intensity', intensity);
-}
 
 // Update accent color UI to show current selection
 function updateAccentColorUI(accentColor) {
@@ -270,23 +252,6 @@ function handleThemeChange(e) {
 	// Handle A11Y themes
 	const isAccessibilityTheme = isA11yTheme(selectedTheme);
 	toggleAccentPicker(!isAccessibilityTheme);
-	toggleGradientControl(!isAccessibilityTheme);
-	
-	// Hide dual-color display for A11Y themes
-	if (isAccessibilityTheme) {
-		toggleDualColorDisplay(false);
-	} else {
-		// Restore dual-color display based on gradient setting
-		toggleDualColorDisplay(currentSettings.backgroundGradient || false);
-	}
-	
-	// Disable gradient for A11Y themes
-	if (isAccessibilityTheme && currentSettings.backgroundGradient) {
-		applyBackgroundGradient(false);
-		const gradientToggle = document.getElementById('gradient-toggle');
-		if (gradientToggle) gradientToggle.checked = false;
-		currentSettings.backgroundGradient = false;
-	}
 	
 	// Reset to neutral accent for A11Y themes
 	if (isAccessibilityTheme) {
@@ -300,43 +265,6 @@ function handleThemeChange(e) {
 	saveSettings(currentSettings);
 }
 
-// Handle background gradient toggle
-function handleGradientToggle(e) {
-	const enabled = e.target.checked;
-	const currentSettings = loadSettings();
-	
-	// Show/hide intensity slider
-	toggleIntensitySlider(enabled);
-	
-	// Show/hide dual-color display in accent picker
-	toggleDualColorDisplay(enabled);
-	
-	// Apply immediately with current intensity
-	applyBackgroundGradient(enabled, currentSettings.gradientIntensity);
-	
-	// Save immediately
-	currentSettings.backgroundGradient = enabled;
-	saveSettings(currentSettings);
-}
-
-// Handle gradient intensity change
-function handleGradientIntensity(e) {
-	const intensity = parseInt(e.target.value);
-	const currentSettings = loadSettings();
-	
-	// Update intensity display
-	const intensityValue = document.getElementById('intensity-value');
-	if (intensityValue) {
-		intensityValue.textContent = intensity;
-	}
-	
-	// Apply immediately
-	applyGradientIntensity(intensity);
-	
-	// Save immediately
-	currentSettings.gradientIntensity = intensity;
-	saveSettings(currentSettings);
-}
 
 // Handle accent color selection
 function handleAccentColorSelect(e) {
@@ -775,7 +703,6 @@ export function initSettings() {
 	applyTheme(settings.theme);
 	applyDistanceUnit(settings.distanceUnit);
 	applyAccentColor(settings.accentColor);
-	applyBackgroundGradient(settings.backgroundGradient || false, settings.gradientIntensity || 25);
 	
 	// Event listeners
 	closeSettingsBtn.addEventListener('click', closeSettings);
@@ -868,4 +795,4 @@ export function initSettings() {
 }
 
 // Export functions for use in other modules
-export { loadSettings, saveSettings, applyTheme, applyDistanceUnit, applyBackgroundGradient };
+export { loadSettings, saveSettings, applyTheme, applyDistanceUnit };

@@ -8,8 +8,8 @@
 		<title>Run Pace Calculator</title>
 	</head>
 	<body
-		class="min-h-screen p-2 sm:px-4 font-sans transition-colors duration-300"
-		style="background-color: var(--color-background);"
+		class="min-h-screen p-2 sm:px-4 font-sans transition-colors duration-300 themed-background"
+		style="background-color: var(--color-themed-background, var(--color-background));"
 	>
 		<div
 			id="app"
@@ -499,30 +499,6 @@
 					</div>
 				</div>
 
-				<!-- Background Gradient Setting -->
-				<div id="gradient-section">
-					<label class="flex items-center justify-between mb-3">
-						<div>
-							<span class="text-sm font-medium modal-text">Background Gradient</span>
-							<p class="text-xs modal-text-tertiary mt-1">Add subtle visual interest</p>
-						</div>
-						<input type="checkbox" id="gradient-toggle" class="toggle-checkbox">
-					</label>
-					<div id="gradient-intensity-control" class="hidden">
-						<label class="block text-xs modal-text-tertiary mb-2">
-							Intensity: <span id="intensity-value">25</span>%
-						</label>
-						<input 
-							type="range" 
-							id="gradient-intensity" 
-							class="intensity-slider" 
-							min="5" 
-							max="60" 
-							value="25"
-							step="5"
-						>
-					</div>
-				</div>
 
 				<!-- Accent Color Setting -->
 				<div id="accent-color-section">

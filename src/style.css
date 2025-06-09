@@ -131,15 +131,6 @@
   /* Gradient Colors */
   --gradient-brand: linear-gradient(135deg, var(--color-secondary-500), var(--color-primary-600));
   --gradient-brand-light: linear-gradient(135deg, var(--color-secondary-400), var(--color-primary-500));
-  
-  /* Background gradient with complementary colors */
-  --gradient-intensity: 25; /* Default intensity percentage */
-  --gradient-background: radial-gradient(ellipse 120% 80% at top left, 
-    color-mix(in srgb, var(--color-primary-200) calc(var(--gradient-intensity) * 1.2%), var(--color-background)) 0%,
-    color-mix(in srgb, var(--color-primary-100) calc(var(--gradient-intensity) * 0.8%), var(--color-background)) 25%,
-    color-mix(in srgb, var(--color-secondary-200) calc(var(--gradient-intensity) * 1.2%), var(--color-background)) 75%,
-    var(--color-background) 100%
-  );
 }
 
 /* Dark Mode Color Overrides */
@@ -169,14 +160,6 @@
   /* Dark mode gradients */
   --gradient-brand: linear-gradient(135deg, var(--color-secondary-400), var(--color-primary-500));
   --gradient-brand-light: linear-gradient(135deg, var(--color-secondary-300), var(--color-primary-400));
-  
-  /* Dark mode background gradient with complementary colors */
-  --gradient-background: radial-gradient(ellipse 120% 80% at top left, 
-    color-mix(in srgb, var(--color-primary-700) calc(var(--gradient-intensity) * 1.2%), var(--color-background)) 0%,
-    color-mix(in srgb, var(--color-primary-800) calc(var(--gradient-intensity) * 0.8%), var(--color-background)) 25%,
-    color-mix(in srgb, var(--color-secondary-700) calc(var(--gradient-intensity) * 1.2%), var(--color-background)) 75%,
-    var(--color-background) 100%
-  );
 }
 
 /* ===========================================
@@ -196,6 +179,9 @@
   --color-primary-800: #3730a3;
   --color-primary-900: #312e81;
   --color-primary-950: #1e1b4b;
+  
+  /* Dark desaturated background */
+  --color-themed-background: #1a1a2e;
   
   /* True complementary: Indigo → Orange */
   --color-secondary-50: #fff7ed;
@@ -225,6 +211,9 @@
   --color-primary-900: #1e3a8a;
   --color-primary-950: #172554;
   
+  /* Dark desaturated background */
+  --color-themed-background: #1a1e2e;
+  
   /* True complementary: Blue → Orange/Red-Orange */
   --color-secondary-50: #fff7ed;
   --color-secondary-100: #ffedd5;
@@ -252,6 +241,9 @@
   --color-primary-800: #065f46;
   --color-primary-900: #064e3b;
   --color-primary-950: #022c22;
+  
+  /* Dark desaturated background */
+  --color-themed-background: #1a2e1e;
   
   /* True complementary: Emerald/Green → Red/Magenta */
   --color-secondary-50: #fdf2f8;
@@ -281,6 +273,9 @@
   --color-primary-900: #78350f;
   --color-primary-950: #451a03;
   
+  /* Dark desaturated background */
+  --color-themed-background: #2e2a1a;
+  
   /* True complementary: Amber/Yellow → Blue/Purple */
   --color-secondary-50: #f5f3ff;
   --color-secondary-100: #ede9fe;
@@ -308,6 +303,9 @@
   --color-primary-800: #9f1239;
   --color-primary-900: #881337;
   --color-primary-950: #4c0519;
+  
+  /* Dark desaturated background */
+  --color-themed-background: #2e1a1e;
   
   /* True complementary: Rose/Red → Green/Cyan */
   --color-secondary-50: #f0fdf4;
@@ -337,6 +335,9 @@
   --color-primary-900: #4c1d95;
   --color-primary-950: #2e1065;
   
+  /* Dark desaturated background */
+  --color-themed-background: #261a2e;
+  
   /* True complementary: Violet/Purple → Yellow/Lime */
   --color-secondary-50: #fefce8;
   --color-secondary-100: #fef9c3;
@@ -364,6 +365,9 @@
   --color-primary-800: #155e75;
   --color-primary-900: #164e63;
   --color-primary-950: #083344;
+  
+  /* Dark desaturated background */
+  --color-themed-background: #1a2a2e;
   
   /* True complementary: Cyan → Red/Orange */
   --color-secondary-50: #fef2f2;
@@ -393,6 +397,9 @@
   --color-primary-900: #7c2d12;
   --color-primary-950: #431407;
   
+  /* Dark desaturated background */
+  --color-themed-background: #2e1e1a;
+  
   /* True complementary: Orange → Blue */
   --color-secondary-50: #eff6ff;
   --color-secondary-100: #dbeafe;
@@ -410,6 +417,11 @@
 /* ===========================================
    SPECIAL THEME VARIANTS
    =========================================== */
+
+/* Themed background for normal themes */
+body.themed-background {
+  background-color: var(--color-themed-background, var(--color-background));
+}
 
 /* AMOLED theme - Pure black for OLED displays */
 .amoled {
@@ -440,6 +452,7 @@
   /* AMOLED-specific overrides for true black */
   --color-background: #000000;
   --color-surface: #000000;
+  --color-themed-background: #000000;
   --color-surface-secondary: #111111;
   --color-surface-tertiary: #1a1a1a;
   
@@ -494,6 +507,7 @@
   /* High contrast overrides */
   --color-background: #ffffff;
   --color-surface: #ffffff;
+  --color-themed-background: #ffffff;
   --color-surface-secondary: #ffffff;
   --color-surface-tertiary: #f5f5f5;
   
@@ -561,10 +575,6 @@
 		clip: rect(0, 0, 0, 0);
 	}
 
-	/* Background gradient class */
-	.gradient-background {
-		background: var(--gradient-background);
-	}
 
 	/* Fix layout jumping by ensuring consistent heights */
 	.form-section {
@@ -764,12 +774,8 @@
 	
 	.tab.active {
 		@apply shadow-md;
-		background-color: var(--color-surface);
-		color: var(--color-interactive-primary);
-	}
-	
-	.dark .tab.active {
-		color: var(--color-text-primary);
+		background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-600));
+		color: var(--color-text-inverse);
 	}
 
 	/* Unit toggles (KM/Miles) - larger touch targets */
@@ -796,18 +802,18 @@
 	
 	.btn-primary {
 		@apply btn;
-		background-color: var(--color-interactive-primary);
+		background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-700));
 		color: var(--color-text-inverse);
 	}
 	
 	.btn-primary:hover:not(:disabled) {
-		background-color: var(--color-interactive-primary-hover);
+		background: linear-gradient(135deg, var(--color-primary-700), var(--color-primary-800));
 	}
 	
 	.btn-primary:disabled {
 		opacity: 0.5;
 		cursor: not-allowed;
-		background-color: var(--color-interactive-primary);
+		background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-700));
 	}
 	
 	.btn-secondary {
@@ -972,32 +978,6 @@
 		box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-interactive-primary-focus);
 	}
 
-	/* Range slider styling */
-	.intensity-slider {
-		@apply w-full h-2 rounded-lg cursor-pointer appearance-none;
-		background: var(--color-interactive-secondary);
-		outline: none;
-	}
-	
-	.intensity-slider::-webkit-slider-thumb {
-		@apply w-5 h-5 rounded-full cursor-pointer appearance-none;
-		background: var(--color-interactive-primary);
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-	}
-	
-	.intensity-slider::-moz-range-thumb {
-		@apply w-5 h-5 rounded-full cursor-pointer border-0;
-		background: var(--color-interactive-primary);
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-	}
-	
-	.intensity-slider:focus {
-		box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-interactive-primary-focus);
-	}
-	
-	.intensity-slider::-webkit-slider-thumb:hover {
-		transform: scale(1.1);
-	}
 
 	/* Mobile improvements */
 	@media (max-width: 640px) {
