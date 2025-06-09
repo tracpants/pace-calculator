@@ -603,21 +603,45 @@ function generateComprehensiveResult() {
 	return result;
 }
 
+function animateCopySuccess() {
+	// Animate copy icon out
+	copyIcon.classList.add('animate-icon-transition-out');
+	copyBtn.classList.add('animate-pulse-success');
+	
+	// After copy icon fades out, show checkmark with animation
+	setTimeout(() => {
+		copyIcon.classList.add('hidden');
+		copyIcon.classList.remove('animate-icon-transition-out');
+		checkIcon.classList.remove('hidden');
+		checkIcon.classList.add('animate-icon-transition-in');
+	}, 200);
+	
+	// Reset after 2 seconds total
+	setTimeout(() => {
+		// Animate checkmark out
+		checkIcon.classList.remove('animate-icon-transition-in');
+		checkIcon.classList.add('animate-icon-transition-out');
+		
+		// After checkmark fades out, show copy icon with animation
+		setTimeout(() => {
+			checkIcon.classList.add('hidden');
+			checkIcon.classList.remove('animate-icon-transition-out');
+			copyIcon.classList.remove('hidden');
+			copyIcon.classList.add('animate-icon-transition-in');
+			copyBtn.classList.remove('animate-pulse-success');
+			
+			// Clean up animation class
+			setTimeout(() => {
+				copyIcon.classList.remove('animate-icon-transition-in');
+			}, 200);
+		}, 200);
+	}, 2000);
+}
+
 async function copyToClipboard(text) {
 	try {
 		await navigator.clipboard.writeText(text);
-		// Show success state
-		copyIcon.classList.add('hidden');
-		checkIcon.classList.remove('hidden');
-		copyBtn.classList.add('animate-pulse-success');
-		
-		// Reset after 2 seconds
-		setTimeout(() => {
-			copyIcon.classList.remove('hidden');
-			checkIcon.classList.add('hidden');
-			copyBtn.classList.remove('animate-pulse-success');
-		}, 2000);
-		
+		animateCopySuccess();
 		return true;
 	} catch (err) {
 		// Fallback for older browsers
@@ -628,6 +652,8 @@ async function copyToClipboard(text) {
 			textArea.select();
 			document.execCommand('copy');
 			document.body.removeChild(textArea);
+			
+			animateCopySuccess();
 			return true;
 		} catch (fallbackErr) {
 			console.error('Failed to copy text:', fallbackErr);

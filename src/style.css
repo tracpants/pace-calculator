@@ -598,6 +598,14 @@
 		animation: pulseSuccess 0.3s ease-out;
 	}
 
+	.animate-icon-transition-out {
+		animation: iconTransitionOut 0.2s ease-in forwards;
+	}
+
+	.animate-icon-transition-in {
+		animation: iconTransitionIn 0.2s ease-out forwards;
+	}
+
 	@keyframes fadeIn {
 		from {
 			opacity: 0;
@@ -647,6 +655,28 @@
 		}
 		100% {
 			background-color: transparent;
+		}
+	}
+
+	@keyframes iconTransitionOut {
+		0% {
+			opacity: 1;
+			transform: scale(1) rotate(0deg);
+		}
+		100% {
+			opacity: 0;
+			transform: scale(0.8) rotate(-15deg);
+		}
+	}
+
+	@keyframes iconTransitionIn {
+		0% {
+			opacity: 0;
+			transform: scale(0.8) rotate(15deg);
+		}
+		100% {
+			opacity: 1;
+			transform: scale(1) rotate(0deg);
 		}
 	}
 
