@@ -8,7 +8,8 @@ const defaultSettings = {
 	distanceUnit: 'km',
 	theme: 'system', // 'light', 'dark', 'system', 'amoled', 'high-contrast', or 'monochrome'
 	accentColor: 'indigo', // default accent color
-	backgroundGradient: false // subtle background gradient
+	backgroundGradient: false, // subtle background gradient
+	gradientIntensity: 25 // gradient intensity percentage (5-60)
 };
 
 // Theme categorization
@@ -183,13 +184,20 @@ function applyAccentColor(accentColor) {
 }
 
 // Apply background gradient
-function applyBackgroundGradient(enabled) {
+function applyBackgroundGradient(enabled, intensity = 25) {
 	const body = document.body;
 	if (enabled) {
+		// Update CSS custom property for intensity
+		document.documentElement.style.setProperty('--gradient-intensity', intensity);
 		body.classList.add('gradient-background');
 	} else {
 		body.classList.remove('gradient-background');
 	}
+}
+
+// Apply gradient intensity
+function applyGradientIntensity(intensity) {
+	document.documentElement.style.setProperty('--gradient-intensity', intensity);
 }
 
 // Update accent color UI to show current selection
@@ -222,6 +230,19 @@ function toggleGradientControl(show) {
 	
 	if (gradientSection) {
 		gradientSection.style.display = show ? 'block' : 'none';
+	}
+}
+
+// Show/hide gradient intensity slider
+function toggleIntensitySlider(show) {
+	const intensityControl = document.getElementById('gradient-intensity-control');
+	
+	if (intensityControl) {
+		if (show) {
+			intensityControl.classList.remove('hidden');
+		} else {
+			intensityControl.classList.add('hidden');
+		}
 	}
 }
 
@@ -263,11 +284,33 @@ function handleGradientToggle(e) {
 	const enabled = e.target.checked;
 	const currentSettings = loadSettings();
 	
-	// Apply immediately
-	applyBackgroundGradient(enabled);
+	// Show/hide intensity slider
+	toggleIntensitySlider(enabled);
+	
+	// Apply immediately with current intensity
+	applyBackgroundGradient(enabled, currentSettings.gradientIntensity);
 	
 	// Save immediately
 	currentSettings.backgroundGradient = enabled;
+	saveSettings(currentSettings);
+}
+
+// Handle gradient intensity change
+function handleGradientIntensity(e) {
+	const intensity = parseInt(e.target.value);
+	const currentSettings = loadSettings();
+	
+	// Update intensity display
+	const intensityValue = document.getElementById('intensity-value');
+	if (intensityValue) {
+		intensityValue.textContent = intensity;
+	}
+	
+	// Apply immediately
+	applyGradientIntensity(intensity);
+	
+	// Save immediately
+	currentSettings.gradientIntensity = intensity;
 	saveSettings(currentSettings);
 }
 
@@ -331,6 +374,17 @@ function openSettings() {
 	if (gradientToggle) {
 		gradientToggle.checked = settings.backgroundGradient || false;
 	}
+	
+	// Set gradient intensity slider
+	const gradientIntensity = document.getElementById('gradient-intensity');
+	const intensityValue = document.getElementById('intensity-value');
+	if (gradientIntensity && intensityValue) {
+		gradientIntensity.value = settings.gradientIntensity || 25;
+		intensityValue.textContent = settings.gradientIntensity || 25;
+	}
+	
+	// Show/hide intensity slider based on gradient state
+	toggleIntensitySlider(settings.backgroundGradient || false);
 	
 	// Handle A11Y theme UI state
 	const isAccessibilityTheme = isA11yTheme(settings.theme);
@@ -694,7 +748,7 @@ export function initSettings() {
 	applyTheme(settings.theme);
 	applyDistanceUnit(settings.distanceUnit);
 	applyAccentColor(settings.accentColor);
-	applyBackgroundGradient(settings.backgroundGradient || false);
+	applyBackgroundGradient(settings.backgroundGradient || false, settings.gradientIntensity || 25);
 	
 	// Event listeners
 	closeSettingsBtn.addEventListener('click', closeSettings);
@@ -708,6 +762,12 @@ export function initSettings() {
 	const gradientToggle = document.getElementById('gradient-toggle');
 	if (gradientToggle) {
 		gradientToggle.addEventListener('change', handleGradientToggle);
+	}
+	
+	// Gradient intensity slider listener
+	const gradientIntensitySlider = document.getElementById('gradient-intensity');
+	if (gradientIntensitySlider) {
+		gradientIntensitySlider.addEventListener('input', handleGradientIntensity);
 	}
 	
 	// Menu event listeners
