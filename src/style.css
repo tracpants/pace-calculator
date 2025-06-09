@@ -680,6 +680,21 @@
 		}
 	}
 
+	/* Menu dropdown styles */
+	.menu-item {
+		color: var(--color-text-primary);
+		transition: background-color 0.2s ease;
+	}
+
+	.menu-item:hover {
+		background-color: var(--color-interactive-secondary-hover);
+	}
+
+	.menu-item:focus {
+		outline: none;
+		background-color: var(--color-interactive-secondary-hover);
+	}
+
 	/* Result display improvements */
 	#result.show {
 		@apply block opacity-100 scale-100;

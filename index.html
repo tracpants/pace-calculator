@@ -20,30 +20,57 @@
 		>
 			<!-- Header -->
 			<header class="relative text-center mb-4 sm:mb-6">
-				<!-- Help Button -->
-				<button id="help-btn" class="absolute top-0 left-0 p-2 rounded-lg transition-colors" style="color: var(--color-text-tertiary);" aria-label="Open help" title="Help" tabindex="0">
-					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-					</svg>
-				</button>
+				<div class="relative flex items-center justify-between px-0">
+					<!-- Menu Button -->
+					<div class="relative z-10">
+						<button id="menu-btn" class="p-2 rounded-lg transition-colors" style="color: var(--color-text-tertiary);" aria-label="Open menu" title="Menu" tabindex="0">
+							<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+							</svg>
+						</button>
+						
+						<!-- Dropdown Menu -->
+						<div id="menu-dropdown" class="absolute top-full left-0 mt-2 w-48 hidden z-50">
+							<div class="modal-content rounded-lg shadow-lg overflow-hidden">
+								<div class="py-1">
+									<button id="pr-menu-item" class="menu-item w-full flex items-center px-4 py-3 text-left transition-colors">
+										<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+										</svg>
+										<span>Personal Records</span>
+									</button>
+									
+									<button id="settings-menu-item" class="menu-item w-full flex items-center px-4 py-3 text-left transition-colors">
+										<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+										</svg>
+										<span>Settings</span>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<!-- Title -->
+					<h1
+						class="absolute inset-x-0 text-3xl sm:text-4xl font-bold bg-clip-text text-transparent text-center"
+						style="background-image: var(--gradient-brand);"
+					>
+						Pace Calculator
+					</h1>
+					
+					<!-- Help Button -->
+					<button id="help-btn" class="relative z-10 p-2 rounded-lg transition-colors" style="color: var(--color-text-tertiary);" aria-label="Open help" title="Help" tabindex="0">
+						<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+						</svg>
+					</button>
+				</div>
 				
-				<h1
-					class="text-3xl sm:text-4xl font-bold bg-clip-text text-transparent"
-					style="background-image: var(--gradient-brand);"
-				>
-					Pace Calculator
-				</h1>
 				<p class="mt-1 sm:mt-2 text-sm sm:text-base" style="color: var(--color-text-tertiary);">
 					Calculate running pace, time, or distance
 				</p>
-				
-				<!-- Settings Button -->
-				<button id="settings-btn" class="absolute top-0 right-0 p-2 rounded-lg transition-colors" style="color: var(--color-text-tertiary);" aria-label="Open settings" title="Settings" tabindex="0">
-					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-					</svg>
-				</button>
 			</header>
 
 			<!-- Tabs -->
@@ -579,16 +606,6 @@
 					<p class="text-xs modal-text-tertiary mt-2">Choose your preferred accent color for buttons and highlights</p>
 				</div>
 
-				<!-- Personal Records Section -->
-				<div>
-					<div class="flex justify-between items-center mb-3">
-						<label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Personal Records</label>
-						<button id="add-pr-btn" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 text-sm font-medium" type="button">+ Add PR</button>
-					</div>
-					<div id="pr-list" class="space-y-2 max-h-32 overflow-y-auto">
-						<!-- PRs will be populated here -->
-					</div>
-				</div>
 			</div>
 
 			<div class="mt-8 flex justify-end">
@@ -695,6 +712,51 @@
 					<button type="button" id="cancel-pr" class="btn-secondary flex-1">Cancel</button>
 				</div>
 			</form>
+		</div>
+	</div>
+
+	<!-- Personal Records Management Modal -->
+	<div id="pr-management-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="pr-management-title">
+		<div class="modal-content rounded-2xl shadow-2xl w-full max-w-md p-6 my-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
+			<div class="flex justify-between items-center mb-6">
+				<h2 id="pr-management-title" class="text-xl font-bold modal-title flex items-center">
+					<svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+					</svg>
+					Personal Records
+				</h2>
+				<button id="close-pr-management" class="modal-text-tertiary p-1 rounded-lg transition-colors" aria-label="Close personal records">
+					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+					</svg>
+				</button>
+			</div>
+
+			<div class="space-y-6">
+				<!-- Add PR Button -->
+				<div class="flex justify-between items-center">
+					<p class="modal-text">Manage your personal running records</p>
+					<button id="add-pr-btn" class="btn-primary text-sm px-4 py-2">+ Add PR</button>
+				</div>
+
+				<!-- PR List -->
+				<div id="pr-list" class="space-y-3 max-h-96 overflow-y-auto">
+					<!-- PRs will be populated here -->
+				</div>
+
+				<!-- Empty State -->
+				<div id="pr-empty-state" class="text-center py-8 hidden">
+					<svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+					</svg>
+					<p class="modal-text mb-2">No personal records yet</p>
+					<p class="modal-text-tertiary text-sm">Add your first PR to compare your performances</p>
+				</div>
+			</div>
+
+			<div class="mt-8 flex justify-end">
+				<button id="close-pr-management-btn" class="btn-secondary">Close</button>
+			</div>
 		</div>
 	</div>
 

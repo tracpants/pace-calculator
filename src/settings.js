@@ -12,14 +12,30 @@ const defaultSettings = {
 
 // DOM Elements
 const settingsModal = document.getElementById("settings-modal");
-const settingsBtn = document.getElementById("settings-btn");
 const closeSettingsBtn = document.getElementById("close-settings");
 const saveSettingsBtn = document.getElementById("save-settings");
 const themeRadios = document.querySelectorAll('.theme-radio');
 const unitToggles = document.querySelectorAll("[data-unit]");
 const accentColorOptions = document.querySelectorAll('.accent-color-option');
 
-// PR-related DOM elements
+// Menu elements
+const menuBtn = document.getElementById("menu-btn");
+const menuDropdown = document.getElementById("menu-dropdown");
+const prMenuBtn = document.getElementById("pr-menu-item");
+const settingsMenuBtn = document.getElementById("settings-menu-item");
+
+// Help elements (separate from menu)
+const helpBtn = document.getElementById("help-btn");
+const helpModal = document.getElementById("help-modal");
+const closeHelpBtn = document.getElementById("close-help");
+
+// PR Management Modal elements
+const prManagementModal = document.getElementById("pr-management-modal");
+const closePrManagementBtn = document.getElementById("close-pr-management");
+const closePrManagementBtnSecondary = document.getElementById("close-pr-management-btn");
+const prEmptyState = document.getElementById("pr-empty-state");
+
+// PR Add/Edit Modal elements
 const prModal = document.getElementById("pr-modal");
 const prModalTitle = document.getElementById("pr-modal-title");
 const addPrBtn = document.getElementById("add-pr-btn");
@@ -211,6 +227,8 @@ function applyDistanceUnit(unit) {
 
 // Open settings modal
 function openSettings() {
+	closeMenu();
+	
 	const settings = loadSettings();
 	
 	// Set current theme radio
@@ -223,9 +241,6 @@ function openSettings() {
 	
 	// Set current accent color
 	updateAccentColorUI(settings.accentColor);
-	
-	// Populate PR list
-	populatePRList();
 	
 	// Show modal
 	settingsModal.classList.remove('hidden');
@@ -249,8 +264,8 @@ function closeSettings() {
 	// Restore body scroll
 	document.body.style.overflow = '';
 	
-	// Return focus to settings button
-	settingsBtn.focus();
+	// Return focus to menu button
+	menuBtn.focus();
 }
 
 // Save and apply settings
@@ -288,8 +303,18 @@ function handleUnitToggle(e) {
 
 // Handle escape key to close modal
 function handleKeyDown(e) {
-	if (e.key === 'Escape' && !settingsModal.classList.contains('hidden')) {
-		closeSettings();
+	if (e.key === 'Escape') {
+		if (!menuDropdown.classList.contains('hidden')) {
+			closeMenu();
+		} else if (!helpModal.classList.contains('hidden')) {
+			closeHelp();
+		} else if (!settingsModal.classList.contains('hidden')) {
+			closeSettings();
+		} else if (!prManagementModal.classList.contains('hidden')) {
+			closePRManagement();
+		} else if (!prModal.classList.contains('hidden')) {
+			closePRModal();
+		}
 	}
 }
 
@@ -297,6 +322,29 @@ function handleKeyDown(e) {
 function handleModalBackdropClick(e) {
 	if (e.target === settingsModal) {
 		closeSettings();
+	}
+}
+
+// Handle click outside PR management modal to close
+function handlePRManagementBackdropClick(e) {
+	if (e.target === prManagementModal) {
+		closePRManagement();
+	}
+}
+
+// Handle click outside help modal to close
+function handleHelpBackdropClick(e) {
+	if (e.target === helpModal) {
+		closeHelp();
+	}
+}
+
+// Handle click outside menu to close
+function handleDocumentClick(e) {
+	if (!menuBtn.contains(e.target) && !menuDropdown.contains(e.target)) {
+		if (!menuDropdown.classList.contains('hidden')) {
+			closeMenu();
+		}
 	}
 }
 
@@ -308,14 +356,91 @@ function handleSystemThemeChange(e) {
 	}
 }
 
+// Menu functionality
+function openMenu() {
+	menuDropdown.classList.remove('hidden');
+	// Focus first menu item
+	prMenuBtn.focus();
+}
+
+function closeMenu() {
+	menuDropdown.classList.add('hidden');
+	// Return focus to menu button
+	menuBtn.focus();
+}
+
+function handleMenuToggle() {
+	if (menuDropdown.classList.contains('hidden')) {
+		openMenu();
+	} else {
+		closeMenu();
+	}
+}
+
+// Help modal functionality
+function openHelp() {
+	helpModal.classList.remove('hidden');
+	helpModal.classList.add('flex');
+	
+	// Focus close button for accessibility
+	closeHelpBtn.focus();
+	
+	// Prevent body scroll
+	document.body.style.overflow = 'hidden';
+}
+
+function closeHelp() {
+	helpModal.classList.add('hidden');
+	helpModal.classList.remove('flex');
+	
+	// Restore body scroll
+	document.body.style.overflow = '';
+	
+	// Return focus to help button
+	helpBtn.focus();
+}
+
+// Open PR management modal
+function openPRManagement() {
+	closeMenu();
+	
+	// Populate PR list
+	populatePRList();
+	
+	// Show modal
+	prManagementModal.classList.remove('hidden');
+	prManagementModal.classList.add('flex');
+	
+	// Focus close button
+	closePrManagementBtn.focus();
+	
+	// Prevent body scroll
+	document.body.style.overflow = 'hidden';
+}
+
+// Close PR management modal
+function closePRManagement() {
+	prManagementModal.classList.add('hidden');
+	prManagementModal.classList.remove('flex');
+	
+	// Restore body scroll
+	document.body.style.overflow = '';
+	
+	// Return focus to menu button
+	menuBtn.focus();
+}
+
 // PR Management Functions
 function populatePRList() {
 	const prs = pr.getAllPRs();
 	
 	if (prs.length === 0) {
-		prList.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-sm text-center py-2">No personal records yet</p>';
+		prList.innerHTML = '';
+		prEmptyState.classList.remove('hidden');
 		return;
 	}
+	
+	prEmptyState.classList.add('hidden');
 	
 	prList.innerHTML = prs.map(prRecord => `
 		<div class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
@@ -430,7 +555,7 @@ function handleDeletePR(e) {
 	
 	if (confirm(`Delete PR for ${pr.getDistanceName(distance, unit)}?`)) {
 		pr.removePR(distance, unit);
-		populatePRList();
+		populatePRList(); // Refresh the PR list in management modal
 	}
 }
 
@@ -483,7 +608,7 @@ function handlePRFormSubmit(e) {
 	const success = pr.setPR(validation.distance, validation.unit, validation.timeSeconds, date, notes);
 	
 	if (success) {
-		populatePRList();
+		populatePRList(); // Refresh the PR list in management modal
 		closePRModal();
 	} else {
 		alert('Failed to save PR. Please try again.');
@@ -500,9 +625,21 @@ export function initSettings() {
 	applyAccentColor(settings.accentColor);
 	
 	// Event listeners
-	settingsBtn.addEventListener('click', openSettings);
 	closeSettingsBtn.addEventListener('click', closeSettings);
 	saveSettingsBtn.addEventListener('click', handleSaveSettings);
+	
+	// Menu event listeners
+	menuBtn.addEventListener('click', handleMenuToggle);
+	prMenuBtn.addEventListener('click', openPRManagement);
+	settingsMenuBtn.addEventListener('click', openSettings);
+	
+	// Help modal event listeners
+	helpBtn.addEventListener('click', openHelp);
+	closeHelpBtn.addEventListener('click', closeHelp);
+	
+	// PR Management modal event listeners
+	closePrManagementBtn.addEventListener('click', closePRManagement);
+	closePrManagementBtnSecondary.addEventListener('click', closePRManagement);
 	
 	// Unit toggles in modal
 	unitToggles.forEach(toggle => {
@@ -541,7 +678,10 @@ export function initSettings() {
 	
 	// Keyboard and modal interactions
 	document.addEventListener('keydown', handleKeyDown);
+	document.addEventListener('click', handleDocumentClick);
 	settingsModal.addEventListener('click', handleModalBackdropClick);
+	helpModal.addEventListener('click', handleHelpBackdropClick);
+	prManagementModal.addEventListener('click', handlePRManagementBackdropClick);
 	prModal.addEventListener('click', (e) => {
 		if (e.target === prModal) closePRModal();
 	});
