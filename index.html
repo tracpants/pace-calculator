@@ -147,10 +147,13 @@
 							<label class="font-medium mb-2 block" style="color: var(--color-text-secondary);" for="pace-distance"
 								>Distance</label
 							>
+							<select id="pace-preset" class="input-base select-custom preset-select mb-3" aria-label="Pick an event">
+								<option value="">-- Pick an event --</option>
+							</select>
 							<input
 								type="text"
 								id="pace-distance"
-								class="input-base mb-2"
+								class="input-base"
 								placeholder="e.g., 10"
 								value="10"
 								aria-describedby="pace-distance-hint pace-distance-error"
@@ -163,7 +166,6 @@
 							/>
 							<div id="pace-distance-hint" class="text-sm mt-1" style="color: var(--color-text-tertiary);">Enter distance in selected unit</div>
 							<div id="pace-distance-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
-							<select id="pace-preset" class="input-base select-custom preset-select mt-2" aria-label="Quick distance presets"></select>
 						</div>
 					</div>
 
@@ -208,13 +210,16 @@
 							<div id="time-pace-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
 						</div>
 						<div>
-							<label class="font-medium text-gray-700 dark:text-gray-300 mb-2 block" for="time-distance"
+							<label class="font-medium mb-2 block" style="color: var(--color-text-secondary);" for="time-distance"
 								>Distance</label
 							>
+							<select id="time-preset" class="input-base select-custom preset-select mb-3" aria-label="Pick an event">
+								<option value="">-- Pick an event --</option>
+							</select>
 							<input
 								type="text"
 								id="time-distance"
-								class="input-base mb-2"
+								class="input-base"
 								placeholder="e.g., 21.1"
 								value="21.1"
 								aria-describedby="time-distance-hint time-distance-error"
@@ -227,7 +232,6 @@
 							/>
 							<div id="time-distance-hint" class="text-sm mt-1" style="color: var(--color-text-tertiary);">Enter distance in selected unit</div>
 							<div id="time-distance-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
-							<select id="time-preset" class="input-base select-custom preset-select mt-2" aria-label="Quick distance presets"></select>
 						</div>
 					</div>
 

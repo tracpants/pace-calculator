@@ -12,7 +12,8 @@
       "Bash(/home/kahu/.nvm/versions/node/v20.17.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n \"state\\.lastResult.*=\" /home/kahu/Documents/workspace/pace-calculator/src/ui.js)",
       "Bash(npm start)",
       "Bash(/home/kahu/.nvm/versions/node/v20.17.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n -A 10 -B 2 \"Time Difference|Pace Difference\" /home/kahu/Documents/workspace/pace-calculator/src/ui.js)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(/home/kahu/.nvm/versions/node/v20.17.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n \"preset.*addEventListener|addEventListener.*preset\" /home/kahu/Documents/workspace/pace-calculator/src/ui.js)"
     ],
     "deny": []
   }
