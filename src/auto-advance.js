@@ -27,8 +27,7 @@ export function initAutoAdvance() {
 		'time-pace', 
 		'distance-time',
 		'distance-pace',
-		'pr-time',
-		'adjuster-pace'
+		'pr-time'
 	];
 
 	timeInputPrefixes.forEach(prefix => {
