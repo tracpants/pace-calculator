@@ -1,6 +1,7 @@
 import { state } from "./state.js";
 import * as calc from "./calculator.js";
 import * as pr from "./pr.js";
+import { reinitAutoAdvance } from "./auto-advance.js";
 
 // DOM Elements
 const form = document.getElementById("calculator-form");
@@ -877,7 +878,7 @@ function createPaceAdjusterAccordion() {
 				style="color: var(--color-text-secondary);"
 			>
 				<span class="text-sm font-medium">
-					Pace Adjuster (What if?)
+					Pace Adjuster
 				</span>
 				<svg id="pace-adjuster-chevron" class="w-4 h-4 transition-transform duration-200" style="color: var(--color-text-tertiary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -975,6 +976,11 @@ function setupPaceAdjusterAccordion() {
 			adjusterContent.setAttribute('aria-hidden', 'false');
 			adjusterToggle.setAttribute('aria-expanded', 'true');
 			adjusterChevron.style.transform = 'rotate(180deg)';
+			
+			// Reinitialize auto-advance for the new pace adjuster inputs
+			setTimeout(() => {
+				reinitAutoAdvance();
+			}, 10);
 			
 			// Calculate initial result
 			updatePaceAdjusterResult();
@@ -1411,19 +1417,19 @@ function showResult(label, value, type = 'success') {
 		resultValue.innerHTML += comparisonHtml;
 	}
 	
-	// Add pace adjuster accordion for successful calculations
-	if (type === 'success') {
-		const paceAdjusterHtml = createPaceAdjusterAccordion();
-		if (paceAdjusterHtml) {
-			resultValue.innerHTML += paceAdjusterHtml;
-		}
-	}
-	
 	// Add race splits accordion for successful calculations
 	if (type === 'success') {
 		const splitsHtml = createSplitsAccordion();
 		if (splitsHtml) {
 			resultValue.innerHTML += splitsHtml;
+		}
+	}
+	
+	// Add pace adjuster accordion for successful calculations (below splits)
+	if (type === 'success') {
+		const paceAdjusterHtml = createPaceAdjusterAccordion();
+		if (paceAdjusterHtml) {
+			resultValue.innerHTML += paceAdjusterHtml;
 		}
 	}
 	
