@@ -343,33 +343,59 @@
 			</form>
 
 			<!-- Result -->
-			<div id="result" class="mt-6 p-4 rounded-lg hidden transition-all duration-500 transform opacity-0 scale-95" role="region" aria-label="Calculation result" aria-live="polite">
-				<div class="flex justify-between items-start mb-2">
+			<div id="result" class="mt-4 sm:mt-6 p-3 sm:p-6 rounded-lg hidden transition-all duration-500 transform opacity-0 scale-95" role="region" aria-label="Calculation result" aria-live="polite">
+				<!-- Main Result Section -->
+				<div class="text-center mb-3 sm:mb-6 relative">
 					<p
 						id="result-label"
-						class="font-semibold"
+						class="text-base sm:text-lg font-semibold mb-1 sm:mb-3"
 						style="color: var(--color-text-secondary);"
 					></p>
-					<button
-						id="copy-result-btn"
-						class="ml-4 p-2 transition-colors rounded-lg copy-btn"
-						style="color: var(--color-text-tertiary);"
-						aria-label="Copy result to clipboard"
-						title="Copy result to clipboard"
-					>
-						<svg id="copy-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<p
+						id="result-value"
+						class="text-3xl sm:text-4xl md:text-5xl font-bold font-mono leading-tight"
+						style="color: var(--color-interactive-primary);"
+					></p>
+					
+					<!-- Action Buttons - positioned top right -->
+					<div class="absolute top-0 right-0 flex items-center gap-1">
+						<button
+							id="save-pr-btn"
+							class="p-1.5 transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 hidden"
+							style="color: var(--color-text-tertiary);"
+							aria-label="Save as Personal Record"
+							title="Save as Personal Record"
+						>
+							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+								<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+							</svg>
+						</button>
+						<button
+							id="update-pr-btn"
+							class="p-1.5 transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 hidden"
+							style="color: var(--color-text-tertiary);"
+							aria-label="Update Personal Record"
+							title="Update Personal Record"
+						>
+							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+							</svg>
+						</button>
+						<button
+							id="copy-result-btn"
+							class="p-1.5 transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+							style="color: var(--color-text-tertiary);"
+							aria-label="Copy result to clipboard"
+							title="Copy result to clipboard"
+						>
+						<svg id="copy-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
 						</svg>
-						<svg id="check-icon" class="w-5 h-5 hidden" style="color: var(--color-status-success);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<svg id="check-icon" class="w-4 h-4 hidden" style="color: var(--color-status-success);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
 						</svg>
 					</button>
 				</div>
-				<p
-					id="result-value"
-					class="text-2xl font-bold font-mono"
-					style="color: var(--color-interactive-primary);"
-				></p>
 			</div>
 
 			<!-- Loading State -->
@@ -385,6 +411,9 @@
 		</datalist>
 	</div>
 
+
+	<!-- All Modals - Positioned at body level for consistent behavior -->
+	
 	<!-- Help Modal -->
 	<div id="help-modal" class="modal-container modal-lg hidden" role="dialog" aria-modal="true" aria-labelledby="help-title">
 		<div class="modal-content">
@@ -663,6 +692,7 @@
 							</div>
 						</button>
 					</div>
+				</div>
 					<p class="text-caption mt-2">Choose your preferred color scheme</p>
 				</div>
 
@@ -676,160 +706,6 @@
 					</p>
 				</div>
 
-			</div>
-		</div>
-	</div>
-
-	<!-- PR Add/Edit Modal -->
-	<div id="pr-modal" class="modal-container modal-md hidden" role="dialog" aria-modal="true" aria-labelledby="pr-modal-title">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2 id="pr-modal-title">
-					<svg class="modal-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-					</svg>
-					Add Personal Record
-				</h2>
-				<button id="close-pr-modal" class="modal-close" aria-label="Close PR modal">
-					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-					</svg>
-				</button>
-			</div>
-
-			<form id="pr-form">
-				<div class="modal-body">
-				<div>
-					<label for="pr-distance" class="text-label mb-2 block">Distance</label>
-					<input type="text" id="pr-distance" class="input-base" placeholder="e.g., 5 or 21.1" required inputmode="decimal" pattern="[0-9]*\.?[0-9]*">
-					<div id="pr-distance-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
-				</div>
-
-				<div>
-					<label for="pr-unit" class="text-label mb-2 block">Unit</label>
-					<select id="pr-unit" class="input-base">
-						<option value="km">Kilometers</option>
-						<option value="miles">Miles</option>
-					</select>
-				</div>
-
-				<div>
-					<label class="text-label mb-2 block">Time</label>
-					<div class="input-segmented-container">
-						<div class="input-segmented-group">
-							<input
-								type="number"
-								id="pr-time-hours"
-								class="input-segmented"
-								placeholder="00"
-								min="0"
-								max="23"
-								inputmode="numeric"
-								autocomplete="off"
-								aria-label="Hours"
-							/>
-							<label class="input-segment-label">HH</label>
-						</div>
-						<span class="input-separator">:</span>
-						<div class="input-segmented-group">
-							<input
-								type="number"
-								id="pr-time-minutes"
-								class="input-segmented"
-								placeholder="00"
-								min="0"
-								max="59"
-								inputmode="numeric"
-								autocomplete="off"
-								aria-label="Minutes"
-								required
-							/>
-							<label class="input-segment-label">MM</label>
-						</div>
-						<span class="input-separator">:</span>
-						<div class="input-segmented-group">
-							<input
-								type="number"
-								id="pr-time-seconds"
-								class="input-segmented"
-								placeholder="00"
-								min="0"
-								max="59"
-								inputmode="numeric"
-								autocomplete="off"
-								aria-label="Seconds"
-								required
-							/>
-							<label class="input-segment-label">SS</label>
-						</div>
-					</div>
-					<div class="input-hint">Enter your personal record time</div>
-					<div id="pr-time-error" class="input-error hidden" role="alert"></div>
-				</div>
-
-				<div>
-					<label for="pr-date" class="text-label mb-2 block">Date (Optional)</label>
-					<input type="date" id="pr-date" class="input-base">
-					<div class="input-hint">When did you achieve this PR?</div>
-				</div>
-
-				<div>
-					<label for="pr-notes" class="text-label mb-2 block">Notes (Optional)</label>
-					<textarea id="pr-notes" class="input-base" rows="3" placeholder="e.g., Great weather, felt strong, new PB!"></textarea>
-					<div class="input-hint">Add context about this performance</div>
-				</div>
-
-				</div>
-				
-				<div class="modal-footer">
-					<button type="submit" class="btn-primary">Save PR</button>
-					<button type="button" id="cancel-pr" class="btn-secondary">Cancel</button>
-				</div>
-			</form>
-		</div>
-	</div>
-
-	<!-- Personal Records Management Modal -->
-	<div id="pr-management-modal" class="modal-container modal-md hidden" role="dialog" aria-modal="true" aria-labelledby="pr-management-title">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2 id="pr-management-title">
-					<svg class="modal-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-					</svg>
-					Personal Records
-				</h2>
-				<button id="close-pr-management" class="modal-close" aria-label="Close personal records">
-					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-					</svg>
-				</button>
-			</div>
-
-			<div class="modal-body">
-				<!-- Add PR Button -->
-				<div class="flex justify-between items-center">
-					<p class="modal-text">Manage your personal running records</p>
-					<button id="add-pr-btn" class="btn-primary btn-small">+ Add PR</button>
-				</div>
-
-				<!-- PR List -->
-				<div id="pr-list" class="space-y-3 max-h-96 overflow-y-auto">
-					<!-- PRs will be populated here -->
-				</div>
-
-				<!-- Empty State -->
-				<div id="pr-empty-state" class="text-center py-8 hidden">
-					<svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-					</svg>
-					<p class="modal-text mb-2">No personal records yet</p>
-					<p class="modal-text-tertiary text-sm">Add your first PR to compare your performances</p>
-				</div>
-			</div>
-
-			<div class="modal-footer">
-				<button id="close-pr-management-btn" class="btn-secondary">Close</button>
 			</div>
 		</div>
 	</div>

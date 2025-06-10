@@ -430,7 +430,6 @@ function openSettings() {
 	
 	// Show modal
 	settingsModal.classList.remove('hidden');
-	settingsModal.classList.add('flex');
 	
 	// Focus first interactive element
 	const firstRadio = settingsModal.querySelector('input[type="radio"]');
@@ -445,7 +444,6 @@ function openSettings() {
 // Close settings modal
 function closeSettings() {
 	settingsModal.classList.add('hidden');
-	settingsModal.classList.remove('flex');
 	
 	// Restore body scroll
 	document.body.style.overflow = '';
@@ -560,7 +558,6 @@ function handleMenuToggle() {
 // Help modal functionality
 function openHelp() {
 	helpModal.classList.remove('hidden');
-	helpModal.classList.add('flex');
 	
 	// Focus close button for accessibility
 	closeHelpBtn.focus();
@@ -571,7 +568,6 @@ function openHelp() {
 
 function closeHelp() {
 	helpModal.classList.add('hidden');
-	helpModal.classList.remove('flex');
 	
 	// Restore body scroll
 	document.body.style.overflow = '';
@@ -589,7 +585,6 @@ function openPRManagement() {
 	
 	// Show modal
 	prManagementModal.classList.remove('hidden');
-	prManagementModal.classList.add('flex');
 	
 	// Focus close button
 	closePrManagementBtn.focus();
@@ -601,7 +596,6 @@ function openPRManagement() {
 // Close PR management modal
 function closePRManagement() {
 	prManagementModal.classList.add('hidden');
-	prManagementModal.classList.remove('flex');
 	
 	// Restore body scroll
 	document.body.style.overflow = '';
@@ -675,7 +669,6 @@ function populatePRList() {
 function openPRModal(isEdit = false) {
 	prModalTitle.textContent = isEdit ? 'Edit Personal Record' : 'Add Personal Record';
 	prModal.classList.remove('hidden');
-	prModal.classList.add('flex');
 	
 	// Set default unit to current setting
 	prUnitSelect.value = state.distanceUnit;
@@ -689,7 +682,6 @@ function openPRModal(isEdit = false) {
 
 function closePRModal() {
 	prModal.classList.add('hidden');
-	prModal.classList.remove('flex');
 	
 	// Reset form
 	prForm.reset();

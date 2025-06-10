@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 16px;
+        }
+        .test-button:hover {
+            background: #4338ca;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        .status.error {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+        .status.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+        .console-output {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Modal Functionality Test</h1>
+        <p>This page tests the modal positioning fixes and functionality.</p>
+        
+        <div id="status" class="status info">
+            Ready to test modals...
+        </div>
+        
+        <div>
+            <h3>Test Buttons:</h3>
+            <button class="test-button" onclick="testModalPositioning()">Test Modal Positioning</button>
+            <button class="test-button" onclick="testPRModal()">Test PR Management Modal</button>
+            <button class="test-button" onclick="testAllModals()">Test All Modals</button>
+            <button class="test-button" onclick="clearConsole()">Clear Console</button>
+        </div>
+        
+        <div id="console" class="console-output">
+            Console output will appear here...
+        </div>
+    </div>
+
+    <script>
+        let consoleElement = document.getElementById('console');
+        let statusElement = document.getElementById('status');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const colored = message.includes('✅') ? 'color: #10b981;' : 
+                           message.includes('❌') ? 'color: #ef4444;' : 
+                           message.includes('⚠️') ? 'color: #f59e0b;' : '';
+            consoleElement.innerHTML += `<div style="${colored}">[${timestamp}] ${message}</div>`;
+            consoleElement.scrollTop = consoleElement.scrollHeight;
+        }
+        
+        function setStatus(message, type) {
+            statusElement.textContent = message;
+            statusElement.className = `status ${type}`;
+        }
+        
+        function clearConsole() {
+            consoleElement.innerHTML = 'Console cleared...';
+        }
+        
+        function testModalPositioning() {
+            log('🔧 Testing modal positioning...');
+            setStatus('Testing modal positioning...', 'info');
+            
+            // Try to access the main app
+            const frame = document.createElement('iframe');
+            frame.src = 'http://localhost:5173/';
+            frame.style.display = 'none';
+            document.body.appendChild(frame);
+            
+            frame.onload = function() {
+                try {
+                    const appWindow = frame.contentWindow;
+                    const appDocument = frame.contentDocument;
+                    
+                    if (appWindow.debugModals) {
+                        log('✅ Found debugModals function');
+                        appWindow.debugModals();
+                        
+                        // Check modals
+                        const modals = appDocument.querySelectorAll('.modal-container');
+                        log(`📋 Found ${modals.length} modals`);
+                        
+                        let allCorrect = true;
+                        modals.forEach(modal => {
+                            const parent = modal.parentElement;
+                            const isAtBodyLevel = parent === appDocument.body;
+                            
+                            if (isAtBodyLevel) {
+                                log(`✅ ${modal.id}: correctly positioned at body level`);
+                            } else {
+                                log(`❌ ${modal.id}: incorrectly positioned (parent: ${parent?.tagName})`);
+                                allCorrect = false;
+                            }
+                        });
+                        
+                        if (allCorrect) {
+                            setStatus('✅ All modals positioned correctly!', 'success');
+                        } else {
+                            setStatus('❌ Some modals have positioning issues', 'error');
+                        }
+                    } else {
+                        log('❌ debugModals function not found');
+                        setStatus('❌ Could not access modal debugging tools', 'error');
+                    }
+                } catch (error) {
+                    log(`❌ Error accessing iframe: ${error.message}`);
+                    setStatus('❌ Could not test modals (CORS restriction)', 'error');
+                } finally {
+                    document.body.removeChild(frame);
+                }
+            };
+            
+            frame.onerror = function() {
+                log('❌ Failed to load main app');
+                setStatus('❌ Could not load main app for testing', 'error');
+                document.body.removeChild(frame);
+            };
+        }
+        
+        function testPRModal() {
+            log('🧪 Testing PR Management Modal...');
+            setStatus('Testing PR modal...', 'info');
+            
+            // This would need to be run in the main app context
+            // For now, just show instructions
+            log('📝 To test PR modal:');
+            log('  1. Open the main app (http://localhost:5173/)');
+            log('  2. Click the menu button (three dots)');
+            log('  3. Click "Personal Records"');
+            log('  4. Verify the modal opens with proper scrim');
+            
+            setStatus('See console for PR modal test instructions', 'info');
+        }
+        
+        function testAllModals() {
+            log('🧪 Testing all modals...');
+            setStatus('Testing all modals...', 'info');
+            
+            log('📝 To test all modals:');
+            log('  1. Open the main app (http://localhost:5173/)');
+            log('  2. Open browser console');
+            log('  3. Run: testModals()');
+            log('  4. Check the results');
+            
+            setStatus('See console for modal testing instructions', 'info');
+        }
+        
+        // Initial setup
+        log('🚀 Modal test page loaded');
+        log('📝 Use the test buttons above to check modal functionality');
+    </script>
+</body>
+</html>

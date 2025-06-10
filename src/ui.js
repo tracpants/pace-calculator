@@ -12,6 +12,8 @@ const loadingDiv = document.getElementById("loading");
 const copyBtn = document.getElementById("copy-result-btn");
 const copyIcon = document.getElementById("copy-icon");
 const checkIcon = document.getElementById("check-icon");
+const savePrBtn = document.getElementById("save-pr-btn");
+const updatePrBtn = document.getElementById("update-pr-btn");
 
 const presets = {
 	"1k": { km: 1, miles: 0.621 },
@@ -868,33 +870,41 @@ function createSplitsAccordion() {
 	}).join('');
 	
 	return `
-		<div class="mt-3 pt-3 border-t" style="border-color: var(--color-border-subtle);">
+		<div class="mt-4 border rounded-lg overflow-hidden" style="border-color: var(--color-border-subtle);">
 			<button 
 				id="splits-toggle" 
-				class="w-full flex items-center justify-between py-2 px-3 text-left transition-colors rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50"
+				class="w-full flex items-center justify-between py-3 px-4 text-left transition-colors" 
+				style="background: linear-gradient(to right, var(--color-surface), var(--color-surface-secondary)); border-bottom: 1px solid var(--color-border-subtle);"
 				aria-expanded="false"
 				aria-controls="splits-content"
 			>
-				<span class="text-sm font-medium" style="color: var(--color-text-secondary);">
-					Show Splits (${calc.formatDistance(totalDistance)} ${state.distanceUnit})
-				</span>
+				<div class="flex items-center">
+					<svg class="w-4 h-4 mr-2" style="color: var(--color-interactive-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+					</svg>
+					<span class="text-sm font-medium" style="color: var(--color-text-primary);">
+						Race Splits (${calc.formatDistance(totalDistance)} ${state.distanceUnit})
+					</span>
+				</div>
 				<svg id="splits-chevron" class="w-4 h-4 transition-transform duration-200" style="color: var(--color-text-tertiary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
 				</svg>
 			</button>
 			<div 
 				id="splits-content" 
-				class="hidden mt-2 space-y-1 px-3 py-2 rounded-lg" 
-				style="background-color: var(--color-surface-secondary);"
+				class="hidden px-4 py-3" 
+				style="background-color: var(--color-surface);"
 				aria-hidden="true"
 			>
-				<div class="flex justify-between items-center pb-2 mb-2 border-b text-xs font-medium" style="border-color: var(--color-border-subtle); color: var(--color-text-tertiary);">
+				<div class="flex justify-between items-center pb-2 mb-3 border-b text-xs font-semibold uppercase tracking-wide" style="border-color: var(--color-border-subtle); color: var(--color-text-tertiary);">
 					<span>Distance</span>
 					<span>Cumulative Time</span>
 				</div>
-				${splitsHtml}
-				<div class="text-xs mt-2 pt-2 border-t" style="border-color: var(--color-border-subtle); color: var(--color-text-tertiary);">
-					Pace: ${calc.formatTime(pacePerUnit)} /${state.distanceUnit}
+				<div class="space-y-1">
+					${splitsHtml}
+				</div>
+				<div class="text-xs mt-3 pt-3 border-t font-medium" style="border-color: var(--color-border-subtle); color: var(--color-text-secondary);">
+					Average Pace: ${calc.formatTime(pacePerUnit)} /${state.distanceUnit}
 				</div>
 			</div>
 		</div>
@@ -1134,26 +1144,32 @@ function showResult(label, value, type = 'success') {
 	if (state.lastResult && state.lastResult.data && state.lastResult.data.prComparison) {
 		const comparison = state.lastResult.data.prComparison;
 		const comparisonHtml = `
-			<div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
-				<div class="text-sm text-gray-600 dark:text-gray-400">
+			<div class="mt-4 p-4 rounded-lg" style="background: linear-gradient(to right, var(--color-surface-secondary), color-mix(in srgb, var(--color-surface-secondary) 80%, transparent)); border: 1px solid var(--color-border-subtle);">
+				<h3 class="text-base font-semibold mb-3 flex items-center" style="color: var(--color-text-primary);">
+					<svg class="w-4 h-4 mr-2" style="color: var(--color-interactive-primary);" fill="currentColor" viewBox="0 0 24 24">
+						<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+					</svg>
+					Personal Record Comparison
+				</h3>
+				<div class="space-y-2">
 					<div class="flex justify-between items-center">
-						<span>PR (${pr.getDistanceName(comparison.prDistance, comparison.prUnit)}):</span>
-						<span class="font-mono">${comparison.prTimeFormatted}</span>
+						<span class="text-sm font-medium" style="color: var(--color-text-secondary);">PR (${pr.getDistanceName(comparison.prDistance, comparison.prUnit)}):</span>
+						<span class="font-mono text-sm font-semibold" style="color: var(--color-text-primary);">${comparison.prTimeFormatted}</span>
 					</div>
-					<div class="flex justify-between items-center mt-1">
-						<span>PR Pace:</span>
-						<span class="font-mono">${comparison.prPaceFormatted} /${comparison.prUnit}</span>
+					<div class="flex justify-between items-center">
+						<span class="text-sm font-medium" style="color: var(--color-text-secondary);">PR Pace:</span>
+						<span class="font-mono text-sm font-semibold" style="color: var(--color-text-primary);">${comparison.prPaceFormatted} /${comparison.prUnit}</span>
 					</div>
-					<div class="flex justify-between items-center mt-1">
-						<span>Time Difference:</span>
-						<span class="font-mono ${comparison.isFaster ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}">
+					<div class="flex justify-between items-center pt-2 border-t" style="border-color: var(--color-border-subtle);">
+						<span class="text-sm font-medium" style="color: var(--color-text-secondary);">Time Difference:</span>
+						<span class="font-mono text-sm font-bold" style="color: ${comparison.isFaster ? 'var(--color-status-success)' : 'var(--color-status-error)'};">
 							${comparison.isFaster ? '-' : '+'}${comparison.timeDifferenceFormatted} 
 							(${comparison.isFaster ? 'faster' : 'slower'})
 						</span>
 					</div>
-					<div class="flex justify-between items-center mt-1">
-						<span>Pace Difference:</span>
-						<span class="font-mono ${comparison.isFaster ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}">
+					<div class="flex justify-between items-center">
+						<span class="text-sm font-medium" style="color: var(--color-text-secondary);">Pace Difference:</span>
+						<span class="font-mono text-sm font-bold" style="color: ${comparison.isFaster ? 'var(--color-status-success)' : 'var(--color-status-error)'};">
 							${comparison.isFaster ? '-' : '+'}${comparison.paceDifferenceFormatted} /km
 						</span>
 					</div>
@@ -1195,7 +1211,113 @@ function showResult(label, value, type = 'success') {
 		resultDiv.classList.remove('animate-bounce-in');
 		// Setup splits accordion if present
 		setupSplitsAccordion();
+		// Update PR button visibility
+		updatePRButtonVisibility();
 	}, 600);
+}
+
+function updatePRButtonVisibility() {
+	if (!state.lastResult) {
+		savePrBtn.classList.add('hidden');
+		updatePrBtn.classList.add('hidden');
+		return;
+	}
+
+	const { type } = state.lastResult;
+	
+	// Only show PR buttons for pace calculations (not time or distance calculations)
+	if (type !== 'pace') {
+		savePrBtn.classList.add('hidden');
+		updatePrBtn.classList.add('hidden');
+		return;
+	}
+
+	// Get current calculation distance
+	const distanceInput = document.getElementById("pace-distance");
+	const distance = parseFloat(distanceInput.value);
+	
+	if (!distance || distance <= 0) {
+		savePrBtn.classList.add('hidden');
+		updatePrBtn.classList.add('hidden');
+		return;
+	}
+
+	// Normalize distance to km for PR lookup
+	const distanceKm = state.distanceUnit === "km" ? distance : distance * 1.609344;
+	
+	// Check if there's an existing PR for this distance
+	const existingPR = pr.getPRForDistance(distanceKm);
+	
+	if (existingPR) {
+		// Get current time from calculation
+		const currentTimeSeconds = getSegmentedTimeValue('pace-time');
+		
+		// Show update button if current time is better (faster) than existing PR
+		if (currentTimeSeconds < existingPR.timeSeconds) {
+			savePrBtn.classList.add('hidden');
+			updatePrBtn.classList.remove('hidden');
+			updatePrBtn.title = `Update PR (current: ${calc.formatTime(existingPR.timeSeconds, true)})`;
+		} else {
+			// Current time is slower, no button needed
+			savePrBtn.classList.add('hidden');
+			updatePrBtn.classList.add('hidden');
+		}
+	} else {
+		// No existing PR, show save button
+		savePrBtn.classList.remove('hidden');
+		updatePrBtn.classList.add('hidden');
+		savePrBtn.title = `Save as Personal Record`;
+	}
+}
+
+function handleSavePR() {
+	if (!state.lastResult || state.lastResult.type !== 'pace') return;
+	
+	const distanceInput = document.getElementById("pace-distance");
+	const distance = parseFloat(distanceInput.value);
+	const timeSeconds = getSegmentedTimeValue('pace-time');
+	
+	if (!distance || !timeSeconds) return;
+	
+	// Save the PR
+	const success = pr.setPR(distance, state.distanceUnit, timeSeconds);
+	
+	if (success) {
+		// Show brief success feedback
+		savePrBtn.style.color = 'var(--color-status-success)';
+		savePrBtn.title = 'Personal Record Saved!';
+		
+		// Reset after 2 seconds
+		setTimeout(() => {
+			savePrBtn.style.color = 'var(--color-text-tertiary)';
+			updatePRButtonVisibility(); // This will hide the save button
+		}, 2000);
+	}
+}
+
+function handleUpdatePR() {
+	if (!state.lastResult || state.lastResult.type !== 'pace') return;
+	
+	const distanceInput = document.getElementById("pace-distance");
+	const distance = parseFloat(distanceInput.value);
+	const timeSeconds = getSegmentedTimeValue('pace-time');
+	
+	if (!distance || !timeSeconds) return;
+	
+	// Update the PR (this will overwrite the existing one)
+	const success = pr.setPR(distance, state.distanceUnit, timeSeconds);
+	
+	if (success) {
+		// Show brief success feedback
+		updatePrBtn.style.color = 'var(--color-status-success)';
+		updatePrBtn.title = 'Personal Record Updated!';
+		
+		// Reset after 2 seconds
+		setTimeout(() => {
+			updatePrBtn.style.color = 'var(--color-text-tertiary)';
+			updatePRButtonVisibility(); // This will hide the update button
+		}, 2000);
+	}
 }
 
 function updateCalculatedResult() {
@@ -1224,6 +1346,8 @@ function updateCalculatedResult() {
 	}
 	
 	showResult(label, value);
+	// Update PR button visibility when result is updated  
+	updatePRButtonVisibility();
 }
 
 function clearCurrentTab() {
@@ -1415,6 +1539,10 @@ export function initUI() {
 			}
 		}
 	});
+	
+	// PR Save/Update button functionality
+	savePrBtn.addEventListener('click', handleSavePR);
+	updatePrBtn.addEventListener('click', handleUpdatePR);
 	
 	// Focus first input on page load (only on non-mobile devices)
 	setTimeout(() => focusFirstInput(), 100);

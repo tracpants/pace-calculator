@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./src/style.css">
+</head>
+<body class="p-8 bg-gray-100">
+    <h1 class="text-2xl font-bold mb-6">Button Functionality Tests</h1>
+    
+    <!-- Test 1: Basic Button Clicks -->
+    <div class="mb-8 p-4 bg-white rounded-lg shadow">
+        <h2 class="text-lg font-semibold mb-4">Test 1: Basic Button Clicks</h2>
+        <div class="space-y-4">
+            <button id="test-primary" class="btn btn-primary btn-full">Test Primary Button</button>
+            <button id="test-secondary" class="btn btn-secondary btn-full">Test Secondary Button</button>
+            <div id="click-result" class="text-sm text-gray-600"></div>
+        </div>
+    </div>
+
+    <!-- Test 2: Tab Functionality -->
+    <div class="mb-8 p-4 bg-white rounded-lg shadow">
+        <h2 class="text-lg font-semibold mb-4">Test 2: Tab Switching</h2>
+        <div class="grid grid-cols-3 gap-2 p-1 rounded-xl mb-4" style="background-color: var(--color-interactive-secondary);">
+            <button data-tab="test1" class="btn btn-tab active" id="test-tab-1">Tab 1</button>
+            <button data-tab="test2" class="btn btn-tab" id="test-tab-2">Tab 2</button>
+            <button data-tab="test3" class="btn btn-tab" id="test-tab-3">Tab 3</button>
+        </div>
+        <div id="tab-result" class="text-sm text-gray-600"></div>
+    </div>
+
+    <!-- Test 3: Form Submission -->
+    <div class="mb-8 p-4 bg-white rounded-lg shadow">
+        <h2 class="text-lg font-semibold mb-4">Test 3: Form Submission</h2>
+        <form id="test-form">
+            <input type="text" placeholder="Test input" class="w-full p-2 border rounded mb-4">
+            <div class="grid grid-cols-2 gap-4">
+                <button type="submit" class="btn btn-primary btn-full">Submit Form</button>
+                <button type="button" id="test-clear" class="btn btn-secondary btn-full">Clear Form</button>
+            </div>
+        </form>
+        <div id="form-result" class="text-sm text-gray-600 mt-2"></div>
+    </div>
+
+    <!-- Test 4: CSS Inspection -->
+    <div class="mb-8 p-4 bg-white rounded-lg shadow">
+        <h2 class="text-lg font-semibold mb-4">Test 4: CSS Inspection</h2>
+        <button id="inspect-button" class="btn btn-primary">Inspect This Button</button>
+        <div id="css-result" class="text-xs text-gray-600 mt-2 whitespace-pre-wrap"></div>
+    </div>
+
+    <script>
+        // Test 1: Basic button clicks
+        document.getElementById('test-primary').addEventListener('click', function() {
+            document.getElementById('click-result').textContent = 'Primary button clicked at ' + new Date().toLocaleTimeString();
+        });
+
+        document.getElementById('test-secondary').addEventListener('click', function() {
+            document.getElementById('click-result').textContent = 'Secondary button clicked at ' + new Date().toLocaleTimeString();
+        });
+
+        // Test 2: Tab functionality
+        document.querySelectorAll('[data-tab]').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active from all tabs
+                document.querySelectorAll('.btn-tab').forEach(t => t.classList.remove('active'));
+                // Add active to clicked tab
+                this.classList.add('active');
+                document.getElementById('tab-result').textContent = `Switched to ${this.dataset.tab} at ` + new Date().toLocaleTimeString();
+            });
+        });
+
+        // Test 3: Form submission
+        document.getElementById('test-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('form-result').textContent = 'Form submitted at ' + new Date().toLocaleTimeString();
+        });
+
+        document.getElementById('test-clear').addEventListener('click', function() {
+            document.querySelector('#test-form input').value = '';
+            document.getElementById('form-result').textContent = 'Form cleared at ' + new Date().toLocaleTimeString();
+        });
+
+        // Test 4: CSS inspection
+        document.getElementById('inspect-button').addEventListener('click', function() {
+            const button = this;
+            const styles = window.getComputedStyle(button);
+            const result = `
+Computed Styles:
+- display: ${styles.display}
+- cursor: ${styles.cursor}
+- pointer-events: ${styles.pointerEvents}
+- position: ${styles.position}
+- z-index: ${styles.zIndex}
+- background-color: ${styles.backgroundColor}
+- border: ${styles.border}
+- padding: ${styles.padding}
+- margin: ${styles.margin}
+- min-height: ${styles.minHeight}
+- user-select: ${styles.userSelect}
+
+Classes: ${button.className}
+Event listeners: ${button.onclick ? 'Has onclick' : 'No onclick'}
+            `;
+            document.getElementById('css-result').textContent = result;
+        });
+
+        // Console logging for debugging
+        console.log('Test page loaded');
+        console.log('Primary button element:', document.getElementById('test-primary'));
+        console.log('Tab buttons:', document.querySelectorAll('[data-tab]'));
+        console.log('Form element:', document.getElementById('test-form'));
+    </script>
+</body>
+</html>
