@@ -1,5 +1,5 @@
 import "./style.css";
-import { initSettings } from "./settings.js";
+import { initSettings, applyDefaultDistance } from "./settings.js";
 import { initUI } from "./ui.js";
 import { initTouch } from "./touch.js";
 import { initAutoAdvance } from "./auto-advance.js";
@@ -10,4 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
 	initUI();
 	initTouch();
 	initAutoAdvance();
+	
+	// Apply default distance after all UI components are initialized
+	setTimeout(() => {
+		applyDefaultDistance();
+	}, 50);
 });

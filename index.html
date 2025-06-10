@@ -154,7 +154,6 @@
 								id="pace-distance"
 								class="input-base"
 								placeholder="e.g., 10"
-								value="10"
 								aria-describedby="pace-distance-hint pace-distance-error"
 								aria-required="true"
 								inputmode="decimal"
@@ -220,7 +219,6 @@
 								id="time-distance"
 								class="input-base"
 								placeholder="e.g., 21.1"
-								value="21.1"
 								aria-describedby="time-distance-hint time-distance-error"
 								aria-required="true"
 								inputmode="decimal"
@@ -468,6 +466,15 @@
 						<button data-unit="km" class="btn-toggle active" aria-pressed="true" tabindex="0">KM</button>
 						<button data-unit="miles" class="btn-toggle" aria-pressed="false" tabindex="0">Miles</button>
 					</fieldset>
+				</div>
+
+				<!-- Default Distance Setting -->
+				<div>
+					<label class="block text-sm font-medium modal-text mb-3">Default Distance</label>
+					<select id="default-distance-select" class="input-base select-custom w-full" aria-label="Choose default distance">
+						<option value="">No default (leave blank)</option>
+					</select>
+					<p class="text-caption mt-2">Automatically fill distance fields when you open the app</p>
 				</div>
 
 				<!-- Theme Setting -->

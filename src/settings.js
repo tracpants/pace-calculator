@@ -3,12 +3,32 @@ import { populatePresetSelects, populateAutocomplete, updateCalculatedResult, up
 import * as pr from "./pr.js";
 import * as calc from "./calculator.js";
 
+// Import presets for default distance options
+const presets = {
+	"1k": { km: 1, miles: 0.621 },
+	"1-mile": { km: 1.609, miles: 1 },
+	"2k": { km: 2, miles: 1.243 },
+	"3k": { km: 3, miles: 1.864 },
+	"5k": { km: 5, miles: 3.107 },
+	"8k": { km: 8, miles: 4.971 },
+	"10k": { km: 10, miles: 6.214 },
+	"12k": { km: 12, miles: 7.456 },
+	"15k": { km: 15, miles: 9.321 },
+	"10-mile": { km: 16.093, miles: 10 },
+	"half-marathon": { km: 21.0975, miles: 13.109 },
+	"25k": { km: 25, miles: 15.534 },
+	"30k": { km: 30, miles: 18.641 },
+	"marathon": { km: 42.195, miles: 26.219 },
+	"50k": { km: 50, miles: 31.069 },
+};
+
 // Settings preferences with defaults
 const defaultSettings = {
 	distanceUnit: 'km',
 	theme: 'system', // 'light', 'dark', 'system', 'amoled', 'high-contrast', or 'monochrome'
 	accentColor: 'indigo', // default accent color
-	dyslexicFont: false // OpenDyslexic font disabled by default
+	dyslexicFont: false, // OpenDyslexic font disabled by default
+	defaultDistance: null // no default distance initially (user can set their preference)
 };
 
 // Theme categorization
@@ -23,6 +43,7 @@ const themeRadios = document.querySelectorAll('.theme-radio');
 const unitToggles = document.querySelectorAll("[data-unit]");
 const accentColorOptions = document.querySelectorAll('.accent-color-option');
 const dyslexicFontToggle = document.getElementById('dyslexic-font-toggle');
+const defaultDistanceSelect = document.getElementById('default-distance-select');
 
 // Menu elements
 const menuBtn = document.getElementById("menu-btn");
@@ -297,6 +318,82 @@ function applyDistanceUnit(unit) {
 	populateAutocomplete();
 	updateCalculatedResult();
 	updateHintTexts();
+	
+	// Update default distance dropdown if in settings modal
+	populateDefaultDistanceSelect();
+}
+
+// Populate default distance dropdown based on current unit
+function populateDefaultDistanceSelect() {
+	if (!defaultDistanceSelect) return;
+	
+	const unit = state.distanceUnit;
+	
+	// Build options HTML
+	const options = 
+		`<option value="">No default (leave blank)</option>` +
+		Object.entries(presets)
+			.map(([key, value]) => {
+				const displayName = key.replace("-", " ").toUpperCase();
+				const distance = calc.formatDistance(value[unit], 3);
+				return `<option value="${key}">${displayName} (${distance} ${unit})</option>`;
+			})
+			.join("");
+	
+	defaultDistanceSelect.innerHTML = options;
+}
+
+// Handle default distance selection change
+function handleDefaultDistanceChange(e) {
+	const selectedPreset = e.target.value;
+	
+	// Save the setting immediately
+	const currentSettings = loadSettings();
+	currentSettings.defaultDistance = selectedPreset || null;
+	saveSettings(currentSettings);
+}
+
+// Apply default distance to all distance input fields if set
+function applyDefaultDistance() {
+	const settings = loadSettings();
+	
+	if (!settings.defaultDistance) {
+		console.log('No default distance set');
+		return; // No default set
+	}
+	
+	const presetDistance = presets[settings.defaultDistance];
+	if (!presetDistance) {
+		console.log('Invalid preset:', settings.defaultDistance);
+		return; // Invalid preset
+	}
+	
+	const distance = presetDistance[state.distanceUnit];
+	console.log('Applying default distance:', distance, state.distanceUnit);
+	
+	// Apply to all distance input fields
+	['pace-distance', 'time-distance'].forEach(inputId => {
+		const input = document.getElementById(inputId);
+		if (input) {
+			const isEmpty = !input.value || input.value.trim() === '';
+			console.log(`Field ${inputId}: exists=${!!input}, isEmpty=${isEmpty}, currentValue="${input.value}"`);
+			
+			if (isEmpty) { // Only set if field is empty
+				input.value = distance;
+				console.log(`Set ${inputId} to ${distance}`);
+				
+				// Update corresponding preset dropdown
+				const tabPrefix = inputId.split('-')[0]; // 'pace' or 'time'
+				const presetSelect = document.getElementById(`${tabPrefix}-preset`);
+				if (presetSelect) {
+					presetSelect.value = settings.defaultDistance;
+					console.log(`Set ${tabPrefix}-preset to ${settings.defaultDistance}`);
+				}
+			}
+		} else {
+			console.log(`Field ${inputId} not found`);
+		}
+	});
 }
 
 // Open settings modal
@@ -312,6 +409,12 @@ function openSettings() {
 	
 	// Set current unit toggles
 	applyDistanceUnit(settings.distanceUnit);
+	
+	// Populate and set default distance
+	populateDefaultDistanceSelect();
+	if (defaultDistanceSelect) {
+		defaultDistanceSelect.value = settings.defaultDistance || '';
+	}
 	
 	// Set current accent color
 	updateAccentColorUI(settings.accentColor);
@@ -743,6 +846,11 @@ export function initSettings() {
 		dyslexicFontToggle.addEventListener('change', handleDyslexicFontToggle);
 	}
 	
+	// Default distance select event listener
+	if (defaultDistanceSelect) {
+		defaultDistanceSelect.addEventListener('change', handleDefaultDistanceChange);
+	}
+	
 	// PR modal event listeners
 	addPrBtn.addEventListener('click', () => openPRModal(false));
 	closePrModalBtn.addEventListener('click', closePRModal);
@@ -791,4 +899,4 @@ export function initSettings() {
 }
 
 // Export functions for use in other modules
-export { loadSettings, saveSettings, applyTheme, applyDistanceUnit, applyDyslexicFont };
+export { loadSettings, saveSettings, applyTheme, applyDistanceUnit, applyDyslexicFont, applyDefaultDistance };
