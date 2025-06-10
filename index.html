@@ -6,6 +6,8 @@
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Run Pace Calculator</title>
+		<!-- OpenDyslexic font for accessibility -->
+		<link href="https://fonts.cdnfonts.com/css/open-dyslexic" rel="stylesheet">
 	</head>
 	<body
 		class="min-h-screen p-2 sm:px-4 font-sans transition-colors duration-300"
@@ -493,6 +495,22 @@
 							<input type="radio" name="theme" value="monochrome" class="theme-radio mr-3" style="color: var(--color-interactive-primary); --tw-ring-color: var(--color-interactive-primary-focus);">
 							<span class="modal-text">Monochrome</span>
 						</label>
+						
+						<!-- OpenDyslexic Font Toggle -->
+						<div class="border-t pt-3 mt-3" style="border-color: var(--color-border-subtle);">
+							<label class="flex items-center justify-between">
+								<div class="flex flex-col">
+									<span class="modal-text font-medium">OpenDyslexic Font</span>
+									<span class="text-caption mt-1">Easier reading for dyslexia</span>
+								</div>
+								<input 
+									type="checkbox" 
+									id="dyslexic-font-toggle" 
+									class="toggle-checkbox ml-4"
+									aria-label="Enable OpenDyslexic font"
+								>
+							</label>
+						</div>
 					</div>
 				</div>
 

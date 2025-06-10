@@ -7,7 +7,8 @@ import * as calc from "./calculator.js";
 const defaultSettings = {
 	distanceUnit: 'km',
 	theme: 'system', // 'light', 'dark', 'system', 'amoled', 'high-contrast', or 'monochrome'
-	accentColor: 'indigo' // default accent color
+	accentColor: 'indigo', // default accent color
+	dyslexicFont: false // OpenDyslexic font disabled by default
 };
 
 // Theme categorization
@@ -21,6 +22,7 @@ const saveSettingsBtn = document.getElementById("save-settings");
 const themeRadios = document.querySelectorAll('.theme-radio');
 const unitToggles = document.querySelectorAll("[data-unit]");
 const accentColorOptions = document.querySelectorAll('.accent-color-option');
+const dyslexicFontToggle = document.getElementById('dyslexic-font-toggle');
 
 // Menu elements
 const menuBtn = document.getElementById("menu-btn");
@@ -181,6 +183,16 @@ function applyAccentColor(accentColor) {
 	document.documentElement.setAttribute('data-accent-color', accentColor);
 }
 
+// Apply dyslexic font
+function applyDyslexicFont(enabled) {
+	const htmlElement = document.documentElement;
+	if (enabled) {
+		htmlElement.classList.add('dyslexic-font');
+	} else {
+		htmlElement.classList.remove('dyslexic-font');
+	}
+}
+
 
 // Update accent color UI to show current selection
 function updateAccentColorUI(accentColor) {
@@ -247,6 +259,19 @@ function handleAccentColorSelect(e) {
 	}
 }
 
+// Handle dyslexic font toggle
+function handleDyslexicFontToggle(e) {
+	const enabled = e.target.checked;
+	
+	// Apply font immediately
+	applyDyslexicFont(enabled);
+	
+	// Save setting
+	const currentSettings = loadSettings();
+	currentSettings.dyslexicFont = enabled;
+	saveSettings(currentSettings);
+}
+
 // Apply distance unit
 function applyDistanceUnit(unit) {
 	state.distanceUnit = unit;
@@ -286,6 +311,11 @@ function openSettings() {
 	
 	// Set current accent color
 	updateAccentColorUI(settings.accentColor);
+	
+	// Set current dyslexic font toggle
+	if (dyslexicFontToggle) {
+		dyslexicFontToggle.checked = settings.dyslexicFont;
+	}
 	
 	// Handle A11Y theme UI state
 	const isAccessibilityTheme = isA11yTheme(settings.theme);
@@ -648,6 +678,7 @@ export function initSettings() {
 	applyTheme(settings.theme);
 	applyDistanceUnit(settings.distanceUnit);
 	applyAccentColor(settings.accentColor);
+	applyDyslexicFont(settings.dyslexicFont);
 	
 	// Event listeners
 	closeSettingsBtn.addEventListener('click', closeSettings);
@@ -679,6 +710,11 @@ export function initSettings() {
 	accentColorOptions.forEach(option => {
 		option.addEventListener('click', handleAccentColorSelect);
 	});
+	
+	// Dyslexic font toggle event listener
+	if (dyslexicFontToggle) {
+		dyslexicFontToggle.addEventListener('change', handleDyslexicFontToggle);
+	}
 	
 	// PR modal event listeners
 	addPrBtn.addEventListener('click', () => openPRModal(false));
@@ -728,4 +764,4 @@ export function initSettings() {
 }
 
 // Export functions for use in other modules
-export { loadSettings, saveSettings, applyTheme, applyDistanceUnit };
+export { loadSettings, saveSettings, applyTheme, applyDistanceUnit, applyDyslexicFont };

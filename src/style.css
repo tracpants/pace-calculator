@@ -443,6 +443,15 @@
   --color-secondary-950: #09090b;
 }
 
+/* OpenDyslexic font support for accessibility */
+.dyslexic-font {
+  font-family: 'Open-Dyslexic', 'Comic Sans MS', cursive, sans-serif;
+}
+
+.dyslexic-font * {
+  font-family: inherit !important;
+}
+
 @layer components {
 	/* Screen reader only text */
 	.sr-only {
