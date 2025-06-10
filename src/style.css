@@ -848,6 +848,17 @@
 		}
 	}
 
+	/* Dropdown content styles */
+	.dropdown-content {
+		background-color: var(--color-surface);
+		border: 1px solid var(--color-border-default);
+		box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+	}
+	
+	.dark .dropdown-content {
+		box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+	}
+
 	/* Menu dropdown styles */
 	.menu-item {
 		color: var(--color-text-primary);
@@ -1226,11 +1237,117 @@
 		outline: none;
 	}
 	
-	/* Modal backgrounds */
-	.modal-content {
-		background-color: var(--color-surface);
+	/* ===========================================
+	   UNIFIED MODAL DESIGN SYSTEM
+	   =========================================== */
+
+	/* Modal container base styles */
+	.modal-container {
+		@apply fixed inset-0 flex items-center justify-center p-4 z-50 overflow-y-auto;
+		background-color: rgba(0, 0, 0, 0.5);
+		backdrop-filter: blur(4px);
+		transition: opacity 0.3s ease, backdrop-filter 0.3s ease;
 	}
 	
+	.modal-container.hidden {
+		display: none;
+	}
+	
+	/* Modal content base styles */
+	.modal-content {
+		@apply rounded-2xl shadow-2xl w-full p-6 my-8 relative flex flex-col;
+		background-color: var(--color-surface);
+		border: 1px solid var(--color-border-subtle);
+		max-height: calc(100vh - 4rem);
+		overflow: hidden; /* Let modal-body handle scrolling */
+		transform: scale(0.95) translateY(10px);
+		transition: transform 0.3s ease, opacity 0.3s ease;
+		opacity: 0;
+	}
+	
+	.modal-container:not(.hidden) .modal-content {
+		transform: scale(1) translateY(0);
+		opacity: 1;
+	}
+	
+	/* Modal size variants */
+	.modal-sm .modal-content {
+		max-width: 24rem; /* 384px */
+	}
+	
+	.modal-md .modal-content {
+		max-width: 28rem; /* 448px - default */
+	}
+	
+	.modal-lg .modal-content {
+		max-width: 32rem; /* 512px */
+	}
+	
+	.modal-xl .modal-content {
+		max-width: 36rem; /* 576px */
+	}
+	
+	/* Default modal size */
+	.modal-content {
+		max-width: 28rem;
+	}
+	
+	/* Modal header standardization */
+	.modal-header {
+		@apply flex justify-between items-center mb-6;
+		padding-bottom: 1rem;
+		border-bottom: 1px solid var(--color-border-subtle);
+		flex-shrink: 0; /* Prevent header from shrinking */
+	}
+	
+	.modal-header h2 {
+		@apply text-heading-2 flex items-center;
+		color: var(--color-text-primary);
+		margin: 0;
+	}
+	
+	.modal-header .modal-icon {
+		@apply w-6 h-6 mr-3;
+		color: var(--color-interactive-primary);
+		flex-shrink: 0;
+	}
+	
+	.modal-header .modal-close {
+		@apply btn-icon;
+		color: var(--color-text-tertiary);
+		flex-shrink: 0;
+	}
+	
+	/* Modal body standardization */
+	.modal-body {
+		@apply space-y-6;
+		flex: 1;
+		overflow-y: auto;
+		max-height: none; /* Allow natural height */
+		overflow-x: visible; /* Allow focus rings to extend horizontally */
+		padding-left: 0.5rem; /* Add left padding to prevent clipping */
+		padding-right: 0.5rem; /* Add right padding for symmetry */
+		margin-left: -0.5rem; /* Negative margin to maintain visual spacing */
+		margin-right: -0.5rem; /* Negative margin to maintain visual spacing */
+	}
+	
+	/* Modal footer standardization */
+	.modal-footer {
+		@apply flex gap-3 mt-6 pt-4;
+		border-top: 1px solid var(--color-border-subtle);
+		flex-shrink: 0;
+	}
+	
+	.modal-footer .btn {
+		@apply flex-1;
+	}
+	
+	.modal-footer .btn:only-child {
+		@apply flex-none ml-auto;
+		min-width: 100px;
+	}
+	
+	/* Modal text styles */
 	.modal-title {
 		color: var(--color-text-primary);
 	}
@@ -1243,14 +1360,92 @@
 		color: var(--color-text-tertiary);
 	}
 	
+	/* Modal specific styling */
+	.modal-section {
+		@apply space-y-4;
+	}
+	
+	.modal-section-title {
+		@apply text-sm font-medium mb-3;
+		color: var(--color-text-secondary);
+	}
+	
+	/* Responsive modal content spacing */
+	.modal-body > div {
+		word-wrap: break-word; /* Prevent text overflow */
+		overflow-wrap: break-word;
+	}
+	
+	/* Dark mode enhancements */
+	.dark .modal-container {
+		backdrop-filter: blur(8px);
+	}
+	
+	.dark .modal-content {
+		box-shadow: 
+			0 25px 50px -12px rgba(0, 0, 0, 0.5),
+			0 0 0 1px rgba(255, 255, 255, 0.1);
+	}
+	
+	/* Mobile responsive modal adjustments */
+	@media (max-width: 640px) {
+		.modal-container {
+			@apply p-2;
+		}
+		
+		.modal-content {
+			@apply p-4 my-4;
+			max-height: calc(100vh - 2rem);
+		}
+		
+		.modal-header {
+			@apply mb-4;
+		}
+		
+		.modal-footer {
+			@apply flex-col;
+		}
+		
+		.modal-footer .btn {
+			@apply w-full;
+		}
+	}
+	
+	/* Animation states for JavaScript control */
+	.modal-enter {
+		opacity: 0;
+		transform: scale(0.95) translateY(20px);
+	}
+	
+	.modal-enter-active {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+		transition: opacity 0.3s ease, transform 0.3s ease;
+	}
+	
+	.modal-exit {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+	
+	.modal-exit-active {
+		opacity: 0;
+		transform: scale(0.95) translateY(-20px);
+		transition: opacity 0.2s ease, transform 0.2s ease;
+	}
+	
 	/* Accent color picker styles */
 	.accent-color-option {
 		position: relative;
 		cursor: pointer;
-		overflow: hidden;
+		overflow: visible; /* Allow focus rings to show */
 		border: 2px solid var(--color-border-default);
 		transition: all 0.2s ease;
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		width: 100%; /* Make responsive */
+		aspect-ratio: 1; /* Maintain square shape */
+		max-width: 3rem; /* 48px max width */
+		height: auto; /* Let aspect-ratio control height */
 	}
 	
 	.accent-color-option:hover {
@@ -1263,12 +1458,14 @@
 		border-color: var(--color-interactive-primary);
 		box-shadow: 0 0 0 3px var(--color-interactive-primary-focus);
 		outline: none;
+		z-index: 10; /* Ensure focus ring appears above other elements */
 	}
 	
 	.accent-color-option.selected {
 		border-color: var(--color-interactive-primary);
 		box-shadow: 0 0 0 3px var(--color-interactive-primary-focus);
 		transform: scale(1.1);
+		z-index: 10; /* Ensure selected ring appears above other elements */
 	}
 	
 	.accent-color-option.selected .accent-color-check {
@@ -1285,6 +1482,19 @@
 		backdrop-filter: blur(4px);
 		opacity: 0;
 		transition: opacity 0.2s ease;
+	}
+	
+	/* Add padding to accent color container to prevent focus ring clipping */
+	#accent-color-section {
+		overflow: visible; /* Ensure focus rings aren't clipped */
+		padding: 0.75rem; /* Extra padding around the section */
+		margin: -0.75rem; /* Negative margin to maintain visual spacing */
+	}
+	
+	#accent-color-section .grid {
+		padding: 0.5rem; /* Add padding around the grid */
+		margin: -0.5rem; /* Negative margin to maintain visual spacing */
+		overflow: visible; /* Allow focus rings to extend beyond grid */
 	}
 	
 
@@ -1344,6 +1554,7 @@
 		appearance: none;
 		outline: none;
 		position: relative;
+		overflow: visible; /* Ensure focus rings are not clipped */
 	}
 	
 	.theme-radio:checked {
@@ -1365,10 +1576,24 @@
 	
 	.theme-radio:focus {
 		box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-interactive-primary-focus);
+		z-index: 1; /* Ensure focus ring appears above other elements */
 	}
 	
 	.theme-radio:hover:not(:checked) {
 		border-color: var(--color-interactive-primary);
+	}
+	
+	/* Ensure theme radio containers have enough padding for focus rings */
+	label:has(.theme-radio) {
+		@apply flex items-center;
+		padding: 0.375rem 0.5rem; /* Add padding to accommodate focus rings */
+		margin: 0.125rem 0; /* Small margin for better spacing */
+		border-radius: 0.375rem; /* Rounded corners for better visual */
+	}
+	
+	.theme-radio {
+		margin-right: 0.75rem; /* Ensure proper spacing from text */
+		flex-shrink: 0; /* Prevent radio from shrinking */
 	}
 
 	/* Toggle checkbox styling */

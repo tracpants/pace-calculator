@@ -33,7 +33,7 @@
 						
 						<!-- Dropdown Menu -->
 						<div id="menu-dropdown" class="absolute top-full left-0 mt-2 w-48 hidden z-50">
-							<div class="modal-content rounded-lg shadow-lg overflow-hidden">
+							<div class="dropdown-content rounded-lg shadow-lg overflow-hidden">
 								<div class="py-1">
 									<button id="pr-menu-item" class="btn-menu flex items-center">
 										<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -388,18 +388,23 @@
 	</div>
 
 	<!-- Help Modal -->
-	<div id="help-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50" role="dialog" aria-modal="true" aria-labelledby="help-title">
-		<div class="modal-content rounded-2xl shadow-2xl w-full max-w-lg p-6">
-			<div class="flex justify-between items-center mb-6">
-				<h2 id="help-title" class="text-heading-2">How to Use</h2>
-				<button id="close-help" class="btn-icon modal-text-tertiary" aria-label="Close help">
+	<div id="help-modal" class="modal-container modal-lg hidden" role="dialog" aria-modal="true" aria-labelledby="help-title">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 id="help-title">
+					<svg class="modal-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+					</svg>
+					How to Use
+				</h2>
+				<button id="close-help" class="modal-close" aria-label="Close help">
 					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 					</svg>
 				</button>
 			</div>
 			
-			<div class="space-y-6">
+			<div class="modal-body">
 				<div>
 					<h3 class="text-heading-3 mb-2 flex items-center">
 						<span class="w-6 h-6 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">P</span>
@@ -437,18 +442,24 @@
 	</div>
 
 	<!-- Settings Modal -->
-	<div id="settings-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="settings-title">
-		<div class="modal-content rounded-2xl shadow-2xl w-full max-w-md p-6 my-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
-			<div class="flex justify-between items-center mb-6">
-				<h2 id="settings-title" class="text-heading-2">Settings</h2>
-				<button id="close-settings" class="btn-icon modal-text-tertiary" aria-label="Close settings">
+	<div id="settings-modal" class="modal-container modal-lg hidden" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 id="settings-title">
+					<svg class="modal-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+					</svg>
+					Settings
+				</h2>
+				<button id="close-settings" class="modal-close" aria-label="Close settings">
 					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 					</svg>
 				</button>
 			</div>
 
-			<div class="space-y-6">
+			<div class="modal-body">
 				<!-- Distance Unit Setting -->
 				<div>
 					<label class="block text-sm font-medium modal-text mb-3">Distance Unit</label>
@@ -518,9 +529,9 @@
 				<!-- Accent Color Setting -->
 				<div id="accent-color-section">
 					<label class="block text-sm font-medium modal-text mb-3">Accent Color</label>
-					<div class="grid grid-cols-4 gap-3">
+					<div class="grid grid-cols-4 gap-2 sm:gap-3">
 						<button 
-							class="accent-color-option w-12 h-12 rounded-lg transition-all duration-200 relative"
+							class="accent-color-option rounded-lg transition-all duration-200 relative"
 							data-accent="indigo"
 							style="background-color: #4f46e5;"
 							aria-label="Indigo accent color"
@@ -534,7 +545,7 @@
 						</button>
 						
 						<button 
-							class="accent-color-option w-12 h-12 rounded-lg transition-all duration-200 relative"
+							class="accent-color-option rounded-lg transition-all duration-200 relative"
 							data-accent="blue"
 							style="background-color: #2563eb;"
 							aria-label="Blue accent color"
@@ -548,7 +559,7 @@
 						</button>
 						
 						<button 
-							class="accent-color-option w-12 h-12 rounded-lg transition-all duration-200 relative"
+							class="accent-color-option rounded-lg transition-all duration-200 relative"
 							data-accent="emerald"
 							style="background-color: #059669;"
 							aria-label="Emerald accent color"
@@ -562,7 +573,7 @@
 						</button>
 						
 						<button 
-							class="accent-color-option w-12 h-12 rounded-lg transition-all duration-200 relative"
+							class="accent-color-option rounded-lg transition-all duration-200 relative"
 							data-accent="amber"
 							style="background-color: #d97706;"
 							aria-label="Amber accent color"
@@ -576,7 +587,7 @@
 						</button>
 						
 						<button 
-							class="accent-color-option w-12 h-12 rounded-lg transition-all duration-200 relative"
+							class="accent-color-option rounded-lg transition-all duration-200 relative"
 							data-accent="rose"
 							style="background-color: #e11d48;"
 							aria-label="Rose accent color"
@@ -590,7 +601,7 @@
 						</button>
 						
 						<button 
-							class="accent-color-option w-12 h-12 rounded-lg transition-all duration-200 relative"
+							class="accent-color-option rounded-lg transition-all duration-200 relative"
 							data-accent="violet"
 							style="background-color: #7c3aed;"
 							aria-label="Violet accent color"
@@ -604,7 +615,7 @@
 						</button>
 						
 						<button 
-							class="accent-color-option w-12 h-12 rounded-lg transition-all duration-200 relative"
+							class="accent-color-option rounded-lg transition-all duration-200 relative"
 							data-accent="cyan"
 							style="background-color: #0891b2;"
 							aria-label="Cyan accent color"
@@ -618,7 +629,7 @@
 						</button>
 						
 						<button 
-							class="accent-color-option w-12 h-12 rounded-lg transition-all duration-200 relative"
+							class="accent-color-option rounded-lg transition-all duration-200 relative"
 							data-accent="orange"
 							style="background-color: #ea580c;"
 							aria-label="Orange accent color"
@@ -649,18 +660,24 @@
 	</div>
 
 	<!-- PR Add/Edit Modal -->
-	<div id="pr-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="pr-modal-title">
-		<div class="modal-content rounded-2xl shadow-2xl w-full max-w-md p-6 my-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
-			<div class="flex justify-between items-center mb-6">
-				<h2 id="pr-modal-title" class="text-heading-2">Add Personal Record</h2>
-				<button id="close-pr-modal" class="btn-icon modal-text-tertiary" aria-label="Close PR modal">
+	<div id="pr-modal" class="modal-container modal-md hidden" role="dialog" aria-modal="true" aria-labelledby="pr-modal-title">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 id="pr-modal-title">
+					<svg class="modal-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+					</svg>
+					Add Personal Record
+				</h2>
+				<button id="close-pr-modal" class="modal-close" aria-label="Close PR modal">
 					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 					</svg>
 				</button>
 			</div>
 
-			<form id="pr-form" class="space-y-4">
+			<form id="pr-form">
+				<div class="modal-body">
 				<div>
 					<label for="pr-distance" class="text-label mb-2 block">Distance</label>
 					<input type="text" id="pr-distance" class="input-base" placeholder="e.g., 5 or 21.1" required inputmode="decimal" pattern="[0-9]*\.?[0-9]*">
@@ -741,32 +758,34 @@
 					<div class="input-hint">Add context about this performance</div>
 				</div>
 
-				<div class="flex gap-3 mt-6">
-					<button type="submit" class="btn-primary flex-1">Save PR</button>
-					<button type="button" id="cancel-pr" class="btn-secondary flex-1">Cancel</button>
+				</div>
+				
+				<div class="modal-footer">
+					<button type="submit" class="btn-primary">Save PR</button>
+					<button type="button" id="cancel-pr" class="btn-secondary">Cancel</button>
 				</div>
 			</form>
 		</div>
 	</div>
 
 	<!-- Personal Records Management Modal -->
-	<div id="pr-management-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="pr-management-title">
-		<div class="modal-content rounded-2xl shadow-2xl w-full max-w-md p-6 my-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
-			<div class="flex justify-between items-center mb-6">
-				<h2 id="pr-management-title" class="text-xl font-bold modal-title flex items-center">
-					<svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+	<div id="pr-management-modal" class="modal-container modal-md hidden" role="dialog" aria-modal="true" aria-labelledby="pr-management-title">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 id="pr-management-title">
+					<svg class="modal-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
 					</svg>
 					Personal Records
 				</h2>
-				<button id="close-pr-management" class="btn-icon modal-text-tertiary" aria-label="Close personal records">
+				<button id="close-pr-management" class="modal-close" aria-label="Close personal records">
 					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 					</svg>
 				</button>
 			</div>
 
-			<div class="space-y-6">
+			<div class="modal-body">
 				<!-- Add PR Button -->
 				<div class="flex justify-between items-center">
 					<p class="modal-text">Manage your personal running records</p>
@@ -788,7 +807,7 @@
 				</div>
 			</div>
 
-			<div class="mt-8 flex justify-end">
+			<div class="modal-footer">
 				<button id="close-pr-management-btn" class="btn-secondary">Close</button>
 			</div>
 		</div>
