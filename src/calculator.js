@@ -184,3 +184,51 @@ export function formatDistance(distance, decimalPlaces = 2) {
 export function formatPaceDisplay(paceSeconds) {
 	return formatTime(paceSeconds, false);
 }
+
+// Pace adjustment calculation for "what if" scenarios
+export function calculateAdjustedTime(originalDistance, originalDistanceUnit, adjustedPaceSeconds, adjustedPaceUnit) {
+	// Convert distance to meters using consistent conversion factors
+	const distanceInMeters = originalDistanceUnit === "km" ? originalDistance * METERS_PER_KM : originalDistance * METERS_PER_MILE;
+	
+	// Convert adjusted pace to seconds per meter
+	const adjustedPaceSecondsPerMeter = adjustedPaceUnit === "km" ? adjustedPaceSeconds / METERS_PER_KM : adjustedPaceSeconds / METERS_PER_MILE;
+	
+	// Calculate new total time in seconds
+	const adjustedTotalTimeSeconds = distanceInMeters * adjustedPaceSecondsPerMeter;
+	
+	return adjustedTotalTimeSeconds;
+}
+
+// Parse pace input from segmented input format (MM:SS)
+export function parsePaceFromSegments(minutesStr, secondsStr) {
+	const minutes = parseInt(minutesStr || '0') || 0;
+	const seconds = parseInt(secondsStr || '0') || 0;
+	
+	if (minutes < 0 || seconds < 0 || seconds >= 60) {
+		return { valid: false, message: "Invalid pace format" };
+	}
+	
+	const totalSeconds = minutes * SECONDS_PER_MINUTE + seconds;
+	
+	if (totalSeconds <= 0) {
+		return { valid: false, message: "Pace must be greater than 0" };
+	}
+	
+	if (totalSeconds > 3600) { // More than 1 hour per unit
+		return { valid: false, message: "Pace cannot exceed 1 hour per unit" };
+	}
+	
+	return { valid: true, value: totalSeconds };
+}
+
+// Calculate time difference for pace adjustments
+export function calculateTimeDifference(originalTimeSeconds, adjustedTimeSeconds) {
+	const differenceSeconds = Math.abs(adjustedTimeSeconds - originalTimeSeconds);
+	const isFaster = adjustedTimeSeconds < originalTimeSeconds;
+	
+	return {
+		differenceSeconds,
+		isFaster,
+		formattedDifference: formatTime(differenceSeconds, true)
+	};
+}
