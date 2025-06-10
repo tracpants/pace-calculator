@@ -1114,17 +1114,18 @@
 	/* Toggle button variant (for unit toggles) */
 	.btn-toggle {
 		@apply flex-1 font-semibold transition-all duration-200 focus:outline-none text-base flex items-center justify-center;
-		min-height: 44px;
-		padding: 12px 24px;
+		min-height: 40px;
+		padding: 8px 16px;
 		border: 1px solid transparent;
 		cursor: pointer;
 		position: relative;
 		text-decoration: none;
 		user-select: none;
-		border-radius: 20px;
+		border-radius: 9999px; /* Full rounded to match container rounded-full */
 		background-color: transparent;
 		color: var(--color-text-tertiary);
 		transition: all 0.3s ease;
+		margin: 2px; /* Add margin for better spacing within container */
 	}
 
 	.btn-toggle:hover:not(.active) {
@@ -1324,12 +1325,39 @@
 		flex: 1;
 		overflow-y: auto;
 		max-height: none; /* Allow natural height */
-		overflow-x: visible; /* Allow focus rings to extend horizontally */
+		overflow-x: hidden; /* Prevent horizontal scroll */
 		padding-left: 0.5rem; /* Add left padding to prevent clipping */
 		padding-right: 0.5rem; /* Add right padding for symmetry */
 		margin-left: -0.5rem; /* Negative margin to maintain visual spacing */
 		margin-right: -0.5rem; /* Negative margin to maintain visual spacing */
 	}
+	
+	
+	/* Settings modal separator styling */
+	#settings-modal hr {
+		margin: 2rem 0; /* Add generous spacing around separator */
+		opacity: 0.6; /* Subtle separator line */
+	}
+	
+	/* Accessibility toggle button styling */
+	#accessibility-toggle {
+		color: var(--color-text-secondary);
+		padding: 0.5rem 0;
+		border-radius: 0.5rem;
+		transition: all 0.2s ease;
+	}
+	
+	#accessibility-toggle:hover {
+		color: var(--color-text-primary);
+		background-color: var(--color-interactive-secondary);
+	}
+	
+	#accessibility-toggle:focus {
+		outline: none;
+		background-color: var(--color-interactive-secondary);
+		box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-interactive-primary-focus);
+	}
+	
 	
 	/* Modal footer standardization */
 	.modal-footer {
@@ -1374,6 +1402,12 @@
 	.modal-body > div {
 		word-wrap: break-word; /* Prevent text overflow */
 		overflow-wrap: break-word;
+		box-sizing: border-box; /* Ensure padding is included in width calculations */
+	}
+	
+	/* Ensure all modal content respects container bounds */
+	.modal-content * {
+		box-sizing: border-box;
 	}
 	
 	/* Dark mode enhancements */
@@ -1454,6 +1488,10 @@
 		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 	}
 	
+	.accent-color-option:hover .accent-color-check {
+		opacity: 0.3; /* Show checkmark slightly on hover for preview */
+	}
+	
 	.accent-color-option:focus {
 		border-color: var(--color-interactive-primary);
 		box-shadow: 0 0 0 3px var(--color-interactive-primary-focus);
@@ -1472,28 +1510,33 @@
 		opacity: 1;
 	}
 	
+	.accent-color-option.selected:hover .accent-color-check {
+		opacity: 1; /* Keep selected state on hover */
+	}
+	
 	.accent-color-check {
 		position: absolute;
 		inset: 0;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background: rgba(0, 0, 0, 0.3);
+		background: rgba(0, 0, 0, 0.7); /* Darker background for better contrast */
 		backdrop-filter: blur(4px);
 		opacity: 0;
 		transition: opacity 0.2s ease;
+		border-radius: inherit; /* Match parent border radius */
 	}
 	
 	/* Add padding to accent color container to prevent focus ring clipping */
 	#accent-color-section {
 		overflow: visible; /* Ensure focus rings aren't clipped */
-		padding: 0.75rem; /* Extra padding around the section */
-		margin: -0.75rem; /* Negative margin to maintain visual spacing */
+		padding: 0.5rem; /* Reduced padding to prevent overflow */
+		margin: -0.5rem; /* Negative margin to maintain visual spacing */
 	}
 	
 	#accent-color-section .grid {
-		padding: 0.5rem; /* Add padding around the grid */
-		margin: -0.5rem; /* Negative margin to maintain visual spacing */
+		padding: 0.25rem; /* Reduced padding around the grid */
+		margin: -0.25rem; /* Negative margin to maintain visual spacing */
 		overflow: visible; /* Allow focus rings to extend beyond grid */
 	}
 	

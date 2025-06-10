@@ -35,6 +35,10 @@ const helpBtn = document.getElementById("help-btn");
 const helpModal = document.getElementById("help-modal");
 const closeHelpBtn = document.getElementById("close-help");
 
+// Accessibility toggle elements
+const accessibilityToggle = document.getElementById("accessibility-toggle");
+const accessibilityContent = document.getElementById("accessibility-content");
+
 // PR Management Modal elements
 const prManagementModal = document.getElementById("pr-management-modal");
 const closePrManagementBtn = document.getElementById("close-pr-management");
@@ -411,6 +415,24 @@ function handleSystemThemeChange(e) {
 	}
 }
 
+// Accessibility toggle functionality
+function toggleAccessibilitySection() {
+	const isExpanded = accessibilityToggle.getAttribute('aria-expanded') === 'true';
+	const icon = accessibilityToggle.querySelector('svg');
+	
+	if (isExpanded) {
+		// Collapse
+		accessibilityContent.classList.add('hidden');
+		accessibilityToggle.setAttribute('aria-expanded', 'false');
+		icon.style.transform = 'rotate(0deg)';
+	} else {
+		// Expand
+		accessibilityContent.classList.remove('hidden');
+		accessibilityToggle.setAttribute('aria-expanded', 'true');
+		icon.style.transform = 'rotate(180deg)';
+	}
+}
+
 // Menu functionality
 function openMenu() {
 	menuDropdown.classList.remove('hidden');
@@ -696,6 +718,11 @@ export function initSettings() {
 	// Help modal event listeners
 	helpBtn.addEventListener('click', openHelp);
 	closeHelpBtn.addEventListener('click', closeHelp);
+	
+	// Accessibility toggle event listener
+	if (accessibilityToggle) {
+		accessibilityToggle.addEventListener('click', toggleAccessibilitySection);
+	}
 	
 	// PR Management modal event listeners
 	closePrManagementBtn.addEventListener('click', closePRManagement);

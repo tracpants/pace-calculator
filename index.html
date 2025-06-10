@@ -442,7 +442,7 @@
 	</div>
 
 	<!-- Settings Modal -->
-	<div id="settings-modal" class="modal-container modal-lg hidden" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+	<div id="settings-modal" class="modal-container modal-md hidden" role="dialog" aria-modal="true" aria-labelledby="settings-title">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h2 id="settings-title">
@@ -472,11 +472,10 @@
 
 				<!-- Theme Setting -->
 				<div>
-					<label class="block text-sm font-medium modal-text mb-3">Appearance</label>
+					<label class="block text-sm font-medium modal-text mb-3">Theme</label>
 					
-					<!-- Basic Themes -->
-					<div class="space-y-2 mb-4">
-						<p class="text-caption mb-2">Basic Themes</p>
+					<!-- Essential Themes -->
+					<div class="space-y-3 mb-4">
 						<label class="flex items-center">
 							<input type="radio" name="theme" value="light" class="theme-radio mr-3" style="color: var(--color-interactive-primary); --tw-ring-color: var(--color-interactive-primary-focus);">
 							<span class="modal-text">Light</span>
@@ -487,13 +486,25 @@
 						</label>
 						<label class="flex items-center">
 							<input type="radio" name="theme" value="system" class="theme-radio mr-3" style="color: var(--color-interactive-primary); --tw-ring-color: var(--color-interactive-primary-focus);">
-							<span class="modal-text">System</span>
+							<span class="modal-text">System (Auto)</span>
 						</label>
 					</div>
 					
-					<!-- Accessibility Themes -->
-					<div class="space-y-2 border-t pt-3" style="border-color: var(--color-border-subtle);">
-						<p class="text-caption mb-2">Accessibility</p>
+					<!-- Accessibility Options - Collapsible -->
+					<div class="border-t pt-4" style="border-color: var(--color-border-subtle);">
+						<button 
+							id="accessibility-toggle" 
+							class="flex items-center justify-between w-full text-left"
+							aria-expanded="false"
+							aria-controls="accessibility-content"
+						>
+							<span class="text-sm font-medium modal-text">Accessibility Options</span>
+							<svg class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+							</svg>
+						</button>
+						
+						<div id="accessibility-content" class="hidden mt-4 space-y-3">
 						<label class="flex items-center">
 							<input type="radio" name="theme" value="amoled" class="theme-radio mr-3" style="color: var(--color-interactive-primary); --tw-ring-color: var(--color-interactive-primary-focus);">
 							<span class="modal-text">AMOLED</span>
@@ -522,10 +533,13 @@
 								>
 							</label>
 						</div>
+						</div>
 					</div>
 				</div>
 
-
+				<!-- Separator -->
+				<hr class="border-t" style="border-color: var(--color-border-subtle);">
+				
 				<!-- Accent Color Setting -->
 				<div id="accent-color-section">
 					<label class="block text-sm font-medium modal-text mb-3">Accent Color</label>
@@ -642,7 +656,7 @@
 							</div>
 						</button>
 					</div>
-					<p class="text-caption mt-2">Choose your preferred accent color for buttons and highlights</p>
+					<p class="text-caption mt-2">Choose your preferred color scheme</p>
 				</div>
 
 				<!-- Accent Color Disabled Message -->
