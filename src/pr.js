@@ -1,16 +1,8 @@
 import * as calc from "./calculator.js";
+import { getRaceDistancesKm, getDistanceDisplayName, normalizeDistanceToKm, findDistanceKey } from "./distances.js";
 
 // PR storage key
 const PR_STORAGE_KEY = 'pace-calculator-prs';
-
-// Common race distances (normalized to km for storage)
-const STANDARD_DISTANCES = {
-	'5k': 5,
-	'10k': 10,
-	'half-marathon': 21.0975,
-	'marathon': 42.195,
-	'1-mile': 1.609344
-};
 
 // Load PRs from localStorage
 export function loadPRs() {
@@ -34,13 +26,7 @@ export function savePRs(prs) {
 	}
 }
 
-// Normalize distance to km for consistent storage
-function normalizeDistance(distance, unit) {
-	if (unit === 'miles') {
-		return distance * 1.609344;
-	}
-	return distance;
-}
+// Note: normalizeDistance function removed - using centralized normalizeDistanceToKm instead
 
 // Get PR for a specific distance (in km)
 export function getPRForDistance(distanceKm) {
@@ -53,7 +39,8 @@ export function getPRForDistance(distanceKm) {
 	}
 	
 	// Check standard distances with small tolerance (0.1km)
-	for (const [name, standardDistanceKm] of Object.entries(STANDARD_DISTANCES)) {
+	const standardDistances = getRaceDistancesKm();
+	for (const [name, standardDistanceKm] of Object.entries(standardDistances)) {
 		if (Math.abs(distanceKm - standardDistanceKm) < 0.1) {
 			const standardPR = prs[standardDistanceKm.toString()];
 			if (standardPR) {
@@ -67,7 +54,7 @@ export function getPRForDistance(distanceKm) {
 
 // Set PR for a distance
 export function setPR(distance, unit, timeSeconds, date = null, notes = null) {
-	const distanceKm = normalizeDistance(distance, unit);
+	const distanceKm = normalizeDistanceToKm(distance, unit);
 	const prs = loadPRs();
 	
 	prs[distanceKm.toString()] = {
@@ -84,7 +71,7 @@ export function setPR(distance, unit, timeSeconds, date = null, notes = null) {
 
 // Remove PR for a distance
 export function removePR(distance, unit) {
-	const distanceKm = normalizeDistance(distance, unit);
+	const distanceKm = normalizeDistanceToKm(distance, unit);
 	const prs = loadPRs();
 	
 	delete prs[distanceKm.toString()];
@@ -97,14 +84,9 @@ export function getAllPRs() {
 	const formatted = [];
 	
 	for (const [distanceKm, pr] of Object.entries(prs)) {
-		// Check if this is a standard distance
-		let displayName = null;
-		for (const [name, standardDistanceKm] of Object.entries(STANDARD_DISTANCES)) {
-			if (Math.abs(parseFloat(distanceKm) - standardDistanceKm) < 0.1) {
-				displayName = name.replace('-', ' ').toUpperCase();
-				break;
-			}
-		}
+		// Check if this is a standard distance using centralized function
+		const distanceKey = findDistanceKey(parseFloat(distanceKm), 'km', 0.1);
+		const displayName = distanceKey ? getDistanceDisplayName(distanceKey) : null;
 		
 		formatted.push({
 			distanceKm: parseFloat(distanceKm),
@@ -113,7 +95,8 @@ export function getAllPRs() {
 			unit: pr.unit,
 			timeSeconds: pr.timeSeconds,
 			timeFormatted: calc.formatTime(pr.timeSeconds, true),
-			dateSet: pr.dateSet
+			dateSet: pr.dateSet,
+			notes: pr.notes
 		});
 	}
 	
@@ -124,7 +107,7 @@ export function getAllPRs() {
 
 // Compare current pace with PR pace
 export function comparePaceWithPR(currentTimeSeconds, distance, unit) {
-	const distanceKm = normalizeDistance(distance, unit);
+	const distanceKm = normalizeDistanceToKm(distance, unit);
 	const pr = getPRForDistance(distanceKm);
 	
 	if (!pr) {
@@ -183,12 +166,11 @@ export function validatePRTime(timeStr) {
 
 // Get distance name for display
 export function getDistanceName(distance, unit) {
-	const distanceKm = normalizeDistance(distance, unit);
+	const distanceKm = normalizeDistanceToKm(distance, unit);
+	const distanceKey = findDistanceKey(distanceKm, 'km', 0.1);
 	
-	for (const [name, standardDistanceKm] of Object.entries(STANDARD_DISTANCES)) {
-		if (Math.abs(distanceKm - standardDistanceKm) < 0.1) {
-			return name.replace('-', ' ').toUpperCase();
-		}
+	if (distanceKey) {
+		return getDistanceDisplayName(distanceKey);
 	}
 	
 	return `${distance} ${unit}`;

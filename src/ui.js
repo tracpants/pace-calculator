@@ -2,6 +2,7 @@ import { state } from "./state.js";
 import * as calc from "./calculator.js";
 import * as pr from "./pr.js";
 import { reinitAutoAdvance } from "./auto-advance.js";
+import { getRaceDistances, getDistanceSuggestions, getDistanceDisplayName, findDistanceKey } from "./distances.js";
 
 // DOM Elements
 const form = document.getElementById("calculator-form");
@@ -14,30 +15,6 @@ const copyIcon = document.getElementById("copy-icon");
 const checkIcon = document.getElementById("check-icon");
 const savePrBtn = document.getElementById("save-pr-btn");
 const updatePrBtn = document.getElementById("update-pr-btn");
-
-const presets = {
-	"1k": { km: 1, miles: 0.621 },
-	"1-mile": { km: 1.609, miles: 1 },
-	"2k": { km: 2, miles: 1.243 },
-	"3k": { km: 3, miles: 1.864 },
-	"5k": { km: 5, miles: 3.107 },
-	"8k": { km: 8, miles: 4.971 },
-	"10k": { km: 10, miles: 6.214 },
-	"12k": { km: 12, miles: 7.456 },
-	"15k": { km: 15, miles: 9.321 },
-	"10-mile": { km: 16.093, miles: 10 },
-	"half-marathon": { km: 21.0975, miles: 13.109 },
-	"25k": { km: 25, miles: 15.534 },
-	"30k": { km: 30, miles: 18.641 },
-	"marathon": { km: 42.195, miles: 26.219 },
-	"50k": { km: 50, miles: 31.069 },
-};
-
-// Extended distances for autocomplete
-const distanceSuggestions = {
-	km: [1, 1.5, 2, 3, 5, 8, 10, 12, 15, 16.09, 21.0975, 25, 30, 42.195, 50, 100],
-	miles: [0.5, 1, 1.5, 2, 3, 3.107, 5, 6.214, 8, 10, 13.109, 15, 20, 26.219, 31, 50, 100]
-};
 
 // Segmented input utility functions
 function getSegmentedTimeValue(prefix) {
@@ -327,15 +304,12 @@ function resetPresetDropdown(distanceInputId) {
 		const currentValue = parseFloat(input.value);
 		
 		if (currentValue) {
-			// Find matching preset
-			const matchingPreset = Object.entries(presets).find(([key, values]) => {
-				const presetValue = values[state.distanceUnit];
-				return Math.abs(currentValue - presetValue) < 0.001; // Small tolerance for floating point comparison
-			});
+			// Find matching preset using centralized function
+			const matchingKey = findDistanceKey(currentValue, state.distanceUnit, 0.001);
 			
-			if (matchingPreset) {
+			if (matchingKey) {
 				// Set the dropdown to the matching preset
-				presetSelect.value = matchingPreset[0];
+				presetSelect.value = matchingKey;
 			} else {
 				// No match, reset to default option
 				presetSelect.selectedIndex = 0;
@@ -475,7 +449,7 @@ function updateTabNavigation() {
 
 function populateAutocomplete() {
 	const datalist = document.getElementById('distance-suggestions');
-	const suggestions = distanceSuggestions[state.distanceUnit];
+	const suggestions = getDistanceSuggestions()[state.distanceUnit];
 	
 	datalist.innerHTML = suggestions
 		.map(distance => `<option value="${distance}">${distance} ${state.distanceUnit}</option>`)
@@ -987,12 +961,13 @@ function updateUnitToggles() {
 
 function populatePresetSelects() {
 	const unit = state.distanceUnit;
+	const raceDistances = getRaceDistances();
 	const options =
 		`<option value="">-- Pick an event --</option>` +
-		Object.entries(presets)
+		Object.entries(raceDistances)
 			.map(
 				([key, value]) =>
-					`<option value="${key}">${key.replace("-", " ").toUpperCase()} (${
+					`<option value="${key}">${getDistanceDisplayName(key)} (${
 						calc.formatDistance(value[unit], 3)
 					} ${unit})</option>`
 			)
@@ -1496,7 +1471,8 @@ export function initUI() {
 			const distanceInput = document.getElementById(
 				`${state.currentTab}-distance`
 			);
-			distanceInput.value = presets[presetKey][state.distanceUnit];
+			const raceDistances = getRaceDistances();
+			distanceInput.value = raceDistances[presetKey][state.distanceUnit];
 			// Save preset selection to tab state
 			state.tabStates[state.currentTab].presetSelection = presetKey;
 			
