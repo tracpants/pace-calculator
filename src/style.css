@@ -500,36 +500,235 @@
 		@apply min-h-[100px];
 	}
 
+	/* ===========================================
+	   UNIFIED INPUT SYSTEM
+	   =========================================== */
+
 	/* Base style for all text inputs and select dropdowns */
 	.input-base {
-		@apply w-full p-4 rounded-lg focus:ring-2 transition duration-200 outline-none text-base;
+		@apply w-full rounded-lg focus:ring-2 transition-all duration-200 outline-none text-base font-medium;
 		background-color: var(--color-surface-tertiary);
 		border: 2px solid var(--color-border-default);
 		color: var(--color-text-primary);
+		padding: 14px 16px;
+		min-height: 52px;
+		position: relative;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	}
+
+	.input-base::placeholder {
+		color: var(--color-text-tertiary);
+		font-weight: 400;
+	}
+
+	.input-base:hover:not(:focus):not(.error) {
+		border-color: var(--color-border-strong);
+		background-color: var(--color-surface);
 	}
 
 	.input-base:focus {
-		border-color: var(--color-interactive-primary-focus);
-		box-shadow: 0 0 0 2px var(--color-interactive-primary-focus);
+		border-color: var(--color-interactive-primary);
+		background-color: var(--color-surface);
+		box-shadow: 0 0 0 3px var(--color-interactive-primary-focus), 0 2px 8px rgba(0, 0, 0, 0.1);
+		transform: translateY(-1px);
 	}
 
 	/* Input validation states */
 	.input-base.error {
 		border-color: var(--color-status-error-border);
+		background-color: var(--color-status-error-bg);
+		animation: shake 0.3s ease-in-out;
 	}
 
 	.input-base.error:focus {
 		border-color: var(--color-status-error-border);
-		box-shadow: 0 0 0 2px var(--color-status-error-border);
+		box-shadow: 0 0 0 3px var(--color-status-error-border), 0 2px 8px rgba(220, 38, 38, 0.2);
 	}
 
 	.input-base.valid {
 		border-color: var(--color-status-success-border);
+		background-color: var(--color-status-success-bg);
 	}
 
 	.input-base.valid:focus {
 		border-color: var(--color-status-success-border);
-		box-shadow: 0 0 0 2px var(--color-status-success-border);
+		box-shadow: 0 0 0 3px var(--color-status-success-border), 0 2px 8px rgba(34, 197, 94, 0.2);
+	}
+
+	/* Segmented input container for time inputs (HH:MM:SS) */
+	.input-segmented-container {
+		@apply flex items-center space-x-2 w-full;
+	}
+
+	.input-segmented-group {
+		@apply flex-1 flex flex-col items-center;
+	}
+
+	.input-segmented {
+		@apply w-full text-center rounded-lg focus:ring-2 transition-all duration-200 outline-none text-lg font-bold;
+		background-color: var(--color-surface-tertiary);
+		border: 2px solid var(--color-border-default);
+		color: var(--color-text-primary);
+		padding: 16px 8px;
+		min-height: 56px;
+		position: relative;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	}
+
+	.input-segmented::placeholder {
+		color: var(--color-text-tertiary);
+		font-weight: 500;
+	}
+
+	.input-segmented:hover:not(:focus):not(.error) {
+		border-color: var(--color-border-strong);
+		background-color: var(--color-surface);
+		transform: scale(1.02);
+	}
+
+	.input-segmented:focus {
+		border-color: var(--color-interactive-primary);
+		background-color: var(--color-surface);
+		box-shadow: 0 0 0 3px var(--color-interactive-primary-focus), 0 2px 8px rgba(0, 0, 0, 0.1);
+		transform: scale(1.05) translateY(-2px);
+		z-index: 10;
+	}
+
+	.input-segmented.error {
+		border-color: var(--color-status-error-border);
+		background-color: var(--color-status-error-bg);
+		animation: shake 0.3s ease-in-out;
+	}
+
+	.input-segmented.error:focus {
+		border-color: var(--color-status-error-border);
+		box-shadow: 0 0 0 3px var(--color-status-error-border), 0 2px 8px rgba(220, 38, 38, 0.2);
+	}
+
+	.input-segmented.valid {
+		border-color: var(--color-status-success-border);
+		background-color: var(--color-status-success-bg);
+	}
+
+	.input-segmented.valid:focus {
+		border-color: var(--color-status-success-border);
+		box-shadow: 0 0 0 3px var(--color-status-success-border), 0 2px 8px rgba(34, 197, 94, 0.2);
+	}
+
+	/* Segmented input separator */
+	.input-separator {
+		@apply font-bold text-2xl;
+		color: var(--color-text-tertiary);
+		margin: 0 4px;
+		user-select: none;
+		line-height: 1;
+		align-self: flex-start;
+		margin-top: 14px; /* Align with input field center (56px height / 2 - 14px padding = 14px) */
+		height: 28px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	/* Segmented input labels */
+	.input-segment-label {
+		@apply text-caption font-medium mt-2 text-center;
+		color: var(--color-text-tertiary);
+		user-select: none;
+		letter-spacing: 0.5px;
+	}
+
+	/* Floating label effect for regular inputs */
+	.input-group {
+		@apply relative;
+	}
+
+	.input-floating-label {
+		@apply absolute left-4 transition-all duration-200 pointer-events-none;
+		top: 50%;
+		transform: translateY(-50%);
+		color: var(--color-text-tertiary);
+		font-size: 1rem;
+		font-weight: 500;
+	}
+
+	.input-base:focus + .input-floating-label,
+	.input-base:not(:placeholder-shown) + .input-floating-label {
+		top: 8px;
+		transform: translateY(0);
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: var(--color-interactive-primary);
+	}
+
+	.input-base.error + .input-floating-label {
+		color: var(--color-status-error-border);
+	}
+
+	.input-base.valid + .input-floating-label {
+		color: var(--color-status-success-border);
+	}
+
+	/* Enhanced preset dropdown styling */
+	.preset-select {
+		@apply appearance-none;
+		background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+		background-position: right 16px center;
+		background-repeat: no-repeat;
+		background-size: 1.25em 1.25em;
+		padding-right: 48px;
+		cursor: pointer;
+		font-weight: 500;
+	}
+
+	.preset-select:focus {
+		background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%234f46e5' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+	}
+
+	.dark .preset-select {
+		background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23d1d5db' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+	}
+
+	.dark .preset-select:focus {
+		background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2388e5a3' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+	}
+
+	/* Form section spacing and layout improvements */
+	.form-input-group {
+		@apply space-y-2;
+	}
+
+	.form-input-row {
+		@apply flex flex-col space-y-4;
+	}
+
+	/* Input hint and error text styling */
+	.input-hint {
+		@apply text-body-small mt-2;
+		color: var(--color-text-tertiary);
+		line-height: 1.4;
+	}
+
+	.input-error {
+		@apply text-sm mt-2 font-medium;
+		color: var(--color-status-error);
+		line-height: 1.4;
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+
+	.input-error::before {
+		content: '⚠';
+		font-size: 14px;
+		flex-shrink: 0;
+	}
+
+	/* Shake animation for validation errors */
+	@keyframes shake {
+		0%, 100% { transform: translateX(0); }
+		10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+		20%, 40%, 60%, 80% { transform: translateX(4px); }
 	}
 
 	/* Animation utilities */
@@ -661,7 +860,7 @@
 		background-color: var(--color-status-success-bg);
 	}
 
-	/* Custom styling for the select dropdown arrow */
+	/* Legacy select custom styling - now handled by preset-select */
 	.select-custom {
 		@apply appearance-none;
 		background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
@@ -1185,7 +1384,29 @@
 	@media (max-width: 640px) {
 		.input-base {
 			@apply text-lg;
-			padding: 16px;
+			padding: 18px 16px;
+			min-height: 56px;
+		}
+
+		.input-segmented {
+			@apply text-xl;
+			padding: 18px 12px;
+			min-height: 60px;
+		}
+
+		.input-separator {
+			@apply text-3xl;
+			margin-top: 16px; /* Adjust for larger mobile inputs (60px height / 2 - 18px padding = 12px + 4px for visual balance) */
+			height: 32px;
+		}
+
+		.input-segment-label {
+			@apply text-sm;
+			margin-top: 8px;
+		}
+
+		.preset-select {
+			padding-right: 52px;
 		}
 	}
 }

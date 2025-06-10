@@ -89,12 +89,12 @@
 					<div data-section="pace" class="form-section space-y-4" role="tabpanel" id="pace-panel" aria-labelledby="pace-tab">
 						<div>
 							<label class="text-label mb-2 block">Time</label>
-							<div class="flex items-center space-x-2">
-								<div class="flex-1">
+							<div class="input-segmented-container">
+								<div class="input-segmented-group">
 									<input
 										type="number"
 										id="pace-time-hours"
-										class="input-base text-center"
+										class="input-segmented"
 										placeholder="0"
 										min="0"
 										max="23"
@@ -102,14 +102,14 @@
 										autocomplete="off"
 										aria-label="Hours"
 									/>
-									<label class="text-caption block text-center mt-1">HH</label>
+									<label class="input-segment-label">HH</label>
 								</div>
-								<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
-								<div class="flex-1">
+								<span class="input-separator">:</span>
+								<div class="input-segmented-group">
 									<input
 										type="number"
 										id="pace-time-minutes"
-										class="input-base text-center"
+										class="input-segmented"
 										placeholder="45"
 										value="45"
 										min="0"
@@ -118,14 +118,14 @@
 										autocomplete="off"
 										aria-label="Minutes"
 									/>
-									<label class="text-caption block text-center mt-1">MM</label>
+									<label class="input-segment-label">MM</label>
 								</div>
-								<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
-								<div class="flex-1">
+								<span class="input-separator">:</span>
+								<div class="input-segmented-group">
 									<input
 										type="number"
 										id="pace-time-seconds"
-										class="input-base text-center"
+										class="input-segmented"
 										placeholder="30"
 										value="30"
 										min="0"
@@ -134,11 +134,11 @@
 										autocomplete="off"
 										aria-label="Seconds"
 									/>
-									<label class="text-caption block text-center mt-1">SS</label>
+									<label class="input-segment-label">SS</label>
 								</div>
 							</div>
-							<div id="pace-time-hint" class="text-body-small mt-1" style="color: var(--color-text-tertiary);">Enter your running time</div>
-							<div id="pace-time-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
+							<div id="pace-time-hint" class="input-hint">Enter your running time</div>
+							<div id="pace-time-error" class="input-error hidden" role="alert"></div>
 						</div>
 						<div>
 							<label class="text-label mb-2 block" for="pace-distance"
@@ -161,8 +161,8 @@
 								autocomplete="off"
 								enterkeyhint="done"
 							/>
-							<div id="pace-distance-hint" class="text-body-small mt-1" style="color: var(--color-text-tertiary);">Enter distance in selected unit</div>
-							<div id="pace-distance-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
+							<div id="pace-distance-hint" class="input-hint">Enter distance in selected unit</div>
+							<div id="pace-distance-error" class="input-error hidden" role="alert"></div>
 						</div>
 					</div>
 
@@ -170,12 +170,12 @@
 					<div data-section="time" class="form-section space-y-4 hidden" role="tabpanel" id="time-panel" aria-labelledby="time-tab">
 						<div>
 							<label class="text-label mb-2 block">Pace</label>
-							<div class="flex items-center space-x-2">
-								<div class="flex-1">
+							<div class="input-segmented-container">
+								<div class="input-segmented-group">
 									<input
 										type="number"
 										id="time-pace-minutes"
-										class="input-base text-center"
+										class="input-segmented"
 										placeholder="4"
 										value="4"
 										min="0"
@@ -184,14 +184,14 @@
 										autocomplete="off"
 										aria-label="Minutes"
 									/>
-									<label class="text-caption block text-center mt-1">MM</label>
+									<label class="input-segment-label">MM</label>
 								</div>
-								<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
-								<div class="flex-1">
+								<span class="input-separator">:</span>
+								<div class="input-segmented-group">
 									<input
 										type="number"
 										id="time-pace-seconds"
-										class="input-base text-center"
+										class="input-segmented"
 										placeholder="30"
 										value="30"
 										min="0"
@@ -200,11 +200,11 @@
 										autocomplete="off"
 										aria-label="Seconds"
 									/>
-									<label class="text-caption block text-center mt-1">SS</label>
+									<label class="input-segment-label">SS</label>
 								</div>
 							</div>
-							<div id="time-pace-hint" class="text-body-small mt-1" style="color: var(--color-text-tertiary);">Enter your pace per unit</div>
-							<div id="time-pace-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
+							<div id="time-pace-hint" class="input-hint">Enter your pace per unit</div>
+							<div id="time-pace-error" class="input-error hidden" role="alert"></div>
 						</div>
 						<div>
 							<label class="text-label mb-2 block" for="time-distance"
@@ -227,8 +227,8 @@
 								autocomplete="off"
 								enterkeyhint="done"
 							/>
-							<div id="time-distance-hint" class="text-body-small mt-1" style="color: var(--color-text-tertiary);">Enter distance in selected unit</div>
-							<div id="time-distance-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
+							<div id="time-distance-hint" class="input-hint">Enter distance in selected unit</div>
+							<div id="time-distance-error" class="input-error hidden" role="alert"></div>
 						</div>
 					</div>
 
@@ -236,12 +236,12 @@
 					<div data-section="distance" class="form-section space-y-4 hidden" role="tabpanel" id="distance-panel" aria-labelledby="distance-tab">
 						<div>
 							<label class="text-label mb-2 block">Time</label>
-							<div class="flex items-center space-x-2">
-								<div class="flex-1">
+							<div class="input-segmented-container">
+								<div class="input-segmented-group">
 									<input
 										type="number"
 										id="distance-time-hours"
-										class="input-base text-center"
+										class="input-segmented"
 										placeholder="1"
 										value="1"
 										min="0"
@@ -250,14 +250,14 @@
 										autocomplete="off"
 										aria-label="Hours"
 									/>
-									<label class="text-caption block text-center mt-1">HH</label>
+									<label class="input-segment-label">HH</label>
 								</div>
-								<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
-								<div class="flex-1">
+								<span class="input-separator">:</span>
+								<div class="input-segmented-group">
 									<input
 										type="number"
 										id="distance-time-minutes"
-										class="input-base text-center"
+										class="input-segmented"
 										placeholder="35"
 										value="35"
 										min="0"
@@ -266,14 +266,14 @@
 										autocomplete="off"
 										aria-label="Minutes"
 									/>
-									<label class="text-caption block text-center mt-1">MM</label>
+									<label class="input-segment-label">MM</label>
 								</div>
-								<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
-								<div class="flex-1">
+								<span class="input-separator">:</span>
+								<div class="input-segmented-group">
 									<input
 										type="number"
 										id="distance-time-seconds"
-										class="input-base text-center"
+										class="input-segmented"
 										placeholder="0"
 										value="0"
 										min="0"
@@ -282,20 +282,20 @@
 										autocomplete="off"
 										aria-label="Seconds"
 									/>
-									<label class="text-caption block text-center mt-1">SS</label>
+									<label class="input-segment-label">SS</label>
 								</div>
 							</div>
-							<div id="distance-time-hint" class="text-body-small mt-1" style="color: var(--color-text-tertiary);">Enter your running time</div>
-							<div id="distance-time-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
+							<div id="distance-time-hint" class="input-hint">Enter your running time</div>
+							<div id="distance-time-error" class="input-error hidden" role="alert"></div>
 						</div>
 						<div>
 							<label class="text-label mb-2 block">Pace</label>
-							<div class="flex items-center space-x-2">
-								<div class="flex-1">
+							<div class="input-segmented-container">
+								<div class="input-segmented-group">
 									<input
 										type="number"
 										id="distance-pace-minutes"
-										class="input-base text-center"
+										class="input-segmented"
 										placeholder="4"
 										value="4"
 										min="0"
@@ -304,14 +304,14 @@
 										autocomplete="off"
 										aria-label="Minutes"
 									/>
-									<label class="text-caption block text-center mt-1">MM</label>
+									<label class="input-segment-label">MM</label>
 								</div>
-								<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
-								<div class="flex-1">
+								<span class="input-separator">:</span>
+								<div class="input-segmented-group">
 									<input
 										type="number"
 										id="distance-pace-seconds"
-										class="input-base text-center"
+										class="input-segmented"
 										placeholder="30"
 										value="30"
 										min="0"
@@ -320,11 +320,11 @@
 										autocomplete="off"
 										aria-label="Seconds"
 									/>
-									<label class="text-caption block text-center mt-1">SS</label>
+									<label class="input-segment-label">SS</label>
 								</div>
 							</div>
-							<div id="distance-pace-hint" class="text-body-small mt-1" style="color: var(--color-text-tertiary);">Enter your pace per unit</div>
-							<div id="distance-pace-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
+							<div id="distance-pace-hint" class="input-hint">Enter your pace per unit</div>
+							<div id="distance-pace-error" class="input-error hidden" role="alert"></div>
 						</div>
 					</div>
 				</div>
@@ -659,12 +659,12 @@
 
 				<div>
 					<label class="text-label mb-2 block">Time</label>
-					<div class="flex items-center space-x-2">
-						<div class="flex-1">
+					<div class="input-segmented-container">
+						<div class="input-segmented-group">
 							<input
 								type="number"
 								id="pr-time-hours"
-								class="input-base text-center"
+								class="input-segmented"
 								placeholder="0"
 								min="0"
 								max="23"
@@ -672,14 +672,14 @@
 								autocomplete="off"
 								aria-label="Hours"
 							/>
-							<label class="text-caption block text-center mt-1">HH</label>
+							<label class="input-segment-label">HH</label>
 						</div>
-						<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
-						<div class="flex-1">
+						<span class="input-separator">:</span>
+						<div class="input-segmented-group">
 							<input
 								type="number"
 								id="pr-time-minutes"
-								class="input-base text-center"
+								class="input-segmented"
 								placeholder="25"
 								min="0"
 								max="59"
@@ -688,14 +688,14 @@
 								aria-label="Minutes"
 								required
 							/>
-							<label class="text-caption block text-center mt-1">MM</label>
+							<label class="input-segment-label">MM</label>
 						</div>
-						<span class="font-bold" style="color: var(--color-text-tertiary);">:</span>
-						<div class="flex-1">
+						<span class="input-separator">:</span>
+						<div class="input-segmented-group">
 							<input
 								type="number"
 								id="pr-time-seconds"
-								class="input-base text-center"
+								class="input-segmented"
 								placeholder="30"
 								min="0"
 								max="59"
@@ -704,23 +704,23 @@
 								aria-label="Seconds"
 								required
 							/>
-							<label class="text-caption block text-center mt-1">SS</label>
+							<label class="input-segment-label">SS</label>
 						</div>
 					</div>
-					<div class="text-body-small mt-1" style="color: var(--color-text-tertiary);">Enter your personal record time</div>
-					<div id="pr-time-error" class="text-sm mt-1 hidden" style="color: var(--color-status-error);" role="alert"></div>
+					<div class="input-hint">Enter your personal record time</div>
+					<div id="pr-time-error" class="input-error hidden" role="alert"></div>
 				</div>
 
 				<div>
 					<label for="pr-date" class="text-label mb-2 block">Date (Optional)</label>
 					<input type="date" id="pr-date" class="input-base">
-					<div class="text-body-small mt-1" style="color: var(--color-text-tertiary);">When did you achieve this PR?</div>
+					<div class="input-hint">When did you achieve this PR?</div>
 				</div>
 
 				<div>
 					<label for="pr-notes" class="text-label mb-2 block">Notes (Optional)</label>
 					<textarea id="pr-notes" class="input-base" rows="3" placeholder="e.g., Great weather, felt strong, new PB!"></textarea>
-					<div class="text-body-small mt-1" style="color: var(--color-text-tertiary);">Add context about this performance</div>
+					<div class="input-hint">Add context about this performance</div>
 				</div>
 
 				<div class="flex gap-3 mt-6">
