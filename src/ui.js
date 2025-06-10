@@ -13,8 +13,6 @@ const loadingDiv = document.getElementById("loading");
 const copyBtn = document.getElementById("copy-result-btn");
 const copyIcon = document.getElementById("copy-icon");
 const checkIcon = document.getElementById("check-icon");
-const savePrBtn = document.getElementById("save-pr-btn");
-const updatePrBtn = document.getElementById("update-pr-btn");
 
 // Segmented input utility functions
 function getSegmentedTimeValue(prefix) {

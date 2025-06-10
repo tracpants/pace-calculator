@@ -1,150 +1,177 @@
 /**
- * Centralized Distance Configuration
- * 
- * This file serves as the single source of truth for all race distances
- * and distance-related data used throughout the application.
+ * Centralized distance configuration for the pace calculator
+ * Single source of truth for all race distances and distance-related utilities
  */
 
-// Conversion constants
-export const CONVERSIONS = {
-    KM_TO_MILES: 0.621371,
-    MILES_TO_KM: 1.609344
-};
-
-/**
- * Standard race distances with precise values
- * All distances stored in kilometers for consistency
- * Includes sprint, middle, long, and ultra distances
- */
+// All race distances stored in kilometers for consistency
+// This is the single source of truth for all distance calculations
 const RACE_DISTANCES_KM = {
-    // Sprint distances
+    // Sprint distances (up to 3K)
     "1k": 1,
     "1-mile": 1.609344,
     "2k": 2,
     "3k": 3,
-    
-    // Middle distances
+
+    // Middle distances (3K to 15K)
     "5k": 5,
     "8k": 8,
     "10k": 10,
     "12k": 12,
     "15k": 15,
+
+    // Long distances (10-mile to marathon)
     "10-mile": 16.09344,
-    
-    // Long distances
     "half-marathon": 21.0975,
     "25k": 25,
     "30k": 30,
     "marathon": 42.195,
-    
-    // Ultra distances
+
+    // Ultra distances (50K and beyond)
     "50k": 50,
-    "50-mile": 80.4672,    // 50 miles
+    "50-mile": 80.4672,
     "100k": 100,
-    "100-mile": 160.9344,  // 100 miles
-    "12-hour": 120,        // Typical 12-hour race distance (estimate)
-    "24-hour": 200,        // Typical 24-hour race distance (estimate)
-    "48-hour": 350,        // Typical 48-hour race distance (estimate)
-    "6-day": 800,          // Typical 6-day race distance (estimate)
+    "100-mile": 160.9344,
+    "12-hour": 120,    // Estimated distance for 12-hour race
+    "24-hour": 200,    // Estimated distance for 24-hour race
+    "48-hour": 350,    // Estimated distance for 48-hour race
+    "6-day": 800,      // Estimated distance for 6-day race
+};
+
+// Distance categories for organization
+const DISTANCE_CATEGORIES = {
+    sprint: ["1k", "1-mile", "2k", "3k"],
+    middle: ["5k", "8k", "10k", "12k", "15k"],
+    long: ["10-mile", "half-marathon", "25k", "30k", "marathon"],
+    ultra: ["50k", "50-mile", "100k", "100-mile", "12-hour", "24-hour", "48-hour", "6-day"]
+};
+
+// Display names for better UX
+const DISTANCE_DISPLAY_NAMES = {
+    "1k": "1K",
+    "1-mile": "1 Mile",
+    "2k": "2K", 
+    "3k": "3K",
+    "5k": "5K",
+    "8k": "8K",
+    "10k": "10K",
+    "12k": "12K",
+    "15k": "15K",
+    "10-mile": "10 Mile",
+    "half-marathon": "Half Marathon",
+    "25k": "25K",
+    "30k": "30K",
+    "marathon": "Marathon",
+    "50k": "50K",
+    "50-mile": "50 Mile", 
+    "100k": "100K",
+    "100-mile": "100 Mile",
+    "12-hour": "12 Hour",
+    "24-hour": "24 Hour",
+    "48-hour": "48 Hour",
+    "6-day": "6 Day"
 };
 
 /**
- * Convert kilometers to miles using precise conversion factor
+ * Convert kilometers to miles
  */
 function kmToMiles(km) {
-    return km * CONVERSIONS.KM_TO_MILES;
+    return km / 1.609344;
 }
 
 /**
- * Convert miles to kilometers using precise conversion factor
+ * Convert miles to kilometers
  */
 function milesToKm(miles) {
-    return miles * CONVERSIONS.MILES_TO_KM;
+    return miles * 1.609344;
 }
 
 /**
  * Get all race distances with both km and miles values
- * Used for dropdowns and presets
+ * @returns {Object} Object with distance keys and {km, miles} values
  */
 export function getRaceDistances() {
     const distances = {};
-    
-    for (const [key, kmValue] of Object.entries(RACE_DISTANCES_KM)) {
+    for (const [key, km] of Object.entries(RACE_DISTANCES_KM)) {
         distances[key] = {
-            km: kmValue,
-            miles: kmToMiles(kmValue)
+            km: km,
+            miles: kmToMiles(km)
         };
     }
-    
     return distances;
 }
 
 /**
- * Get race distances in kilometers only
- * Used for PR logic and storage
+ * Get race distances only in kilometers
+ * @returns {Object} Object with distance keys and kilometer values
  */
 export function getRaceDistancesKm() {
     return { ...RACE_DISTANCES_KM };
 }
 
 /**
+ * Get distance display name
+ * @param {string} key - Distance key (e.g., "5k", "half-marathon")
+ * @returns {string} Human-readable display name
+ */
+export function getDistanceDisplayName(key) {
+    return DISTANCE_DISPLAY_NAMES[key] || key.replace("-", " ").toUpperCase();
+}
+
+/**
+ * Get distance value for a specific unit
+ * @param {string} key - Distance key (e.g., "5k", "marathon")
+ * @param {string} unit - "km" or "miles"
+ * @returns {number|null} Distance value or null if not found
+ */
+export function getDistanceValue(key, unit) {
+    const km = RACE_DISTANCES_KM[key];
+    if (!km) return null;
+    
+    return unit === "miles" ? kmToMiles(km) : km;
+}
+
+/**
  * Get distance suggestions for autocomplete
- * Includes common fractional distances and ultra distances for better UX
+ * @returns {Object} Object with km and miles arrays of suggested distances
  */
 export function getDistanceSuggestions() {
+    // Standard race distances
+    const standardKm = Object.values(RACE_DISTANCES_KM);
+    
+    // Additional common training distances
+    const additionalKm = [1.5, 6, 7, 9, 16, 18, 20, 32, 35, 40, 45, 60, 75, 90, 150, 200, 300, 400, 500, 750, 1000];
+    
+    // Combine and sort
+    const allKm = [...new Set([...standardKm, ...additionalKm])].sort((a, b) => a - b);
+    
     return {
-        km: [
-            // Sprint & middle distances
-            1, 1.5, 2, 3, 5, 8, 10, 12, 15, 
-            16.09, // 10 miles
-            // Long distances
-            21.0975, // half marathon
-            25, 30, 
-            42.195, // marathon
-            // Ultra distances
-            50, 60, 80.47, // 50 miles
-            100, 120, 150, 160.93, // 100 miles
-            200, 250, 300, 350, 400, 500, 600, 700, 800, 1000
-        ],
-        miles: [
-            // Sprint & middle distances
-            0.5, 1, 1.5, 2, 3, 
-            3.107, // 5k
-            5, 
-            6.214, // 10k
-            8, 10, 
-            13.109, // half marathon
-            15, 20, 
-            26.219, // marathon
-            // Ultra distances
-            31, 40, 50, 62, // 100k
-            75, 100, 125, 150, 200, 250, 300, 400, 500
-        ]
+        km: allKm,
+        miles: allKm.map(kmToMiles).sort((a, b) => a - b)
     };
 }
 
 /**
- * Get formatted display name for a distance
- * @param {string} key - Distance key (e.g., "half-marathon")
- * @returns {string} - Formatted display name (e.g., "HALF MARATHON")
+ * Normalize distance to kilometers
+ * @param {number} distance - Distance value
+ * @param {string} unit - "km" or "miles"
+ * @returns {number} Distance in kilometers
  */
-export function getDistanceDisplayName(key) {
-    return key.replace(/[-_]/g, " ").toUpperCase();
+export function normalizeDistanceToKm(distance, unit) {
+    return unit === "miles" ? milesToKm(distance) : distance;
 }
 
 /**
- * Find distance key by approximate distance value
- * @param {number} distance - Distance value
- * @param {string} unit - Unit ("km" or "miles")
- * @param {number} tolerance - Tolerance for matching (default: 0.1 km)
- * @returns {string|null} - Distance key or null if no match
+ * Find distance key by value with tolerance
+ * @param {number} distance - Distance value to find
+ * @param {string} unit - "km" or "miles" 
+ * @param {number} tolerance - Tolerance for matching (default 0.001)
+ * @returns {string|null} Distance key or null if not found
  */
-export function findDistanceKey(distance, unit, tolerance = 0.1) {
-    // Convert to km for comparison
-    const distanceKm = unit === "miles" ? milesToKm(distance) : distance;
+export function findDistanceKey(distance, unit, tolerance = 0.001) {
+    const distanceKm = normalizeDistanceToKm(distance, unit);
     
-    for (const [key, kmValue] of Object.entries(RACE_DISTANCES_KM)) {
-        if (Math.abs(distanceKm - kmValue) <= tolerance) {
+    for (const [key, km] of Object.entries(RACE_DISTANCES_KM)) {
+        if (Math.abs(distanceKm - km) < tolerance) {
             return key;
         }
     }
@@ -153,116 +180,64 @@ export function findDistanceKey(distance, unit, tolerance = 0.1) {
 }
 
 /**
- * Get distance value for a specific key and unit
+ * Check if a distance is an ultra distance
  * @param {string} key - Distance key
- * @param {string} unit - Unit ("km" or "miles")
- * @returns {number|null} - Distance value or null if key doesn't exist
+ * @returns {boolean} True if ultra distance
  */
-export function getDistanceValue(key, unit) {
-    const kmValue = RACE_DISTANCES_KM[key];
-    if (!kmValue) return null;
-    
-    return unit === "miles" ? kmToMiles(kmValue) : kmValue;
+export function isUltraDistance(key) {
+    return DISTANCE_CATEGORIES.ultra.includes(key);
 }
 
 /**
- * Get all distance keys sorted by distance
- * @returns {string[]} - Array of distance keys
+ * Get distance category
+ * @param {string} key - Distance key
+ * @returns {string|null} Category name or null if not found
  */
-export function getDistanceKeys() {
-    return Object.keys(RACE_DISTANCES_KM).sort((a, b) => {
-        return RACE_DISTANCES_KM[a] - RACE_DISTANCES_KM[b];
-    });
-}
-
-/**
- * Check if a distance is a standard race distance
- * @param {number} distance - Distance value
- * @param {string} unit - Unit ("km" or "miles")
- * @param {number} tolerance - Tolerance for matching (default: 0.1 km)
- * @returns {boolean} - True if it's a standard race distance
- */
-export function isStandardRaceDistance(distance, unit, tolerance = 0.1) {
-    return findDistanceKey(distance, unit, tolerance) !== null;
-}
-
-/**
- * Get the normalized distance in km for storage
- * @param {number} distance - Distance value
- * @param {string} unit - Unit ("km" or "miles")
- * @returns {number} - Distance in kilometers
- */
-export function normalizeDistanceToKm(distance, unit) {
-    return unit === "miles" ? milesToKm(distance) : distance;
-}
-
-/**
- * Convert distance from km to specified unit
- * @param {number} distanceKm - Distance in kilometers
- * @param {string} unit - Target unit ("km" or "miles")
- * @returns {number} - Distance in target unit
- */
-export function convertFromKm(distanceKm, unit) {
-    return unit === "miles" ? kmToMiles(distanceKm) : distanceKm;
-}
-
-/**
- * Distance categories for better organization
- */
-export const DISTANCE_CATEGORIES = {
-    SPRINT: "sprint",
-    MIDDLE: "middle", 
-    LONG: "long",
-    ULTRA: "ultra"
-};
-
-/**
- * Get distance category for a distance
- * @param {number} distance - Distance value
- * @param {string} unit - Unit ("km" or "miles")
- * @returns {string} - Distance category
- */
-export function getDistanceCategory(distance, unit) {
-    const distanceKm = normalizeDistanceToKm(distance, unit);
-    
-    if (distanceKm <= 3) return DISTANCE_CATEGORIES.SPRINT;
-    if (distanceKm <= 21) return DISTANCE_CATEGORIES.MIDDLE;
-    if (distanceKm <= 42.195) return DISTANCE_CATEGORIES.LONG;
-    return DISTANCE_CATEGORIES.ULTRA;
-}
-
-/**
- * Check if a distance is an ultra distance (>42.195km/26.2miles)
- * @param {number} distance - Distance value
- * @param {string} unit - Unit ("km" or "miles")
- * @returns {boolean} - True if ultra distance
- */
-export function isUltraDistance(distance, unit) {
-    return getDistanceCategory(distance, unit) === DISTANCE_CATEGORIES.ULTRA;
-}
-
-/**
- * Get distances by category
- * @param {string} category - Distance category
- * @returns {Object} - Object with distance keys in that category
- */
-export function getDistancesByCategory(category) {
-    const allDistances = getRaceDistances();
-    const result = {};
-    
-    for (const [key, value] of Object.entries(allDistances)) {
-        if (getDistanceCategory(value.km, 'km') === category) {
-            result[key] = value;
+export function getDistanceCategory(key) {
+    for (const [category, distances] of Object.entries(DISTANCE_CATEGORIES)) {
+        if (distances.includes(key)) {
+            return category;
         }
     }
-    
-    return result;
+    return null;
 }
 
 /**
  * Get ultra distances only
- * @returns {Object} - Object with ultra distance keys only
+ * @returns {Object} Object with ultra distance keys and {km, miles} values
  */
 export function getUltraDistances() {
-    return getDistancesByCategory(DISTANCE_CATEGORIES.ULTRA);
+    const ultraDistances = {};
+    for (const key of DISTANCE_CATEGORIES.ultra) {
+        const km = RACE_DISTANCES_KM[key];
+        if (km) {
+            ultraDistances[key] = {
+                km: km,
+                miles: kmToMiles(km)
+            };
+        }
+    }
+    return ultraDistances;
+}
+
+/**
+ * Get distances by category
+ * @param {string} category - "sprint", "middle", "long", or "ultra"
+ * @returns {Object} Object with distance keys and {km, miles} values for that category
+ */
+export function getDistancesByCategory(category) {
+    const categoryDistances = {};
+    const keys = DISTANCE_CATEGORIES[category] || [];
+    
+    for (const key of keys) {
+        const km = RACE_DISTANCES_KM[key];
+        if (km) {
+            categoryDistances[key] = {
+                km: km,
+                miles: kmToMiles(km)
+            };
+        }
+    }
+    
+    return categoryDistances;
 }
