@@ -333,21 +333,54 @@ npm run preview
 ## File Organization
 
 ```
-src/
-├── main.js           # Application entry point and initialization
-├── calculator.js     # Core calculation logic and validation
-├── ui.js            # UI interactions and DOM manipulation
-├── settings.js      # Settings, modals, and preferences
-├── state.js         # Application state management
-├── touch.js         # Touch and mobile interactions
-├── auto-advance.js  # Input auto-advancement logic
-├── pr.js           # Personal records functionality
-├── style.css       # Global styles and design tokens
-└── test/           # Unit tests
-    ├── calculator.test.js  # Tests for calculation functions
-    ├── pr.test.js         # Tests for Personal Records
-    ├── tabs.test.js       # Tests for UI tab functionality
-    └── [module].test.js   # Additional test files as needed
+pace-calculator/
+├── src/                    # Source code
+│   ├── main.js            # Application entry point and initialization
+│   ├── calculator.js      # Core calculation logic and validation
+│   ├── ui.js             # UI interactions and DOM manipulation
+│   ├── settings.js       # Settings, modals, and preferences
+│   ├── state.js          # Application state management
+│   ├── touch.js          # Touch and mobile interactions
+│   ├── auto-advance.js   # Input auto-advancement logic
+│   ├── pr.js            # Personal records functionality
+│   ├── distances.js      # Distance configuration and utilities
+│   ├── dom-ready.js      # DOM initialization utilities
+│   ├── modal-positioning.js # Modal positioning system
+│   └── style.css         # Global styles and design tokens
+├── tests/                  # Testing infrastructure
+│   ├── unit/              # Unit tests (run with Vitest)
+│   │   ├── setup.js       # Test setup and configuration
+│   │   ├── calculator.test.js # Tests for calculation functions
+│   │   ├── pr.test.js     # Tests for Personal Records
+│   │   └── tabs.test.js   # Tests for UI tab functionality
+│   └── e2e/               # End-to-end tests (run with Playwright)
+│       └── tabs.spec.js   # E2E tests for tab functionality
+├── public/                 # Static assets
+│   ├── favicon.svg        
+│   └── vite.svg          
+├── dist/                   # Build output (generated)
+├── node_modules/           # Dependencies (generated)
+├── index.html             # Main HTML file
+├── package.json           # Project configuration and dependencies
+├── vite.config.js         # Vite build configuration
+├── vitest.config.js       # Unit test configuration
+├── playwright.config.js   # E2E test configuration
+├── tailwind.config.js     # TailwindCSS configuration
+├── postcss.config.js      # PostCSS configuration
+├── update.sh              # Development utility script
+├── CLAUDE.md              # Development guidelines (this file)
+└── README.md              # Project documentation
 ```
 
-This architecture supports maintainable, accessible, and user-friendly development while keeping the codebase organized and extensible. The comprehensive unit test suite ensures code quality and prevents regressions.
+### Testing Structure
+
+- **Unit Tests** (`tests/unit/`): Fast, isolated tests for individual functions and modules
+- **E2E Tests** (`tests/e2e/`): Browser-based tests for complete user workflows
+- **Test Commands**:
+  ```bash
+  npm run test           # Run unit tests in watch mode
+  npm run test:run      # Run unit tests once
+  npm run test:e2e      # Run E2E tests
+  ```
+
+This clean, organized architecture supports maintainable, accessible, and user-friendly development while keeping concerns properly separated. The comprehensive test suite ensures code quality and prevents regressions.

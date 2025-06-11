@@ -11,7 +11,7 @@ import {
   getDistanceName,
   formatDate,
   getDateInputValue
-} from '../pr.js'
+} from '../../src/pr.js'
 
 // Mock localStorage
 const localStorageMock = {
@@ -36,7 +36,7 @@ Object.defineProperty(window, 'localStorage', {
 })
 
 // Mock calculator functions
-vi.mock('../calculator.js', () => ({
+vi.mock('../../src/calculator.js', () => ({
   validateTimeInput: vi.fn((timeStr) => {
     if (!timeStr) return { valid: false, message: 'Time is required' }
     if (timeStr === 'invalid') return { valid: false, message: 'Invalid format' }
@@ -75,7 +75,7 @@ vi.mock('../calculator.js', () => ({
 }))
 
 // Mock distances functions
-vi.mock('../distances.js', () => ({
+vi.mock('../../src/distances.js', () => ({
   getRaceDistancesKm: vi.fn(() => ({
     '5k': 5,
     '10k': 10,

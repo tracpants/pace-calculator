@@ -1,31 +1,31 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { fireEvent } from '@testing-library/dom'
-import { initUI } from '../ui.js'
-import { state } from '../state.js'
+import { initUI } from '../../src/ui.js'
+import { state } from '../../src/state.js'
 
 // Mock the other modules that ui.js depends on
-vi.mock('../settings.js', () => ({
+vi.mock('../../src/settings.js', () => ({
   applyDefaultDistance: vi.fn()
 }))
 
-vi.mock('../calculator.js', () => ({
+vi.mock('../../src/calculator.js', () => ({
   validateDistanceInput: vi.fn(() => ({ valid: true, value: 10 })),
   formatTime: vi.fn((seconds) => `${Math.floor(seconds/60)}:${(seconds%60).toString().padStart(2, '0')}`),
   formatDistance: vi.fn((distance) => distance.toString())
 }))
 
-vi.mock('../auto-advance.js', () => ({
+vi.mock('../../src/auto-advance.js', () => ({
   reinitAutoAdvance: vi.fn()
 }))
 
-vi.mock('../pr.js', () => ({
+vi.mock('../../src/pr.js', () => ({
   getAllPRs: vi.fn(() => []),
   getPRForDistance: vi.fn(() => null),
   comparePaceWithPR: vi.fn(() => null),
   getDistanceName: vi.fn(() => 'Test Distance')
 }))
 
-vi.mock('../distances.js', () => ({
+vi.mock('../../src/distances.js', () => ({
   getRaceDistances: vi.fn(() => ({
     '5k': { km: 5, miles: 3.107 },
     '10k': { km: 10, miles: 6.214 }

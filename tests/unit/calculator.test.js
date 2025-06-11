@@ -9,7 +9,7 @@ import {
   calculateDistance,
   formatDistance,
   formatPaceDisplay
-} from '../calculator.js'
+} from '../../src/calculator.js'
 
 describe('Calculator Core Functions', () => {
   
