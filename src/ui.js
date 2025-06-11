@@ -3,16 +3,10 @@ import * as calc from "./calculator.js";
 import * as pr from "./pr.js";
 import { reinitAutoAdvance } from "./auto-advance.js";
 import { getRaceDistances, getDistanceSuggestions, getDistanceDisplayName, findDistanceKey } from "./distances.js";
+import { safeGetElements, safeAddEventListener, robustInit } from "./dom-ready.js";
 
-// DOM Elements
-const form = document.getElementById("calculator-form");
-const resultDiv = document.getElementById("result");
-const resultLabel = document.getElementById("result-label");
-const resultValue = document.getElementById("result-value");
-const loadingDiv = document.getElementById("loading");
-const copyBtn = document.getElementById("copy-result-btn");
-const copyIcon = document.getElementById("copy-icon");
-const checkIcon = document.getElementById("check-icon");
+// DOM Elements (will be initialized in initUI)
+let form, resultDiv, resultLabel, resultValue, loadingDiv, copyBtn, copyIcon, checkIcon, savePrBtn, updatePrBtn;
 
 // Segmented input utility functions
 function getSegmentedTimeValue(prefix) {
@@ -374,9 +368,11 @@ function focusFirstInput() {
 	}
 	
 	const activeSection = document.querySelector(`[data-section="${state.currentTab}"]`);
-	const firstInput = activeSection.querySelector('input');
-	if (firstInput) {
-		firstInput.focus();
+	if (activeSection) {
+		const firstInput = activeSection.querySelector('input');
+		if (firstInput) {
+			firstInput.focus();
+		}
 	}
 }
 
@@ -1191,8 +1187,8 @@ function showResult(label, value, type = 'success') {
 
 function updatePRButtonVisibility() {
 	if (!state.lastResult) {
-		savePrBtn.classList.add('hidden');
-		updatePrBtn.classList.add('hidden');
+		if (savePrBtn) savePrBtn.classList.add('hidden');
+		if (updatePrBtn) updatePrBtn.classList.add('hidden');
 		return;
 	}
 
@@ -1200,8 +1196,8 @@ function updatePRButtonVisibility() {
 	
 	// Only show PR buttons for pace calculations (not time or distance calculations)
 	if (type !== 'pace') {
-		savePrBtn.classList.add('hidden');
-		updatePrBtn.classList.add('hidden');
+		if (savePrBtn) savePrBtn.classList.add('hidden');
+		if (updatePrBtn) updatePrBtn.classList.add('hidden');
 		return;
 	}
 
@@ -1210,8 +1206,8 @@ function updatePRButtonVisibility() {
 	const distance = parseFloat(distanceInput.value);
 	
 	if (!distance || distance <= 0) {
-		savePrBtn.classList.add('hidden');
-		updatePrBtn.classList.add('hidden');
+		if (savePrBtn) savePrBtn.classList.add('hidden');
+		if (updatePrBtn) updatePrBtn.classList.add('hidden');
 		return;
 	}
 
@@ -1227,19 +1223,23 @@ function updatePRButtonVisibility() {
 		
 		// Show update button if current time is better (faster) than existing PR
 		if (currentTimeSeconds < existingPR.timeSeconds) {
-			savePrBtn.classList.add('hidden');
-			updatePrBtn.classList.remove('hidden');
-			updatePrBtn.title = `Update PR (current: ${calc.formatTime(existingPR.timeSeconds, true)})`;
+			if (savePrBtn) savePrBtn.classList.add('hidden');
+			if (updatePrBtn) {
+				updatePrBtn.classList.remove('hidden');
+				updatePrBtn.title = `Update PR (current: ${calc.formatTime(existingPR.timeSeconds, true)})`;
+			}
 		} else {
 			// Current time is slower, no button needed
-			savePrBtn.classList.add('hidden');
-			updatePrBtn.classList.add('hidden');
+			if (savePrBtn) savePrBtn.classList.add('hidden');
+			if (updatePrBtn) updatePrBtn.classList.add('hidden');
 		}
 	} else {
 		// No existing PR, show save button
-		savePrBtn.classList.remove('hidden');
-		updatePrBtn.classList.add('hidden');
-		savePrBtn.title = `Save as Personal Record`;
+		if (savePrBtn) {
+			savePrBtn.classList.remove('hidden');
+			savePrBtn.title = `Save as Personal Record`;
+		}
+		if (updatePrBtn) updatePrBtn.classList.add('hidden');
 	}
 }
 
@@ -1380,119 +1380,159 @@ function clearCurrentTab() {
 
 export { populatePresetSelects, populateAutocomplete, updateCalculatedResult, updateHintTexts };
 
-export function initUI() {
-	// Validate critical DOM elements exist
-	const requiredElements = [
+/**
+ * Core UI initialization logic (called by robustInitUI)
+ */
+async function coreInitUI() {
+	console.log('🚀 Starting core UI initialization');
+	
+	// Get all required DOM elements with error handling
+	const elementIds = [
 		'calculator-form',
 		'result', 
 		'result-label',
 		'result-value',
 		'loading',
 		'copy-result-btn',
+		'copy-icon',
+		'check-icon',
 		'clear-btn'
 	];
 	
-	for (const id of requiredElements) {
-		const element = document.getElementById(id);
-		if (!element) {
-			console.error(`Required element missing: ${id}`);
-			return;
-		}
+	const optionalElementIds = [
+		'save-pr-btn',
+		'update-pr-btn'
+	];
+	
+	// Get required elements
+	const elements = safeGetElements(elementIds, true);
+	
+	// Get optional elements
+	const optionalElements = safeGetElements(optionalElementIds, false);
+	
+	// Assign to module variables
+	form = elements['calculator-form'];
+	resultDiv = elements['result'];
+	resultLabel = elements['result-label'];
+	resultValue = elements['result-value'];
+	loadingDiv = elements['loading'];
+	copyBtn = elements['copy-result-btn'];
+	copyIcon = elements['copy-icon'];
+	checkIcon = elements['check-icon'];
+	savePrBtn = optionalElements['save-pr-btn'];
+	updatePrBtn = optionalElements['update-pr-btn'];
+	
+	// Verify tab elements exist
+	const tabElements = document.querySelectorAll("[data-tab]");
+	const sectionElements = document.querySelectorAll("[data-section]");
+	
+	if (tabElements.length === 0) {
+		throw new Error('No tab elements found - check [data-tab] selectors');
 	}
 	
-	console.log('All required DOM elements found');
+	if (sectionElements.length === 0) {
+		throw new Error('No section elements found - check [data-section] selectors');
+	}
+	
+	console.log(`✅ Found ${tabElements.length} tab elements and ${sectionElements.length} section elements`);
 	
 	// Initial setup
 	updateTabNavigation();
-
-	// Setup input validation
 	setupInputValidation();
-	
-	// Initial button state check
 	updateCalculateButtonState();
-
-	// Global keyboard event listeners
-	document.addEventListener('keydown', handleKeyboardNavigation);
+	
+	// Add global keyboard event listeners
+	safeAddEventListener(document, 'keydown', handleKeyboardNavigation, 'document (keyboard nav)');
 	
 	// Enter key to submit form from any input
-	document.addEventListener('keydown', (e) => {
+	safeAddEventListener(document, 'keydown', (e) => {
 		if (e.key === 'Enter' && e.target.matches('input')) {
 			e.preventDefault();
-			form.dispatchEvent(new Event('submit'));
+			if (form) {
+				form.dispatchEvent(new Event('submit'));
+			}
 		}
-	});
-
-	// Event Listeners (unit toggles are now handled by settings.js)
-
-	document.querySelectorAll("[data-tab]").forEach((tab) => {
-		console.log('Adding event listener to tab:', tab);
-		tab.addEventListener("click", () => {
-			console.log('Tab clicked:', tab.dataset.tab);
-			state.currentTab = tab.dataset.tab;
-			// Save current tab state before switching
-			saveCurrentTabState();
-			
-			document.querySelectorAll(".btn-tab").forEach((t) => t.classList.remove("active"));
-			tab.classList.add("active");
-			updateTabNavigation();
-			document
-				.querySelectorAll(".form-section")
-				.forEach((s) => s.classList.add("hidden"));
-			document
-				.querySelector(`[data-section="${state.currentTab}"]`)
-				.classList.remove("hidden");
-			loadingDiv.classList.add("hidden");
-			
-			// Restore the target tab's state
-			restoreTabState(state.currentTab);
-			
-			// Update button state for new tab
-			updateCalculateButtonState();
-			
-			// Focus first input in new tab after a short delay (only on non-mobile)
-			setTimeout(() => focusFirstInput(), 100);
-		});
+	}, 'document (enter key)');
+	
+	// Setup tab click handlers
+	tabElements.forEach((tab, index) => {
+		safeAddEventListener(tab, 'click', () => {
+			try {
+				state.currentTab = tab.dataset.tab;
+				
+				// Save current tab state before switching
+				saveCurrentTabState();
+				
+				// Update tab visual states
+				document.querySelectorAll(".btn-tab").forEach((t) => t.classList.remove("active"));
+				tab.classList.add("active");
+				updateTabNavigation();
+				
+				// Update section visibility
+				document.querySelectorAll(".form-section").forEach((s) => s.classList.add("hidden"));
+				
+				const targetSection = document.querySelector(`[data-section="${state.currentTab}"]`);
+				if (targetSection) {
+					targetSection.classList.remove("hidden");
+				} else {
+					console.error('Target section not found for:', state.currentTab);
+				}
+				
+				if (loadingDiv) loadingDiv.classList.add("hidden");
+				
+				// Restore the target tab's state
+				restoreTabState(state.currentTab);
+				updateCalculateButtonState();
+				
+				// Focus first input after a short delay (only on non-mobile)
+				setTimeout(() => focusFirstInput(), 100);
+			} catch (error) {
+				console.error('Error in tab click handler:', error);
+			}
+		}, `tab-${index}`);
 		
 		// Tab keyboard navigation
-		tab.addEventListener('keydown', (e) => {
+		safeAddEventListener(tab, 'keydown', (e) => {
 			if (e.key === 'Enter' || e.key === ' ') {
 				e.preventDefault();
 				tab.click();
 			}
-		});
+		}, `tab-${index} (keyboard)`);
 	});
-
-	document.querySelectorAll(".preset-select").forEach((select) => {
-		select.addEventListener("change", (e) => {
+	
+	// Setup preset select handlers
+	document.querySelectorAll(".preset-select").forEach((select, index) => {
+		safeAddEventListener(select, 'change', (e) => {
 			const presetKey = e.target.value;
 			if (!presetKey) return;
-			const distanceInput = document.getElementById(
-				`${state.currentTab}-distance`
-			);
-			const raceDistances = getRaceDistances();
-			distanceInput.value = raceDistances[presetKey][state.distanceUnit];
-			// Save preset selection to tab state
-			state.tabStates[state.currentTab].presetSelection = presetKey;
 			
-			// Validate the new value
+			const distanceInput = document.getElementById(`${state.currentTab}-distance`);
 			if (distanceInput) {
+				const raceDistances = getRaceDistances();
+				distanceInput.value = raceDistances[presetKey][state.distanceUnit];
+				
+				// Save preset selection to tab state
+				if (!state.tabStates[state.currentTab]) {
+					state.tabStates[state.currentTab] = { inputs: {}, validationStates: {}, result: null, presetSelection: "" };
+				}
+				state.tabStates[state.currentTab].presetSelection = presetKey;
+				
+				// Validate the new value
 				validateInput(distanceInput, calc.validateDistanceInput);
+				updateCalculateButtonState();
 			}
-			
-			// Update button state after preset selection
-			updateCalculateButtonState();
-		});
+		}, `preset-select-${index}`);
 	});
-
-	form.addEventListener("submit", handleFormSubmit);
-	console.log('Added form submit listener to:', form);
 	
-	const clearBtn = document.getElementById("clear-btn");
-	console.log('Clear button found:', clearBtn);
-	clearBtn.addEventListener("click", clearCurrentTab);
+	// Setup form submission
+	safeAddEventListener(form, 'submit', handleFormSubmit, 'calculator-form');
 	
-	// Copy/Share button functionality
-	copyBtn.addEventListener('click', async () => {
+	// Setup clear button
+	const clearBtn = elements['clear-btn'];
+	safeAddEventListener(clearBtn, 'click', clearCurrentTab, 'clear-btn');
+	
+	// Setup copy button
+	safeAddEventListener(copyBtn, 'click', async () => {
 		const comprehensiveText = generateComprehensiveResult();
 		
 		if (isMobileDevice() && navigator.share) {
@@ -1512,12 +1552,56 @@ export function initUI() {
 				alert('Failed to copy to clipboard');
 			}
 		}
-	});
+	}, 'copy-btn');
 	
-	// PR Save/Update button functionality
-	savePrBtn.addEventListener('click', handleSavePR);
-	updatePrBtn.addEventListener('click', handleUpdatePR);
+	// Setup PR buttons (optional)
+	safeAddEventListener(savePrBtn, 'click', handleSavePR, 'save-pr-btn');
+	safeAddEventListener(updatePrBtn, 'click', handleUpdatePR, 'update-pr-btn');
 	
-	// Focus first input on page load (only on non-mobile devices)
-	setTimeout(() => focusFirstInput(), 100);
+	// Focus first input after everything is set up (only on non-mobile devices)
+	// Skip in test environment to avoid timer-related issues
+	if (typeof process === 'undefined' || process.env?.NODE_ENV !== 'test') {
+		setTimeout(() => focusFirstInput(), 100);
+	}
+	
+	console.log('✅ Core UI initialization completed successfully');
+}
+
+/**
+ * UI initialization with environment-aware error handling
+ */
+export async function initUI() {
+	// In test environment, elements are available immediately
+	if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'test') {
+		try {
+			await coreInitUI();
+			return;
+		} catch (error) {
+			console.error('❌ Test UI initialization failed:', error);
+			throw error;
+		}
+	}
+	
+	// In browser environment, use robust DOM-ready handling
+	try {
+		const result = await robustInit(coreInitUI, {
+			name: 'UI Components',
+			timeout: 10000,
+			requiredElements: [
+				'#app',
+				'[data-tab="pace"]',
+				'[data-tab="time"]', 
+				'[data-tab="distance"]',
+				'[data-section="pace"]',
+				'[data-section="time"]',
+				'[data-section="distance"]',
+				'#calculator-form'
+			],
+			retries: 2
+		});
+		return result;
+	} catch (error) {
+		console.error('❌ Browser UI initialization failed:', error);
+		throw error;
+	}
 }

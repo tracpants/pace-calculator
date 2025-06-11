@@ -8,12 +8,18 @@ import { ensureModalPositioning, fixModalIssues, debugModalState } from "./modal
 import { validateModals, autoFixModals, startModalMonitoring } from "./modal-validator.js";
 
 // Initialize all parts of the application
-document.addEventListener("DOMContentLoaded", () => {
-	// CRITICAL: Fix modal positioning first before other initializations
-	ensureModalPositioning();
+document.addEventListener("DOMContentLoaded", async () => {
+	// Initialize UI first to ensure tab functionality works properly
+	try {
+		await initUI();
+	} catch (error) {
+		console.error('❌ UI initialization failed:', error);
+		// Continue with other initializations even if UI fails
+	}
 	
+	// Initialize other components
+	ensureModalPositioning();
 	initSettings();
-	initUI();
 	initTouch();
 	initAutoAdvance();
 	

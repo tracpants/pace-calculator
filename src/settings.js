@@ -17,49 +17,15 @@ const defaultSettings = {
 const accessibilityThemes = ['amoled', 'high-contrast', 'monochrome'];
 const isA11yTheme = (theme) => accessibilityThemes.includes(theme);
 
-// DOM Elements
-const settingsModal = document.getElementById("settings-modal");
-const closeSettingsBtn = document.getElementById("close-settings");
-const saveSettingsBtn = document.getElementById("save-settings");
-const themeRadios = document.querySelectorAll('.theme-radio');
-const unitToggles = document.querySelectorAll("[data-unit]");
-const accentColorOptions = document.querySelectorAll('.accent-color-option');
-const dyslexicFontToggle = document.getElementById('dyslexic-font-toggle');
-const defaultDistanceSelect = document.getElementById('default-distance-select');
+// DOM Elements (will be initialized in initSettings)
+let settingsModal, closeSettingsBtn, saveSettingsBtn, themeRadios, unitToggles, accentColorOptions, dyslexicFontToggle, defaultDistanceSelect;
+let menuBtn, menuDropdown, prMenuBtn, settingsMenuBtn;
+let helpBtn, helpModal, closeHelpBtn;
+let accessibilityToggle, accessibilityContent;
+let prManagementModal, closePrManagementBtn, closePrManagementBtnSecondary, prEmptyState;
 
-// Menu elements
-const menuBtn = document.getElementById("menu-btn");
-const menuDropdown = document.getElementById("menu-dropdown");
-const prMenuBtn = document.getElementById("pr-menu-item");
-const settingsMenuBtn = document.getElementById("settings-menu-item");
-
-// Help elements (separate from menu)
-const helpBtn = document.getElementById("help-btn");
-const helpModal = document.getElementById("help-modal");
-const closeHelpBtn = document.getElementById("close-help");
-
-// Accessibility toggle elements
-const accessibilityToggle = document.getElementById("accessibility-toggle");
-const accessibilityContent = document.getElementById("accessibility-content");
-
-// PR Management Modal elements
-const prManagementModal = document.getElementById("pr-management-modal");
-const closePrManagementBtn = document.getElementById("close-pr-management");
-const closePrManagementBtnSecondary = document.getElementById("close-pr-management-btn");
-const prEmptyState = document.getElementById("pr-empty-state");
-
-// PR Add/Edit Modal elements
-const prModal = document.getElementById("pr-modal");
-const prModalTitle = document.getElementById("pr-modal-title");
-const addPrBtn = document.getElementById("add-pr-btn");
-const closePrModalBtn = document.getElementById("close-pr-modal");
-const cancelPrBtn = document.getElementById("cancel-pr");
-const prForm = document.getElementById("pr-form");
-const prList = document.getElementById("pr-list");
-const prDistanceInput = document.getElementById("pr-distance");
-const prUnitSelect = document.getElementById("pr-unit");
-const prDateInput = document.getElementById("pr-date");
-const prNotesInput = document.getElementById("pr-notes");
+// PR Add/Edit Modal elements (will be initialized in initSettings)
+let prModal, prModalTitle, addPrBtn, closePrModalBtn, cancelPrBtn, prForm, prList, prDistanceInput, prUnitSelect, prDateInput, prNotesInput;
 
 // PR modal state
 let editingPR = null;
@@ -771,6 +737,50 @@ function handlePRFormSubmit(e) {
 
 // Initialize settings
 export function initSettings() {
+	// Initialize DOM elements
+	settingsModal = document.getElementById("settings-modal");
+	closeSettingsBtn = document.getElementById("close-settings");
+	saveSettingsBtn = document.getElementById("save-settings");
+	themeRadios = document.querySelectorAll('.theme-radio');
+	unitToggles = document.querySelectorAll("[data-unit]");
+	accentColorOptions = document.querySelectorAll('.accent-color-option');
+	dyslexicFontToggle = document.getElementById('dyslexic-font-toggle');
+	defaultDistanceSelect = document.getElementById('default-distance-select');
+	
+	// Menu elements
+	menuBtn = document.getElementById("menu-btn");
+	menuDropdown = document.getElementById("menu-dropdown");
+	prMenuBtn = document.getElementById("pr-menu-item");
+	settingsMenuBtn = document.getElementById("settings-menu-item");
+	
+	// Help elements
+	helpBtn = document.getElementById("help-btn");
+	helpModal = document.getElementById("help-modal");
+	closeHelpBtn = document.getElementById("close-help");
+	
+	// Accessibility toggle elements
+	accessibilityToggle = document.getElementById("accessibility-toggle");
+	accessibilityContent = document.getElementById("accessibility-content");
+	
+	// PR Management Modal elements
+	prManagementModal = document.getElementById("pr-management-modal");
+	closePrManagementBtn = document.getElementById("close-pr-management");
+	closePrManagementBtnSecondary = document.getElementById("close-pr-management-btn");
+	prEmptyState = document.getElementById("pr-empty-state");
+	
+	// PR Add/Edit Modal elements
+	prModal = document.getElementById("pr-modal");
+	prModalTitle = document.getElementById("pr-modal-title");
+	addPrBtn = document.getElementById("add-pr-btn");
+	closePrModalBtn = document.getElementById("close-pr-modal");
+	cancelPrBtn = document.getElementById("cancel-pr");
+	prForm = document.getElementById("pr-form");
+	prList = document.getElementById("pr-list");
+	prDistanceInput = document.getElementById("pr-distance");
+	prUnitSelect = document.getElementById("pr-unit");
+	prDateInput = document.getElementById("pr-date");
+	prNotesInput = document.getElementById("pr-notes");
+	
 	const settings = loadSettings();
 	
 	// Apply initial settings
@@ -779,22 +789,36 @@ export function initSettings() {
 	applyAccentColor(settings.accentColor);
 	applyDyslexicFont(settings.dyslexicFont);
 	
-	// Event listeners
-	closeSettingsBtn.addEventListener('click', closeSettings);
+	// Event listeners (with null checks)
+	if (closeSettingsBtn) {
+		closeSettingsBtn.addEventListener('click', closeSettings);
+	}
 	
 	// Theme radio button listeners for auto-apply
-	themeRadios.forEach(radio => {
-		radio.addEventListener('change', handleThemeChange);
-	});
+	if (themeRadios) {
+		themeRadios.forEach(radio => {
+			radio.addEventListener('change', handleThemeChange);
+		});
+	}
 	
 	// Menu event listeners
-	menuBtn.addEventListener('click', handleMenuToggle);
-	prMenuBtn.addEventListener('click', openPRManagement);
-	settingsMenuBtn.addEventListener('click', openSettings);
+	if (menuBtn) {
+		menuBtn.addEventListener('click', handleMenuToggle);
+	}
+	if (prMenuBtn) {
+		prMenuBtn.addEventListener('click', openPRManagement);
+	}
+	if (settingsMenuBtn) {
+		settingsMenuBtn.addEventListener('click', openSettings);
+	}
 	
 	// Help modal event listeners
-	helpBtn.addEventListener('click', openHelp);
-	closeHelpBtn.addEventListener('click', closeHelp);
+	if (helpBtn) {
+		helpBtn.addEventListener('click', openHelp);
+	}
+	if (closeHelpBtn) {
+		closeHelpBtn.addEventListener('click', closeHelp);
+	}
 	
 	// Accessibility toggle event listener
 	if (accessibilityToggle) {
@@ -802,18 +826,26 @@ export function initSettings() {
 	}
 	
 	// PR Management modal event listeners
-	closePrManagementBtn.addEventListener('click', closePRManagement);
-	closePrManagementBtnSecondary.addEventListener('click', closePRManagement);
+	if (closePrManagementBtn) {
+		closePrManagementBtn.addEventListener('click', closePRManagement);
+	}
+	if (closePrManagementBtnSecondary) {
+		closePrManagementBtnSecondary.addEventListener('click', closePRManagement);
+	}
 	
 	// Unit toggles in modal
-	unitToggles.forEach(toggle => {
-		toggle.addEventListener('click', handleUnitToggle);
-	});
+	if (unitToggles) {
+		unitToggles.forEach(toggle => {
+			toggle.addEventListener('click', handleUnitToggle);
+		});
+	}
 	
 	// Accent color event listeners
-	accentColorOptions.forEach(option => {
-		option.addEventListener('click', handleAccentColorSelect);
-	});
+	if (accentColorOptions) {
+		accentColorOptions.forEach(option => {
+			option.addEventListener('click', handleAccentColorSelect);
+		});
+	}
 	
 	// Dyslexic font toggle event listener
 	if (dyslexicFontToggle) {
@@ -826,10 +858,18 @@ export function initSettings() {
 	}
 	
 	// PR modal event listeners
-	addPrBtn.addEventListener('click', () => openPRModal(false));
-	closePrModalBtn.addEventListener('click', closePRModal);
-	cancelPrBtn.addEventListener('click', closePRModal);
-	prForm.addEventListener('submit', handlePRFormSubmit);
+	if (addPrBtn) {
+		addPrBtn.addEventListener('click', () => openPRModal(false));
+	}
+	if (closePrModalBtn) {
+		closePrModalBtn.addEventListener('click', closePRModal);
+	}
+	if (cancelPrBtn) {
+		cancelPrBtn.addEventListener('click', closePRModal);
+	}
+	if (prForm) {
+		prForm.addEventListener('submit', handlePRFormSubmit);
+	}
 	
 	// PR segmented time input validation
 	['hours', 'minutes', 'seconds'].forEach(segment => {
