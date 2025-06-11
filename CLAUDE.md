@@ -227,6 +227,31 @@ The Pace Calculator is a modern, accessible running pace calculator built with:
 
 ### Testing and Validation
 
+#### Unit Testing Requirements
+- **Mandatory unit tests** - All new features and changes MUST include comprehensive unit tests
+- **Test coverage** - Cover core business logic, edge cases, and error conditions
+- **Passing tests required** - All unit tests must pass before committing and pushing code
+- **Test framework** - Use Vitest for fast, modern JavaScript testing
+- **Test commands**:
+  ```bash
+  npm run test        # Run tests in watch mode during development
+  npm run test:run    # Run tests once for CI/verification
+  ```
+
+#### Unit Testing Guidelines
+- **Test file naming** - Use `.test.js` suffix (e.g., `calculator.test.js`)
+- **Test organization** - Group related tests in `describe` blocks with clear hierarchies
+- **Mock dependencies** - Mock external modules and DOM APIs appropriately
+- **Real-world scenarios** - Include tests for actual use cases, not just isolated functions
+- **Precision handling** - Account for floating-point precision in calculations
+- **Boundary conditions** - Test edge cases, limits, and error conditions
+
+#### Testing Workflow
+1. **Before starting** - Run existing tests to ensure clean baseline
+2. **During development** - Write tests alongside code (TDD encouraged)
+3. **Before committing** - Ensure all tests pass with `npm run test:run`
+4. **Feature completion** - Verify comprehensive test coverage for new functionality
+
 #### Manual Testing Checklist
 - **Cross-browser** - test in Chrome, Firefox, Safari, Edge
 - **Mobile devices** - test on iOS and Android
@@ -252,32 +277,43 @@ The Pace Calculator is a modern, accessible running pace calculator built with:
 #### Implementation Process
 1. **Update state management** if needed
 2. **Implement core logic** with comprehensive validation
-3. **Create UI components** following established patterns
-4. **Use semantic design tokens** exclusively for styling:
+3. **Write unit tests** for new functionality (TDD approach recommended)
+4. **Create UI components** following established patterns
+5. **Use semantic design tokens** exclusively for styling:
    ```css
    /* Use tokens that work across all themes */
    background-color: var(--color-surface);
    color: var(--color-text-primary);
    border-color: var(--color-border-subtle);
    ```
-5. **Add accessibility features** (ARIA, keyboard support)
-6. **Test across all themes** including accessibility variants
-7. **Verify contrast ratios** in high-contrast and monochrome themes
-8. **Test thoroughly** across devices and accessibility modes
-9. **Update this guide** if new patterns emerge
+6. **Add accessibility features** (ARIA, keyboard support)
+7. **Test across all themes** including accessibility variants
+8. **Verify contrast ratios** in high-contrast and monochrome themes
+9. **Run unit tests** to ensure all functionality works correctly (`npm run test:run`)
+10. **Test thoroughly** across devices and accessibility modes
+11. **Update this guide** if new patterns emerge
 
-#### Design Token Checklist for New Features
-- [ ] No hardcoded colors (use semantic tokens only)
-- [ ] Works in all 6 themes (light, dark, system, amoled, high-contrast, monochrome)
-- [ ] Maintains proper contrast ratios in accessibility themes
-- [ ] Interactive elements use appropriate state tokens (hover, focus, active)
-- [ ] Error and success states use semantic status tokens
+#### Feature Completion Checklist
+- [ ] **Unit tests written** - Comprehensive test coverage for new functionality
+- [ ] **All tests passing** - `npm run test:run` completes successfully
+- [ ] **No hardcoded colors** - Use semantic tokens only
+- [ ] **Multi-theme support** - Works in all 6 themes (light, dark, system, amoled, high-contrast, monochrome)
+- [ ] **Accessibility compliance** - Maintains proper contrast ratios in accessibility themes
+- [ ] **Interactive states** - Elements use appropriate state tokens (hover, focus, active)
+- [ ] **Status indicators** - Error and success states use semantic status tokens
+- [ ] **Manual testing** - Cross-browser and device testing completed
 
 ### Development Commands
 
 ```bash
 # Start development server
 npm run dev
+
+# Run unit tests (watch mode for development)
+npm run test
+
+# Run unit tests once (for verification before commit)
+npm run test:run
 
 # Build for production
 npm run build
@@ -292,6 +328,8 @@ npm run preview
 ./update.sh --dev
 ```
 
+**Important**: Always run `npm run test:run` before committing to ensure all tests pass.
+
 ## File Organization
 
 ```
@@ -304,7 +342,12 @@ src/
 ├── touch.js         # Touch and mobile interactions
 ├── auto-advance.js  # Input auto-advancement logic
 ├── pr.js           # Personal records functionality
-└── style.css       # Global styles and design tokens
+├── style.css       # Global styles and design tokens
+└── test/           # Unit tests
+    ├── calculator.test.js  # Tests for calculation functions
+    ├── pr.test.js         # Tests for Personal Records
+    ├── tabs.test.js       # Tests for UI tab functionality
+    └── [module].test.js   # Additional test files as needed
 ```
 
-This architecture supports maintainable, accessible, and user-friendly development while keeping the codebase organized and extensible.
+This architecture supports maintainable, accessible, and user-friendly development while keeping the codebase organized and extensible. The comprehensive unit test suite ensures code quality and prevents regressions.
