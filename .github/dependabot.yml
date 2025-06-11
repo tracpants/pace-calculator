@@ -1,0 +1,66 @@
+version: 2
+updates:
+  # Enable version updates for npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "tracpants"
+    assignees:
+      - "tracpants"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps-dev"
+      include: "scope"
+    # Group related updates together
+    groups:
+      testing:
+        patterns:
+          - "vitest*"
+          - "@vitest/*"
+          - "playwright*"
+          - "@playwright/*"
+          - "@testing-library/*"
+          - "jsdom"
+      linting:
+        patterns:
+          - "eslint*"
+          - "@eslint/*"
+          - "stylelint*"
+          - "husky"
+          - "lint-staged"
+      build-tools:
+        patterns:
+          - "vite*"
+          - "@vitejs/*"
+          - "postcss"
+          - "autoprefixer"
+          - "tailwindcss"
+    # Ignore specific packages if needed
+    ignore:
+      # Ignore major version updates for stable packages
+      - dependency-name: "node"
+        update-types: ["version-update:semver-major"]
+      # Example: ignore specific versions
+      # - dependency-name: "lodash"
+      #   versions: ["4.17.19", "4.17.20"]
+    
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "tracpants"
+    assignees:
+      - "tracpants"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
