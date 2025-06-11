@@ -24,7 +24,13 @@
     "lint:check": "npm run lint:js:check && npm run lint:css:check",
     "validate:tokens": "node scripts/validate-tokens.js",
     "validate:all": "npm run lint:check && npm run validate:tokens",
-    "prepare": "husky"
+    "prepare": "husky",
+    "clean": "rm -rf dist coverage test-results playwright-report",
+    "reset": "npm run clean && rm -rf node_modules package-lock.json && npm install",
+    "audit:security": "npm audit --audit-level=moderate",
+    "audit:fix": "npm audit fix",
+    "outdated": "npm outdated",
+    "ci": "npm ci && npm run validate:all && npm run test:run && npm run build"
   },
   "lint-staged": {
     "*.js": [
