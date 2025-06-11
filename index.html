@@ -36,12 +36,11 @@
 							<div class="dropdown-content rounded-lg shadow-lg overflow-hidden">
 								<div class="py-1">
 									<button id="pr-menu-item" class="btn-menu flex items-center">
-										<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+										<svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24">
+											<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
 										</svg>
 										<span>Personal Records</span>
 									</button>
-									
 									<button id="settings-menu-item" class="btn-menu flex items-center">
 										<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
@@ -708,7 +707,180 @@
 
 			</div>
 		</div>
-	</div>
+
+		<!-- PR Management Modal -->
+		<div id="pr-management-modal" class="modal-container modal-lg hidden" role="dialog" aria-modal="true" aria-labelledby="pr-management-title">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2 id="pr-management-title">
+						<svg class="modal-icon" fill="currentColor" viewBox="0 0 24 24">
+							<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+						</svg>
+						Personal Records
+					</h2>
+					<button id="close-pr-management" class="modal-close" aria-label="Close Personal Records">
+						<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+						</svg>
+					</button>
+				</div>
+
+				<div class="modal-body">
+					<!-- Empty State -->
+					<div id="pr-empty-state" class="text-center py-8">
+						<svg class="w-16 h-16 mx-auto mb-4" style="color: var(--color-text-tertiary);" fill="currentColor" viewBox="0 0 24 24">
+							<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+						</svg>
+						<h3 class="text-lg font-semibold modal-text mb-2">No Personal Records Yet</h3>
+						<p class="modal-text-tertiary mb-4">Start tracking your best times by adding your first PR</p>
+						<button id="add-pr-btn" class="btn-primary">
+							<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+							</svg>
+							Add Personal Record
+						</button>
+					</div>
+
+					<!-- PR List -->
+					<div id="pr-list" class="space-y-3">
+						<!-- PRs will be populated dynamically -->
+					</div>
+
+					<!-- Add PR Button (when PRs exist) -->
+					<div id="pr-list-actions" class="hidden mt-6 pt-4 border-t text-center" style="border-color: var(--color-border-subtle);">
+						<button id="add-pr-btn-secondary" class="btn-secondary">
+							<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+							</svg>
+							Add Another PR
+						</button>
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<button id="close-pr-management-btn" class="btn-secondary btn-full">Close</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- PR Add/Edit Modal -->
+		<div id="pr-modal" class="modal-container modal-md hidden" role="dialog" aria-modal="true" aria-labelledby="pr-modal-title">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2 id="pr-modal-title">Add Personal Record</h2>
+					<button id="close-pr-modal" class="modal-close" aria-label="Close PR form">
+						<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+						</svg>
+					</button>
+				</div>
+
+				<form id="pr-form" class="modal-body">
+					<!-- Distance Input -->
+					<div>
+						<label class="block text-sm font-medium modal-text mb-2" for="pr-distance">Distance</label>
+						<div class="flex gap-2">
+							<input
+								type="number"
+								id="pr-distance"
+								class="input-base flex-1"
+								placeholder="e.g., 5"
+								step="0.1"
+								min="0.1"
+								required
+								aria-describedby="pr-distance-error"
+							/>
+							<select id="pr-unit" class="input-base select-custom w-20" aria-label="Distance unit">
+								<option value="km">km</option>
+								<option value="miles">mi</option>
+							</select>
+						</div>
+						<div id="pr-distance-error" class="input-error hidden" role="alert"></div>
+					</div>
+
+					<!-- Time Input -->
+					<div>
+						<label class="block text-sm font-medium modal-text mb-2">Time</label>
+						<div class="input-segmented-container">
+							<div class="input-segmented-group">
+								<input
+									type="number"
+									id="pr-time-hours"
+									class="input-segmented"
+									placeholder="00"
+									min="0"
+									max="23"
+									inputmode="numeric"
+									aria-label="Hours"
+								/>
+								<label class="input-segment-label">HH</label>
+							</div>
+							<span class="input-separator">:</span>
+							<div class="input-segmented-group">
+								<input
+									type="number"
+									id="pr-time-minutes"
+									class="input-segmented"
+									placeholder="00"
+									min="0"
+									max="59"
+									inputmode="numeric"
+									required
+									aria-label="Minutes"
+								/>
+								<label class="input-segment-label">MM</label>
+							</div>
+							<span class="input-separator">:</span>
+							<div class="input-segmented-group">
+								<input
+									type="number"
+									id="pr-time-seconds"
+									class="input-segmented"
+									placeholder="00"
+									min="0"
+									max="59"
+									inputmode="numeric"
+									aria-label="Seconds"
+								/>
+								<label class="input-segment-label">SS</label>
+							</div>
+						</div>
+						<div id="pr-time-error" class="input-error hidden" role="alert"></div>
+					</div>
+
+					<!-- Date (Optional) -->
+					<div>
+						<label class="block text-sm font-medium modal-text mb-2" for="pr-date">Date (Optional)</label>
+						<input
+							type="date"
+							id="pr-date"
+							class="input-base"
+							aria-describedby="pr-date-hint"
+						/>
+						<div id="pr-date-hint" class="input-hint">When did you achieve this time?</div>
+					</div>
+
+					<!-- Notes (Optional) -->
+					<div>
+						<label class="block text-sm font-medium modal-text mb-2" for="pr-notes">Notes (Optional)</label>
+						<textarea
+							id="pr-notes"
+							class="input-base resize-none"
+							rows="2"
+							placeholder="Race name, conditions, etc."
+							maxlength="200"
+							aria-describedby="pr-notes-hint"
+						></textarea>
+						<div id="pr-notes-hint" class="input-hint">Add context about this performance</div>
+					</div>
+				</form>
+
+				<div class="modal-footer">
+					<button type="button" id="cancel-pr" class="btn-secondary">Cancel</button>
+					<button type="submit" form="pr-form" class="btn-primary">Save PR</button>
+				</div>
+			</div>
+		</div>
 
 	<script type="module" src="/src/main.js"></script>
 	</body>

@@ -1,8 +1,8 @@
 import { state } from "./state.js";
 import { populatePresetSelects, populateAutocomplete, updateCalculatedResult, updateHintTexts } from "./ui.js";
-import * as pr from "./pr.js";
 import * as calc from "./calculator.js";
 import { getRaceDistances, getDistanceDisplayName, getDistanceValue } from "./distances.js";
+import * as pr from "./pr.js";
 
 // Settings preferences with defaults
 const defaultSettings = {
@@ -23,95 +23,10 @@ let menuBtn, menuDropdown, prMenuBtn, settingsMenuBtn;
 let helpBtn, helpModal, closeHelpBtn;
 let accessibilityToggle, accessibilityContent;
 let prManagementModal, closePrManagementBtn, closePrManagementBtnSecondary, prEmptyState;
-
-// PR Add/Edit Modal elements (will be initialized in initSettings)
-let prModal, prModalTitle, addPrBtn, closePrModalBtn, cancelPrBtn, prForm, prList, prDistanceInput, prUnitSelect, prDateInput, prNotesInput;
-
-// PR modal state
+let prModal, prModalTitle, addPrBtn, addPrBtnSecondary, closePrModalBtn, cancelPrBtn, prForm, prList, prListActions;
+let prDistanceInput, prUnitSelect, prDateInput, prNotesInput;
 let editingPR = null;
 
-// Utility functions for segmented PR time input
-function getPRSegmentedTimeValue() {
-	const hoursInput = document.getElementById('pr-time-hours');
-	const minutesInput = document.getElementById('pr-time-minutes');
-	const secondsInput = document.getElementById('pr-time-seconds');
-	
-	const hours = parseInt(hoursInput?.value || '0') || 0;
-	const minutes = parseInt(minutesInput?.value || '0') || 0;
-	const seconds = parseInt(secondsInput?.value || '0') || 0;
-	
-	return hours * 3600 + minutes * 60 + seconds;
-}
-
-function setPRSegmentedTimeValue(totalSeconds) {
-	const hoursInput = document.getElementById('pr-time-hours');
-	const minutesInput = document.getElementById('pr-time-minutes');
-	const secondsInput = document.getElementById('pr-time-seconds');
-	
-	const hours = Math.floor(totalSeconds / 3600);
-	const minutes = Math.floor((totalSeconds % 3600) / 60);
-	const seconds = totalSeconds % 60;
-	
-	if (hoursInput) hoursInput.value = hours > 0 ? hours : '';
-	if (minutesInput) minutesInput.value = minutes;
-	if (secondsInput) secondsInput.value = seconds;
-}
-
-function validatePRSegmentedTime() {
-	const totalSeconds = getPRSegmentedTimeValue();
-	
-	if (totalSeconds <= 0) {
-		return { valid: false, message: "Time must be greater than 0" };
-	}
-	
-	if (totalSeconds > 86400) {
-		return { valid: false, message: "Time cannot exceed 24 hours" };
-	}
-	
-	return { valid: true, value: totalSeconds };
-}
-
-function clearPRTimeErrors() {
-	const errorElement = document.getElementById('pr-time-error');
-	if (errorElement) {
-		errorElement.classList.add('hidden');
-		errorElement.textContent = '';
-	}
-	
-	['hours', 'minutes', 'seconds'].forEach(segment => {
-		const input = document.getElementById(`pr-time-${segment}`);
-		if (input) {
-			input.classList.remove('error', 'valid');
-		}
-	});
-}
-
-function showPRTimeError(message) {
-	const errorElement = document.getElementById('pr-time-error');
-	if (errorElement) {
-		errorElement.textContent = message;
-		errorElement.classList.remove('hidden');
-	}
-	
-	['hours', 'minutes', 'seconds'].forEach(segment => {
-		const input = document.getElementById(`pr-time-${segment}`);
-		if (input) {
-			input.classList.add('error');
-			input.classList.remove('valid');
-		}
-	});
-}
-
-function markPRTimeValid() {
-	clearPRTimeErrors();
-	
-	['hours', 'minutes', 'seconds'].forEach(segment => {
-		const input = document.getElementById(`pr-time-${segment}`);
-		if (input) {
-			input.classList.add('valid');
-		}
-	});
-}
 
 // Load settings from localStorage
 function loadSettings() {
@@ -433,6 +348,14 @@ function handleModalBackdropClick(e) {
 	}
 }
 
+
+// Handle click outside help modal to close
+function handleHelpBackdropClick(e) {
+	if (e.target === helpModal) {
+		closeHelp();
+	}
+}
+
 // Handle click outside PR management modal to close
 function handlePRManagementBackdropClick(e) {
 	if (e.target === prManagementModal) {
@@ -440,10 +363,10 @@ function handlePRManagementBackdropClick(e) {
 	}
 }
 
-// Handle click outside help modal to close
-function handleHelpBackdropClick(e) {
-	if (e.target === helpModal) {
-		closeHelp();
+// Handle click outside PR modal to close
+function handlePRModalBackdropClick(e) {
+	if (e.target === prModal) {
+		closePRModal();
 	}
 }
 
@@ -524,7 +447,7 @@ function closeHelp() {
 	helpBtn.focus();
 }
 
-// Open PR management modal
+// PR Management Functions
 function openPRManagement() {
 	closeMenu();
 	
@@ -541,7 +464,6 @@ function openPRManagement() {
 	document.body.style.overflow = 'hidden';
 }
 
-// Close PR management modal
 function closePRManagement() {
 	prManagementModal.classList.add('hidden');
 	
@@ -552,17 +474,18 @@ function closePRManagement() {
 	menuBtn.focus();
 }
 
-// PR Management Functions
 function populatePRList() {
 	const prs = pr.getAllPRs();
 	
 	if (prs.length === 0) {
 		prList.innerHTML = '';
 		prEmptyState.classList.remove('hidden');
+		prListActions.classList.add('hidden');
 		return;
 	}
 	
 	prEmptyState.classList.add('hidden');
+	prListActions.classList.remove('hidden');
 	
 	prList.innerHTML = prs.map(prRecord => `
 		<div class="flex justify-between items-center p-2 rounded-lg" style="background-color: var(--color-surface-secondary);">
@@ -735,6 +658,63 @@ function handlePRFormSubmit(e) {
 	}
 }
 
+// PR Time Validation Functions
+function validatePRSegmentedTime() {
+	const hours = parseInt(document.getElementById('pr-time-hours').value) || 0;
+	const minutes = parseInt(document.getElementById('pr-time-minutes').value) || 0;
+	const seconds = parseInt(document.getElementById('pr-time-seconds').value) || 0;
+	
+	if (hours === 0 && minutes === 0 && seconds === 0) {
+		return { valid: false, message: 'Please enter a valid time' };
+	}
+	
+	if (minutes >= 60 || seconds >= 60) {
+		return { valid: false, message: 'Minutes and seconds must be less than 60' };
+	}
+	
+	if (hours < 0 || minutes < 0 || seconds < 0) {
+		return { valid: false, message: 'Time values cannot be negative' };
+	}
+	
+	const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+	return { valid: true, value: totalSeconds };
+}
+
+function setPRSegmentedTimeValue(totalSeconds) {
+	const hours = Math.floor(totalSeconds / 3600);
+	const minutes = Math.floor((totalSeconds % 3600) / 60);
+	const seconds = totalSeconds % 60;
+	
+	document.getElementById('pr-time-hours').value = hours > 0 ? hours : '';
+	document.getElementById('pr-time-minutes').value = minutes;
+	document.getElementById('pr-time-seconds').value = seconds;
+}
+
+function showPRTimeError(message) {
+	const errorElement = document.getElementById('pr-time-error');
+	errorElement.textContent = message;
+	errorElement.classList.remove('hidden');
+	
+	// Add error styling to time inputs
+	['pr-time-hours', 'pr-time-minutes', 'pr-time-seconds'].forEach(id => {
+		document.getElementById(id).classList.add('error');
+	});
+}
+
+function markPRTimeValid() {
+	const errorElement = document.getElementById('pr-time-error');
+	errorElement.classList.add('hidden');
+	
+	// Remove error styling from time inputs
+	['pr-time-hours', 'pr-time-minutes', 'pr-time-seconds'].forEach(id => {
+		document.getElementById(id).classList.remove('error');
+	});
+}
+
+function clearPRTimeErrors() {
+	markPRTimeValid();
+}
+
 // Initialize settings
 export function initSettings() {
 	// Initialize DOM elements
@@ -767,15 +747,17 @@ export function initSettings() {
 	closePrManagementBtn = document.getElementById("close-pr-management");
 	closePrManagementBtnSecondary = document.getElementById("close-pr-management-btn");
 	prEmptyState = document.getElementById("pr-empty-state");
+	prList = document.getElementById("pr-list");
+	prListActions = document.getElementById("pr-list-actions");
 	
 	// PR Add/Edit Modal elements
 	prModal = document.getElementById("pr-modal");
 	prModalTitle = document.getElementById("pr-modal-title");
 	addPrBtn = document.getElementById("add-pr-btn");
+	addPrBtnSecondary = document.getElementById("add-pr-btn-secondary");
 	closePrModalBtn = document.getElementById("close-pr-modal");
 	cancelPrBtn = document.getElementById("cancel-pr");
 	prForm = document.getElementById("pr-form");
-	prList = document.getElementById("pr-list");
 	prDistanceInput = document.getElementById("pr-distance");
 	prUnitSelect = document.getElementById("pr-unit");
 	prDateInput = document.getElementById("pr-date");
@@ -832,35 +814,14 @@ export function initSettings() {
 	if (closePrManagementBtnSecondary) {
 		closePrManagementBtnSecondary.addEventListener('click', closePRManagement);
 	}
-	
-	// Unit toggles in modal
-	if (unitToggles) {
-		unitToggles.forEach(toggle => {
-			toggle.addEventListener('click', handleUnitToggle);
-		});
-	}
-	
-	// Accent color event listeners
-	if (accentColorOptions) {
-		accentColorOptions.forEach(option => {
-			option.addEventListener('click', handleAccentColorSelect);
-		});
-	}
-	
-	// Dyslexic font toggle event listener
-	if (dyslexicFontToggle) {
-		dyslexicFontToggle.addEventListener('change', handleDyslexicFontToggle);
-	}
-	
-	// Default distance select event listener
-	if (defaultDistanceSelect) {
-		defaultDistanceSelect.addEventListener('change', handleDefaultDistanceChange);
-	}
-	
-	// PR modal event listeners
 	if (addPrBtn) {
 		addPrBtn.addEventListener('click', () => openPRModal(false));
 	}
+	if (addPrBtnSecondary) {
+		addPrBtnSecondary.addEventListener('click', () => openPRModal(false));
+	}
+	
+	// PR modal event listeners
 	if (closePrModalBtn) {
 		closePrModalBtn.addEventListener('click', closePRModal);
 	}
@@ -890,15 +851,37 @@ export function initSettings() {
 		}
 	});
 	
+	// Unit toggles in modal
+	if (unitToggles) {
+		unitToggles.forEach(toggle => {
+			toggle.addEventListener('click', handleUnitToggle);
+		});
+	}
+	
+	// Accent color event listeners
+	if (accentColorOptions) {
+		accentColorOptions.forEach(option => {
+			option.addEventListener('click', handleAccentColorSelect);
+		});
+	}
+	
+	// Dyslexic font toggle event listener
+	if (dyslexicFontToggle) {
+		dyslexicFontToggle.addEventListener('change', handleDyslexicFontToggle);
+	}
+	
+	// Default distance select event listener
+	if (defaultDistanceSelect) {
+		defaultDistanceSelect.addEventListener('change', handleDefaultDistanceChange);
+	}
+	
 	// Keyboard and modal interactions
 	document.addEventListener('keydown', handleKeyDown);
 	document.addEventListener('click', handleDocumentClick);
 	settingsModal.addEventListener('click', handleModalBackdropClick);
 	helpModal.addEventListener('click', handleHelpBackdropClick);
 	prManagementModal.addEventListener('click', handlePRManagementBackdropClick);
-	prModal.addEventListener('click', (e) => {
-		if (e.target === prModal) closePRModal();
-	});
+	prModal.addEventListener('click', handlePRModalBackdropClick);
 	
 	// Listen for system theme changes
 	window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', handleSystemThemeChange);

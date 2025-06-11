@@ -42,8 +42,8 @@ test.describe('Smoke Tests - Basic Application Health', () => {
     // Check for calculator form
     await expect(page.locator('#calculator-form')).toBeVisible();
     
-    // Check for submit button
-    await expect(page.locator('button[type="submit"]')).toBeVisible();
+    // Check for calculator submit button
+    await expect(page.locator('#calculator-form button[type="submit"]')).toBeVisible();
   });
   
   test('no broken imports or missing resources', async ({ page }) => {
@@ -76,7 +76,7 @@ test.describe('Smoke Tests - Basic Application Health', () => {
     await page.fill('#pace-distance', '5');
     
     // Submit the form
-    await page.click('button[type="submit"]');
+    await page.click('#calculator-form button[type="submit"]');
     
     // Check that a result appears (basic functionality test)
     await expect(page.locator('#result')).toBeVisible();
