@@ -12,14 +12,21 @@
     "test:run": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:e2e:headed": "playwright test --headed"
+    "test:e2e:headed": "playwright test --headed",
+    "lint": "eslint src/ tests/ --ext .js",
+    "lint:fix": "eslint src/ tests/ --ext .js --fix",
+    "lint:check": "eslint src/ tests/ --ext .js"
   },
   "devDependencies": {
+    "@eslint/js": "^9.28.0",
     "@playwright/test": "^1.53.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/user-event": "^14.6.1",
     "@vitest/ui": "^3.2.3",
     "autoprefixer": "^10.4.21",
+    "eslint": "^9.28.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-jsdoc": "^50.8.0",
     "jsdom": "^26.1.0",
     "postcss": "^8.5.4",
     "tailwindcss": "^3.4.17",
