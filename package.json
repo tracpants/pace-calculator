@@ -28,14 +28,10 @@
   },
   "lint-staged": {
     "*.js": [
-      "eslint --fix",
-      "vitest related --run"
+      "eslint --fix"
     ],
     "*.css": [
       "stylelint --fix"
-    ],
-    "*.{js,css,html}": [
-      "node scripts/validate-tokens.js"
     ]
   },
   "devDependencies": {

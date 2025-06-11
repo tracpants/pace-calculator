@@ -1,4 +1,4 @@
-// Conversion constants for consistent calculations
+// Conversion constants for consistent calculations across the application
 const METERS_PER_KM = 1000;
 const METERS_PER_MILE = 1609.344; // Exact international mile
 const SECONDS_PER_MINUTE = 60;
@@ -34,7 +34,7 @@ export function parseTime(timeStr) {
 	
 	// Handle colon-separated format (e.g., "4:30" or "1:23:45")
 	if (trimmed.includes(':')) {
-		const parts = trimmed.split(":").map((p) => parseInt(p) || 0);
+		const parts = trimmed.split(":").map(p => parseInt(p) || 0);
 		if (parts.length === 3) return parts[0] * SECONDS_PER_HOUR + parts[1] * SECONDS_PER_MINUTE + parts[2];
 		if (parts.length === 2) return parts[0] * SECONDS_PER_MINUTE + parts[1];
 		return 0;
@@ -140,8 +140,8 @@ export function calculatePace(totalSeconds, distance, unit) {
 	
 	// Return raw values - rounding will be handled at display time
 	return { 
-		pacePerKm: pacePerKm, 
-		pacePerMile: pacePerMile 
+		pacePerKm, 
+		pacePerMile 
 	};
 }
 
