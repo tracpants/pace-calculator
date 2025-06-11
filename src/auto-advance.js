@@ -37,6 +37,7 @@ export function initAutoAdvance() {
 
 /**
  * Setup auto-advance for a specific input group (e.g., 'pace-time')
+ * @param prefix
  */
 function setupAutoAdvanceGroup(prefix) {
 	// Determine which segments this group has
@@ -55,6 +56,7 @@ function setupAutoAdvanceGroup(prefix) {
 
 /**
  * Get available segments for an input group
+ * @param prefix
  */
 function getAvailableSegments(prefix) {
 	// Check if this is a pace input (MM:SS) or time input (HH:MM:SS)
@@ -71,22 +73,27 @@ function getAvailableSegments(prefix) {
 
 /**
  * Setup auto-advance behavior for a single input
+ * @param input
+ * @param segment
+ * @param prefix
+ * @param segments
+ * @param segmentIndex
  */
 function setupAutoAdvanceInput(input, segment, prefix, segments, segmentIndex) {
 	const config = INPUT_CONFIGS[segment];
 	
 	// Input event for auto-advance
-	input.addEventListener('input', (e) => {
+	input.addEventListener('input', e => {
 		handleAutoAdvance(e, input, segment, prefix, segments, segmentIndex, config);
 	});
 	
 	// Keydown event for backspace handling
-	input.addEventListener('keydown', (e) => {
+	input.addEventListener('keydown', e => {
 		handleBackspace(e, input, segment, prefix, segments, segmentIndex);
 	});
 	
 	// Focus event to select all text for easy editing
-	input.addEventListener('focus', (e) => {
+	input.addEventListener('focus', e => {
 		// Small delay to ensure the focus has fully completed
 		setTimeout(() => {
 			e.target.select();
@@ -94,16 +101,23 @@ function setupAutoAdvanceInput(input, segment, prefix, segments, segmentIndex) {
 	});
 	
 	// Paste event handling
-	input.addEventListener('paste', (e) => {
+	input.addEventListener('paste', e => {
 		handlePaste(e, input, segment, prefix, segments, segmentIndex);
 	});
 }
 
 /**
  * Handle input and auto-advance logic
+ * @param e
+ * @param input
+ * @param segment
+ * @param prefix
+ * @param segments
+ * @param segmentIndex
+ * @param config
  */
 function handleAutoAdvance(e, input, segment, prefix, segments, segmentIndex, config) {
-	let value = e.target.value;
+	let {value} = e.target;
 	
 	// Remove non-numeric characters
 	value = value.replace(/\D/g, '');
@@ -153,6 +167,12 @@ function handleAutoAdvance(e, input, segment, prefix, segments, segmentIndex, co
 
 /**
  * Handle backspace for going to previous field
+ * @param e
+ * @param input
+ * @param segment
+ * @param prefix
+ * @param segments
+ * @param segmentIndex
  */
 function handleBackspace(e, input, segment, prefix, segments, segmentIndex) {
 	if (e.key === 'Backspace' && input.value === '' && segmentIndex > 0) {
@@ -174,6 +194,12 @@ function handleBackspace(e, input, segment, prefix, segments, segmentIndex) {
 
 /**
  * Handle paste events to intelligently distribute time values
+ * @param e
+ * @param input
+ * @param segment
+ * @param prefix
+ * @param segments
+ * @param segmentIndex
  */
 function handlePaste(e, input, segment, prefix, segments, segmentIndex) {
 	e.preventDefault();
@@ -189,6 +215,12 @@ function handlePaste(e, input, segment, prefix, segments, segmentIndex) {
 
 /**
  * Distribute pasted numeric value across time fields
+ * @param value
+ * @param currentInput
+ * @param segment
+ * @param prefix
+ * @param segments
+ * @param segmentIndex
  */
 function distributePastedValue(value, currentInput, segment, prefix, segments, segmentIndex) {
 	const inputs = segments.map(seg => document.getElementById(`${prefix}-${seg}`)).filter(inp => inp);
@@ -231,6 +263,11 @@ function distributePastedValue(value, currentInput, segment, prefix, segments, s
 
 /**
  * Advance to the next input field
+ * @param currentInput
+ * @param prefix
+ * @param segments
+ * @param segmentIndex
+ * @param prefillValue
  */
 function advanceToNext(currentInput, prefix, segments, segmentIndex, prefillValue = '') {
 	if (segmentIndex < segments.length - 1) {

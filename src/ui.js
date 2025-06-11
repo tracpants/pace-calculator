@@ -1,9 +1,8 @@
-import { state } from "./state.js";
 import * as calc from "./calculator.js";
-import * as pr from "./pr.js";
-import { reinitAutoAdvance } from "./auto-advance.js";
 import { getRaceDistances, getDistanceSuggestions, getDistanceDisplayName, findDistanceKey } from "./distances.js";
 import { safeGetElements, safeAddEventListener, robustInit } from "./dom-ready.js";
+import * as pr from "./pr.js";
+import { state } from "./state.js";
 
 // DOM Elements (will be initialized in initUI)
 let form, resultDiv, resultLabel, resultValue, loadingDiv, copyBtn, copyIcon, checkIcon, savePrBtn, updatePrBtn;
@@ -177,7 +176,7 @@ const ErrorManager = {
 	
 	// Clear all errors in current tab
 	clearCurrentTab() {
-		const currentTab = state.currentTab;
+		const {currentTab} = state;
 		const currentSection = document.querySelector(`[data-section="${currentTab}"]`);
 		
 		if (!currentSection) return;
@@ -201,7 +200,7 @@ const ErrorManager = {
 
 // Input validation functions
 function validateInput(inputElement, validationFn) {
-	const value = inputElement.value;
+	const {value} = inputElement;
 	const result = validationFn(value);
 	
 	if (result.valid) {
@@ -434,7 +433,7 @@ function switchTab(tabName) {
 }
 
 function updateTabNavigation() {
-	document.querySelectorAll('[role="tab"]').forEach((tab, index) => {
+	document.querySelectorAll('[role="tab"]').forEach(tab => {
 		const isActive = tab.dataset.tab === state.currentTab;
 		tab.setAttribute('aria-selected', isActive);
 		tab.setAttribute('tabindex', isActive ? '0' : '-1');
@@ -568,10 +567,6 @@ function restoreTabState(tabName) {
 	}
 }
 
-function clearNonRelevantFields() {
-	// This function is now replaced by saveCurrentTabState and restoreTabState
-	// Keep for backward compatibility but make it empty
-}
 
 function generateComprehensiveResult() {
 	if (!state.lastResult) {
@@ -666,7 +661,7 @@ async function copyToClipboard(text) {
 		await navigator.clipboard.writeText(text);
 		animateCopySuccess();
 		return true;
-	} catch (err) {
+	} catch {
 		// Fallback for older browsers
 		try {
 			const textArea = document.createElement('textarea');
@@ -691,7 +686,7 @@ async function shareContent(text) {
 		try {
 			await navigator.share({
 				title: 'Running Pace Calculation',
-				text: text
+				text
 			});
 			return true;
 		} catch (err) {
@@ -782,7 +777,7 @@ function generateRaceSplits() {
 		const cumulativeTime = pacePerUnit * i;
 		splits.push({
 			distance: i,
-			unit: unit,
+			unit,
 			time: calc.formatTime(cumulativeTime, true),
 			timeSeconds: cumulativeTime
 		});
@@ -794,7 +789,7 @@ function generateRaceSplits() {
 		const cumulativeTime = pacePerUnit * distance;
 		splits.push({
 			distance: calc.formatDistance(distance),
-			unit: unit,
+			unit,
 			time: calc.formatTime(cumulativeTime, true),
 			timeSeconds: cumulativeTime,
 			isFinish: true
@@ -814,7 +809,7 @@ function createSplitsAccordion() {
 	const splitsData = generateRaceSplits();
 	if (!splitsData) return '';
 	
-	const { splits, totalDistance, unit, pacePerUnit } = splitsData;
+	const { splits, totalDistance, pacePerUnit } = splitsData;
 	
 	const splitsHtml = splits.map(split => {
 		// Determine split type styling and label
@@ -936,28 +931,12 @@ function scrollToExpandedSplits() {
 	}
 }
 
-function updateUnitToggles() {
-	document.querySelectorAll("[data-unit]").forEach((btn) => {
-		const isActive = btn.dataset.unit === state.distanceUnit;
-		if (isActive) {
-			btn.classList.add("active");
-			btn.setAttribute('aria-pressed', 'true');
-		} else {
-			btn.classList.remove("active");
-			btn.setAttribute('aria-pressed', 'false');
-		}
-	});
-	populatePresetSelects();
-	populateAutocomplete();
-	updateCalculatedResult();
-	updateHintTexts();
-}
 
 function populatePresetSelects() {
 	const unit = state.distanceUnit;
 	const raceDistances = getRaceDistances();
 	const options =
-		`<option value="">-- Pick an event --</option>` +
+		`<option value="">-- Pick an event --</option>${ 
 		Object.entries(raceDistances)
 			.map(
 				([key, value]) =>
@@ -965,11 +944,11 @@ function populatePresetSelects() {
 						calc.formatDistance(value[unit], 3)
 					} ${unit})</option>`
 			)
-			.join("");
+			.join("")}`;
 
 	document
 		.querySelectorAll(".preset-select")
-		.forEach((select) => (select.innerHTML = options));
+		.forEach(select => (select.innerHTML = options));
 }
 
 function handleFormSubmit(e) {
@@ -1324,7 +1303,7 @@ function updateCalculatedResult() {
 }
 
 function clearCurrentTab() {
-	const currentTab = state.currentTab;
+	const {currentTab} = state;
 	const currentSection = document.querySelector(`[data-section="${currentTab}"]`);
 	
 	if (!currentSection) return;
@@ -1445,7 +1424,7 @@ async function coreInitUI() {
 	safeAddEventListener(document, 'keydown', handleKeyboardNavigation, 'document (keyboard nav)');
 	
 	// Enter key to submit form from any input
-	safeAddEventListener(document, 'keydown', (e) => {
+	safeAddEventListener(document, 'keydown', e => {
 		if (e.key === 'Enter' && e.target.matches('input')) {
 			e.preventDefault();
 			if (form) {
@@ -1464,12 +1443,12 @@ async function coreInitUI() {
 				saveCurrentTabState();
 				
 				// Update tab visual states
-				document.querySelectorAll(".btn-tab").forEach((t) => t.classList.remove("active"));
+				document.querySelectorAll(".btn-tab").forEach(t => t.classList.remove("active"));
 				tab.classList.add("active");
 				updateTabNavigation();
 				
 				// Update section visibility
-				document.querySelectorAll(".form-section").forEach((s) => s.classList.add("hidden"));
+				document.querySelectorAll(".form-section").forEach(s => s.classList.add("hidden"));
 				
 				const targetSection = document.querySelector(`[data-section="${state.currentTab}"]`);
 				if (targetSection) {
@@ -1492,7 +1471,7 @@ async function coreInitUI() {
 		}, `tab-${index}`);
 		
 		// Tab keyboard navigation
-		safeAddEventListener(tab, 'keydown', (e) => {
+		safeAddEventListener(tab, 'keydown', e => {
 			if (e.key === 'Enter' || e.key === ' ') {
 				e.preventDefault();
 				tab.click();
@@ -1502,7 +1481,7 @@ async function coreInitUI() {
 	
 	// Setup preset select handlers
 	document.querySelectorAll(".preset-select").forEach((select, index) => {
-		safeAddEventListener(select, 'change', (e) => {
+		safeAddEventListener(select, 'change', e => {
 			const presetKey = e.target.value;
 			if (!presetKey) return;
 			

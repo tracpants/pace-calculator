@@ -8,7 +8,7 @@
  * @returns {Promise} Resolves when DOM is ready
  */
 export function waitForDOM() {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     if (document.readyState === 'loading') {
       // DOM is still loading
       document.addEventListener('DOMContentLoaded', resolve, { once: true });
@@ -90,7 +90,7 @@ export function safeGetElement(id, required = true) {
  * Safely get multiple elements with error handling
  * @param {string[]} ids - Array of element IDs
  * @param {boolean} allRequired - Whether all elements are required (default true)
- * @returns {Object} Object with element IDs as keys and elements as values
+ * @returns {object} Object with element IDs as keys and elements as values
  */
 export function safeGetElements(ids, allRequired = true) {
   const elements = {};
@@ -123,7 +123,7 @@ export function safeGetElements(ids, allRequired = true) {
  * @param {string} event - Event type
  * @param {Function} handler - Event handler
  * @param {string} elementName - Name for error reporting
- * @param {Object} options - Event listener options
+ * @param {object} options - Event listener options
  */
 export function safeAddEventListener(element, event, handler, elementName = 'unknown', options = {}) {
   if (!element) {
@@ -144,7 +144,7 @@ export function safeAddEventListener(element, event, handler, elementName = 'unk
 /**
  * Initialize with proper DOM readiness and error handling
  * @param {Function} initFunction - The initialization function to call
- * @param {Object} options - Configuration options
+ * @param {object} options - Configuration options
  * @returns {Promise} Resolves when initialization is complete
  */
 export async function robustInit(initFunction, options = {}) {

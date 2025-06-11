@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { fireEvent } from '@testing-library/dom'
-import { initUI } from '../../src/ui.js'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { state } from '../../src/state.js'
+import { initUI } from '../../src/ui.js'
 
 // Mock the other modules that ui.js depends on
 vi.mock('../../src/settings.js', () => ({
@@ -10,8 +10,8 @@ vi.mock('../../src/settings.js', () => ({
 
 vi.mock('../../src/calculator.js', () => ({
   validateDistanceInput: vi.fn(() => ({ valid: true, value: 10 })),
-  formatTime: vi.fn((seconds) => `${Math.floor(seconds/60)}:${(seconds%60).toString().padStart(2, '0')}`),
-  formatDistance: vi.fn((distance) => distance.toString())
+  formatTime: vi.fn(seconds => `${Math.floor(seconds/60)}:${(seconds%60).toString().padStart(2, '0')}`),
+  formatDistance: vi.fn(distance => distance.toString())
 }))
 
 vi.mock('../../src/auto-advance.js', () => ({
@@ -34,7 +34,7 @@ vi.mock('../../src/distances.js', () => ({
     km: [5, 10, 21.1],
     miles: [3.1, 6.2, 13.1]
   })),
-  getDistanceDisplayName: vi.fn((key) => key.toUpperCase()),
+  getDistanceDisplayName: vi.fn(key => key.toUpperCase()),
   findDistanceKey: vi.fn(() => null)
 }))
 
@@ -273,7 +273,7 @@ describe('Tab Functionality', () => {
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       
       // Mock querySelector to return null for target section
-      document.querySelector = vi.fn((selector) => {
+      document.querySelector = vi.fn(selector => {
         if (selector.includes('data-section=')) {
           return null
         }

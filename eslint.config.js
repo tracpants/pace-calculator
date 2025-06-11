@@ -22,6 +22,9 @@ export default [
         setInterval: 'readonly',
         clearInterval: 'readonly',
         Event: 'readonly',
+        Element: 'readonly',
+        MutationObserver: 'readonly',
+        HTMLElement: 'readonly',
         process: 'readonly',
         global: 'readonly',
         // Vite globals

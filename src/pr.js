@@ -40,7 +40,7 @@ export function getPRForDistance(distanceKm) {
 	
 	// Check standard distances with small tolerance (0.1km)
 	const standardDistances = getRaceDistancesKm();
-	for (const [name, standardDistanceKm] of Object.entries(standardDistances)) {
+	for (const standardDistanceKm of Object.values(standardDistances)) {
 		if (Math.abs(distanceKm - standardDistanceKm) < 0.1) {
 			const standardPR = prs[standardDistanceKm.toString()];
 			if (standardPR) {
@@ -58,9 +58,9 @@ export function setPR(distance, unit, timeSeconds, date = null, notes = null) {
 	const prs = loadPRs();
 	
 	prs[distanceKm.toString()] = {
-		distance: distance,
-		unit: unit,
-		timeSeconds: timeSeconds,
+		distance,
+		unit,
+		timeSeconds,
 		dateSet: date ? new Date(date).toISOString() : new Date().toISOString(),
 		hasCustomDate: !!date,
 		notes: notes || null
@@ -90,7 +90,7 @@ export function getAllPRs() {
 		
 		formatted.push({
 			distanceKm: parseFloat(distanceKm),
-			displayName: displayName,
+			displayName,
 			distance: pr.distance,
 			unit: pr.unit,
 			timeSeconds: pr.timeSeconds,
@@ -132,11 +132,11 @@ export function comparePaceWithPR(currentTimeSeconds, distance, unit) {
 		prPaceFormatted: calc.formatTime(prPacePerKm),
 		currentPace: currentPacePerKm,
 		currentPaceFormatted: calc.formatTime(currentPacePerKm),
-		paceDifference: paceDifference,
+		paceDifference,
 		paceDifferenceFormatted: calc.formatTime(Math.abs(paceDifference)),
-		timeDifference: timeDifference,
+		timeDifference,
 		timeDifferenceFormatted: calc.formatTime(Math.abs(timeDifference), true),
-		percentageDifference: percentageDifference,
+		percentageDifference,
 		isFaster: paceDifference < 0,
 		isSlower: paceDifference > 0,
 		prDistance: pr.distance,
@@ -183,7 +183,7 @@ export function formatDate(isoString) {
 	try {
 		const date = new Date(isoString);
 		return date.toLocaleDateString();
-	} catch (error) {
+	} catch {
 		return '';
 	}
 }
@@ -195,7 +195,7 @@ export function getDateInputValue(isoString) {
 	try {
 		const date = new Date(isoString);
 		return date.toISOString().split('T')[0];
-	} catch (error) {
+	} catch {
 		return '';
 	}
 }
