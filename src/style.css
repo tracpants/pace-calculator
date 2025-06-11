@@ -1667,8 +1667,9 @@
 	
 	.toggle-checkbox::before {
 		content: '';
-		@apply absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+		@apply absolute top-0.5 left-0.5 w-5 h-5 rounded-full transition-transform;
+		background-color: var(--color-white);
+		box-shadow: 0 1px 3px var(--color-neutral-400);
 	}
 	
 	.toggle-checkbox:checked::before {

@@ -1158,11 +1158,11 @@ function showResult(label, value, type = 'success') {
 	
 	// Reset all classes
 	resultDiv.classList.remove('hidden', 'success', 'error', 'opacity-0', 'scale-95');
-	resultDiv.classList.remove('bg-indigo-50', 'dark:bg-gray-700', 'border-l-4', 'border-indigo-500');
+	resultDiv.classList.remove('success', 'error');
 	
 	// Add appropriate classes based on type
 	if (type === 'success') {
-		resultDiv.classList.add('success', 'bg-indigo-50', 'dark:bg-gray-700', 'border-l-4', 'border-indigo-500');
+		resultDiv.classList.add('success');
 	} else if (type === 'error') {
 		resultDiv.classList.add('error');
 	}
