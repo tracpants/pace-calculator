@@ -8,7 +8,7 @@ test.describe('Pace Calculator - Tab Functionality', () => {
     await expect(page.locator('#app')).toBeVisible();
   });
 
-  test('should load with pace tab active by default', async ({ page }) => {
+  test('should load with pace tab active by default @ui @basic', async ({ page }) => {
     // Check that pace tab is active
     await expect(page.locator('[data-tab="pace"]')).toHaveClass(/active/);
     
@@ -20,7 +20,7 @@ test.describe('Pace Calculator - Tab Functionality', () => {
     await expect(page.locator('[data-section="distance"]')).toHaveClass(/hidden/);
   });
 
-  test('should switch to time tab when clicked', async ({ page }) => {
+  test('should switch to time tab when clicked @ui @interaction', async ({ page }) => {
     // Click time tab
     await page.click('[data-tab="time"]');
     
@@ -34,7 +34,7 @@ test.describe('Pace Calculator - Tab Functionality', () => {
     await expect(page.locator('[data-section="distance"]')).toHaveClass(/hidden/);
   });
 
-  test('should switch to distance tab when clicked', async ({ page }) => {
+  test('should switch to distance tab when clicked @ui @interaction', async ({ page }) => {
     // Click distance tab
     await page.click('[data-tab="distance"]');
     
@@ -48,7 +48,7 @@ test.describe('Pace Calculator - Tab Functionality', () => {
     await expect(page.locator('[data-section="time"]')).toHaveClass(/hidden/);
   });
 
-  test('should preserve input values when switching tabs', async ({ page }) => {
+  test('should preserve input values when switching tabs @functionality @persistence', async ({ page }) => {
     // Enter data in pace tab
     await page.fill('#pace-distance', '10');
     await page.fill('#pace-time-minutes', '45');
@@ -75,7 +75,7 @@ test.describe('Pace Calculator - Tab Functionality', () => {
     await expect(page.locator('#time-pace-minutes')).toHaveValue('4');
   });
 
-  test('should handle rapid tab switching', async ({ page }) => {
+  test('should handle rapid tab switching @functionality @stress', async ({ page }) => {
     // Rapidly switch between tabs
     await page.click('[data-tab="time"]');
     await page.click('[data-tab="distance"]');
@@ -88,7 +88,7 @@ test.describe('Pace Calculator - Tab Functionality', () => {
     await expect(page.locator('[data-section="pace"]')).toBeVisible();
   });
 
-  test('should show correct form fields for each tab', async ({ page }) => {
+  test('should show correct form fields for each tab @ui @validation', async ({ page }) => {
     // Pace tab - should show time and distance inputs
     await expect(page.locator('#pace-time-hours')).toBeVisible();
     await expect(page.locator('#pace-time-minutes')).toBeVisible();
@@ -110,7 +110,7 @@ test.describe('Pace Calculator - Tab Functionality', () => {
     await expect(page.locator('#distance-pace-seconds')).toBeVisible();
   });
 
-  test('should support keyboard navigation', async ({ page }) => {
+  test('should support keyboard navigation @accessibility @keyboard', async ({ page }) => {
     // Focus on pace tab and use Enter key
     await page.locator('[data-tab="pace"]').focus();
     await page.keyboard.press('Tab'); // Move to time tab
@@ -127,7 +127,7 @@ test.describe('Pace Calculator - Tab Functionality', () => {
     await expect(page.locator('[data-tab="distance"]')).toHaveClass(/active/);
   });
 
-  test('should have proper ARIA attributes', async ({ page }) => {
+  test('should have proper ARIA attributes @accessibility @aria', async ({ page }) => {
     // Check tab roles and attributes
     await expect(page.locator('[data-tab="pace"]')).toHaveAttribute('role', 'tab');
     await expect(page.locator('[data-tab="time"]')).toHaveAttribute('role', 'tab');
@@ -143,7 +143,7 @@ test.describe('Pace Calculator - Tab Functionality', () => {
     await expect(page.locator('[data-tab="pace"]')).toHaveAttribute('aria-selected', 'false');
   });
 
-  test('should calculate pace correctly', async ({ page }) => {
+  test('should calculate pace correctly @functionality @calculation', async ({ page }) => {
     // Stay on pace tab and fill in values
     await page.fill('#pace-time-minutes', '45');
     await page.fill('#pace-time-seconds', '30');
@@ -160,7 +160,7 @@ test.describe('Pace Calculator - Tab Functionality', () => {
     await expect(page.locator('#result-value')).toContainText(':');
   });
 
-  test('should calculate time correctly', async ({ page }) => {
+  test('should calculate time correctly @functionality @calculation', async ({ page }) => {
     // Switch to time tab
     await page.click('[data-tab="time"]');
     
@@ -180,7 +180,7 @@ test.describe('Pace Calculator - Tab Functionality', () => {
     await expect(page.locator('#result-value')).toContainText('50:00');
   });
 
-  test('should calculate distance correctly', async ({ page }) => {
+  test('should calculate distance correctly @functionality @calculation', async ({ page }) => {
     // Switch to distance tab
     await page.click('[data-tab="distance"]');
     
@@ -202,7 +202,7 @@ test.describe('Pace Calculator - Tab Functionality', () => {
     await expect(page.locator('#result-value')).toContainText('12');
   });
 
-  test('should clear form when clear button is clicked', async ({ page }) => {
+  test('should clear form when clear button is clicked @functionality @ui', async ({ page }) => {
     // Fill in some values
     await page.fill('#pace-distance', '10');
     await page.fill('#pace-time-minutes', '45');
@@ -215,7 +215,7 @@ test.describe('Pace Calculator - Tab Functionality', () => {
     await expect(page.locator('#pace-time-minutes')).toHaveValue('');
   });
 
-  test('should work on mobile viewport', async ({ page }) => {
+  test('should work on mobile viewport @responsive @mobile', async ({ page }) => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
     
@@ -232,7 +232,7 @@ test.describe('Pace Calculator - Tab Functionality', () => {
     await expect(page.locator('#result')).toBeVisible();
   });
 
-  test('should handle preset distances', async ({ page }) => {
+  test('should handle preset distances @functionality @ui', async ({ page }) => {
     // Check that preset dropdown exists
     await expect(page.locator('#pace-preset')).toBeVisible();
     
@@ -243,7 +243,7 @@ test.describe('Pace Calculator - Tab Functionality', () => {
     await expect(page.locator('#pace-distance')).toHaveValue('5');
   });
 
-  test('should maintain focus management', async ({ page }) => {
+  test('should maintain focus management @accessibility @focus', async ({ page }) => {
     // Tab navigation should work properly
     await page.keyboard.press('Tab');
     
