@@ -1,1 +1,20 @@
+# Run design token validation first (fail fast)
+echo "🎨 Validating design tokens..."
+npm run validate:tokens || {
+  echo "❌ Design token violations found! Please fix before committing."
+  echo "💡 See output above for specific issues to fix."
+  exit 1
+}
+
+# Run lint-staged for file-specific checks
 npx lint-staged
+
+# Quick build check for critical changes
+if git diff --cached --name-only | grep -E "(src/|vite.config|package.json)" > /dev/null; then
+  echo "🔨 Running quick build check..."
+  npm run build --silent || {
+    echo "❌ Build failed! Please fix build errors before committing."
+    exit 1
+  }
+  echo "✅ Build check passed"
+fi
