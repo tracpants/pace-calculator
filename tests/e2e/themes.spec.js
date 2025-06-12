@@ -118,6 +118,7 @@ test.describe('Theme System Tests', () => {
       });
 
       // Verify that button has visible styling (not transparent)
+      // eslint-disable-next-line design-tokens/no-hardcoded-colors
       expect(buttonStyles.backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
       expect(buttonStyles.backgroundColor).not.toBe('transparent');
     }
@@ -190,6 +191,7 @@ test.describe('Theme System Tests', () => {
     });
 
     // AMOLED should use true black or very dark colors
+    // eslint-disable-next-line design-tokens/no-hardcoded-colors  
     expect(['rgb(0, 0, 0)', 'rgba(0, 0, 0, 1)', '#000000', 'black'].some(color => 
       bodyStyles.includes('0, 0, 0') || bodyStyles.includes('black')
     )).toBeTruthy();

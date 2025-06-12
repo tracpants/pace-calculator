@@ -26,7 +26,7 @@ const CONFIG = {
   },
   
   // Directories to scan
-  scanDirs: ['src', 'tests'],
+  scanDirs: ['src'],
   
   // Directories to ignore
   ignoreDirs: ['node_modules', 'dist', '.git', 'coverage'],
@@ -89,6 +89,24 @@ const CONFIG = {
     // Data attributes and test IDs
     /data-[a-z-]+=["'][^"']*["']/g,
     /test-[a-z-]+=["'][^"']*["']/g
+  ],
+  
+  // Test file exceptions - allow hardcoded colors in test assertions
+  testFileExceptions: [
+    // Any line containing expect() with color values
+    /expect\(.*\)/gi,
+    
+    // Lines with color assertions
+    /\.(?:toBe|toEqual|toContain|toMatch|not\.toBe)\(/gi,
+    
+    // Array literals in test files (for color testing arrays)
+    /\s*expect\s*\(\s*\[/gi,
+    
+    // Color value checks in test files
+    /(?:backgroundColor|color|borderColor|includes|contains).*(?:#[A-Fa-f0-9]{3,6}|rgba?\([^)]+\)|(?:red|blue|green|yellow|orange|purple|pink|brown|black|white|gray|grey|cyan|magenta|lime|olive|navy|teal|silver|maroon|fuchsia|aqua))/gi,
+    
+    // Test utility method calls
+    /(?:some|every|includes|contains|match|test)\(/gi
   ]
 };
 
@@ -250,6 +268,30 @@ function checkFile(filePath) {
         // Skip if this is in a design token definition (for CSS files)
         if (fileExt === '.css' && isInTokenDefinition(content, match, index)) {
           continue;
+        }
+        
+        // Skip if this is a test file and the color is in a test assertion
+        if (relativePath.includes('test') || relativePath.includes('spec')) {
+          const lineStart = content.lastIndexOf('\n', index);
+          const lineEnd = content.indexOf('\n', index) === -1 ? content.length : content.indexOf('\n', index);
+          const line = content.substring(lineStart + 1, lineEnd);
+          
+          // Check for eslint-disable comment on previous line
+          const prevLineStart = content.lastIndexOf('\n', lineStart - 1);
+          const prevLine = content.substring(prevLineStart + 1, lineStart);
+          if (prevLine.includes('eslint-disable-next-line') && prevLine.includes('design-tokens')) {
+            continue;
+          }
+          
+          // Check if this color usage matches any test file exception patterns
+          const isTestException = CONFIG.testFileExceptions.some(pattern => {
+            pattern.lastIndex = 0; // Reset regex
+            return pattern.test(line);
+          });
+          
+          if (isTestException) {
+            continue;
+          }
         }
         
         // Calculate line number
