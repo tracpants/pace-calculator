@@ -1,5 +1,5 @@
 import { fireEvent } from '@testing-library/dom'
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { state } from '../../src/state.js'
 import { initUI } from '../../src/ui.js'
 
@@ -40,6 +40,9 @@ vi.mock('../../src/distances.js', () => ({
 
 describe('Tab Functionality', () => {
   beforeEach(() => {
+    // Use fake timers to control timing in tests
+    vi.useFakeTimers()
+    
     // Reset state
     state.currentTab = 'pace'
     state.distanceUnit = 'km'
@@ -109,6 +112,12 @@ describe('Tab Functionality', () => {
     `
   })
 
+  afterEach(() => {
+    // Clean up any pending timers and restore real timers
+    vi.runOnlyPendingTimers()
+    vi.useRealTimers()
+  })
+
   describe('Tab Elements Existence', () => {
     it('should find all required tab elements', () => {
       const tabs = document.querySelectorAll('[data-tab]')
@@ -146,12 +155,15 @@ describe('Tab Functionality', () => {
   describe('Tab Initialization', () => {
     it('should initialize UI without errors', async () => {
       await expect(initUI()).resolves.not.toThrow()
+      // Clear any pending timers from initialization
+      vi.runAllTimers()
     })
 
     it('should find all required DOM elements during initialization', async () => {
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       
       await initUI()
+      vi.runAllTimers() // Clear any pending timers
       
       expect(consoleSpy).not.toHaveBeenCalledWith(expect.stringContaining('Required element missing'))
       consoleSpy.mockRestore()
@@ -161,6 +173,7 @@ describe('Tab Functionality', () => {
   describe('Tab Clicking Behavior', () => {
     beforeEach(async () => {
       await initUI()
+      vi.runAllTimers() // Clear any pending timers from initialization
     })
 
     it('should switch to time tab when clicked', () => {
@@ -218,6 +231,7 @@ describe('Tab Functionality', () => {
   describe('Tab Accessibility', () => {
     beforeEach(async () => {
       await initUI()
+      vi.runAllTimers() // Clear any pending timers from initialization
     })
 
     it('should have proper ARIA attributes', () => {
@@ -250,6 +264,7 @@ describe('Tab Functionality', () => {
   describe('Tab State Management', () => {
     beforeEach(async () => {
       await initUI()
+      vi.runAllTimers() // Clear any pending timers from initialization
     })
 
     it('should preserve tab states when switching', () => {
@@ -293,6 +308,7 @@ describe('Tab Functionality', () => {
   describe('Tab Integration with Form', () => {
     beforeEach(async () => {
       await initUI()
+      vi.runAllTimers() // Clear any pending timers from initialization
     })
 
     it('should clear form when clear button is clicked', () => {
