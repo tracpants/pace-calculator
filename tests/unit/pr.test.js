@@ -37,7 +37,7 @@ Object.defineProperty(window, 'localStorage', {
 
 // Mock calculator functions
 vi.mock('../../src/calculator.js', () => ({
-  validateTimeInput: vi.fn((timeStr) => {
+  validateTimeInput: vi.fn(timeStr => {
     if (!timeStr) return { valid: false, message: 'Time is required' }
     if (timeStr === 'invalid') return { valid: false, message: 'Invalid format' }
     
@@ -82,7 +82,7 @@ vi.mock('../../src/distances.js', () => ({
     'half-marathon': 21.1,
     'marathon': 42.195
   })),
-  getDistanceDisplayName: vi.fn((key) => {
+  getDistanceDisplayName: vi.fn(key => {
     const names = {
       '5k': '5K',
       '10k': '10K',

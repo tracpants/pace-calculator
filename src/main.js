@@ -1,9 +1,9 @@
 import "./style.css";
-import { initSettings, applyDefaultDistance } from "./settings.js";
-import { initUI } from "./ui.js";
-import { initTouch } from "./touch.js";
 import { initAutoAdvance } from "./auto-advance.js";
 import { ensureModalPositioning } from "./modal-positioning.js";
+import { initSettings, applyDefaultDistance } from "./settings.js";
+import { initTouch } from "./touch.js";
+import { initUI } from "./ui.js";
 
 // Initialize all parts of the application
 document.addEventListener("DOMContentLoaded", async () => {

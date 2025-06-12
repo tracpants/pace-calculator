@@ -1,8 +1,8 @@
-import { state } from "./state.js";
-import { populatePresetSelects, populateAutocomplete, updateCalculatedResult, updateHintTexts } from "./ui.js";
 import * as calc from "./calculator.js";
 import { getRaceDistances, getDistanceDisplayName, getDistanceValue } from "./distances.js";
 import * as pr from "./pr.js";
+import { state } from "./state.js";
+import { populatePresetSelects, populateAutocomplete, updateCalculatedResult, updateHintTexts } from "./ui.js";
 
 // Settings preferences with defaults
 const defaultSettings = {
@@ -15,10 +15,10 @@ const defaultSettings = {
 
 // Theme categorization
 const accessibilityThemes = ['amoled', 'high-contrast', 'monochrome'];
-const isA11yTheme = (theme) => accessibilityThemes.includes(theme);
+const isA11yTheme = theme => accessibilityThemes.includes(theme);
 
 // DOM Elements (will be initialized in initSettings)
-let settingsModal, closeSettingsBtn, saveSettingsBtn, themeRadios, unitToggles, accentColorOptions, dyslexicFontToggle, defaultDistanceSelect;
+let settingsModal, closeSettingsBtn, themeRadios, unitToggles, accentColorOptions, dyslexicFontToggle, defaultDistanceSelect;
 let menuBtn, menuDropdown, prMenuBtn, settingsMenuBtn;
 let helpBtn, helpModal, closeHelpBtn;
 let accessibilityToggle, accessibilityContent;
@@ -195,14 +195,14 @@ function populateDefaultDistanceSelect() {
 	
 	// Build options HTML
 	const options = 
-		`<option value="">No default (leave blank)</option>` +
+		`<option value="">No default (leave blank)</option>${ 
 		Object.entries(raceDistances)
 			.map(([key, value]) => {
 				const displayName = getDistanceDisplayName(key);
 				const distance = calc.formatDistance(value[unit], 3);
 				return `<option value="${key}">${displayName} (${distance} ${unit})</option>`;
 			})
-			.join("");
+			.join("")}`;
 	
 	defaultDistanceSelect.innerHTML = options;
 }
@@ -380,7 +380,7 @@ function handleDocumentClick(e) {
 }
 
 // Listen for system theme changes
-function handleSystemThemeChange(e) {
+function handleSystemThemeChange(_e) {
 	const settings = loadSettings();
 	if (settings.theme === 'system') {
 		applyTheme('system');
@@ -594,7 +594,7 @@ function handleEditPR(e) {
 function handleDeletePR(e) {
 	const btn = e.currentTarget;
 	const distance = parseFloat(btn.dataset.distance);
-	const unit = btn.dataset.unit;
+	const {unit} = btn.dataset;
 	
 	if (confirm(`Delete PR for ${pr.getDistanceName(distance, unit)}?`)) {
 		pr.removePR(distance, unit);
@@ -720,7 +720,6 @@ export function initSettings() {
 	// Initialize DOM elements
 	settingsModal = document.getElementById("settings-modal");
 	closeSettingsBtn = document.getElementById("close-settings");
-	saveSettingsBtn = document.getElementById("save-settings");
 	themeRadios = document.querySelectorAll('.theme-radio');
 	unitToggles = document.querySelectorAll("[data-unit]");
 	accentColorOptions = document.querySelectorAll('.accent-color-option');

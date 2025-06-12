@@ -147,7 +147,7 @@ export function debugModalState() {
         const parent = modal.parentElement;
         
         console.log(`\n📋 ${modal.id}:`);
-        console.log(`  Parent: ${parent?.tagName}${parent?.id ? '#' + parent.id : ''}`);
+        console.log(`  Parent: ${parent?.tagName}${parent?.id ? `#${parent.id}` : ''}`);
         console.log(`  Classes: ${modal.className}`);
         console.log(`  Position: ${style.position}`);
         console.log(`  Display: ${style.display}`);

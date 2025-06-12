@@ -73,6 +73,7 @@ const DISTANCE_DISPLAY_NAMES = {
 
 /**
  * Convert kilometers to miles
+ * @param km
  */
 function kmToMiles(km) {
     return km / 1.609344;
@@ -80,6 +81,7 @@ function kmToMiles(km) {
 
 /**
  * Convert miles to kilometers
+ * @param miles
  */
 function milesToKm(miles) {
     return miles * 1.609344;
@@ -87,13 +89,13 @@ function milesToKm(miles) {
 
 /**
  * Get all race distances with both km and miles values
- * @returns {Object} Object with distance keys and {km, miles} values
+ * @returns {object} Object with distance keys and {km, miles} values
  */
 export function getRaceDistances() {
     const distances = {};
     for (const [key, km] of Object.entries(RACE_DISTANCES_KM)) {
         distances[key] = {
-            km: km,
+            km,
             miles: kmToMiles(km)
         };
     }
@@ -102,7 +104,7 @@ export function getRaceDistances() {
 
 /**
  * Get race distances only in kilometers
- * @returns {Object} Object with distance keys and kilometer values
+ * @returns {object} Object with distance keys and kilometer values
  */
 export function getRaceDistancesKm() {
     return { ...RACE_DISTANCES_KM };
@@ -132,7 +134,7 @@ export function getDistanceValue(key, unit) {
 
 /**
  * Get distance suggestions for autocomplete
- * @returns {Object} Object with km and miles arrays of suggested distances
+ * @returns {object} Object with km and miles arrays of suggested distances
  */
 export function getDistanceSuggestions() {
     // Standard race distances
@@ -204,7 +206,7 @@ export function getDistanceCategory(key) {
 
 /**
  * Get ultra distances only
- * @returns {Object} Object with ultra distance keys and {km, miles} values
+ * @returns {object} Object with ultra distance keys and {km, miles} values
  */
 export function getUltraDistances() {
     const ultraDistances = {};
@@ -212,7 +214,7 @@ export function getUltraDistances() {
         const km = RACE_DISTANCES_KM[key];
         if (km) {
             ultraDistances[key] = {
-                km: km,
+                km,
                 miles: kmToMiles(km)
             };
         }
@@ -223,7 +225,7 @@ export function getUltraDistances() {
 /**
  * Get distances by category
  * @param {string} category - "sprint", "middle", "long", or "ultra"
- * @returns {Object} Object with distance keys and {km, miles} values for that category
+ * @returns {object} Object with distance keys and {km, miles} values for that category
  */
 export function getDistancesByCategory(category) {
     const categoryDistances = {};
@@ -233,7 +235,7 @@ export function getDistancesByCategory(category) {
         const km = RACE_DISTANCES_KM[key];
         if (km) {
             categoryDistances[key] = {
-                km: km,
+                km,
                 miles: kmToMiles(km)
             };
         }
