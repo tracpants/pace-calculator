@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Smoke Tests - Basic Application Health', () => {
   
-  test('application loads without errors', async ({ page }) => {
+  test('application loads without errors @smoke @critical', async ({ page }) => {
     // Listen for console errors
     const consoleErrors = [];
     page.on('console', msg => {
@@ -28,7 +28,7 @@ test.describe('Smoke Tests - Basic Application Health', () => {
     expect(pageErrors).toEqual([]);
   });
   
-  test('essential UI elements are present', async ({ page }) => {
+  test('essential UI elements are present @smoke @ui', async ({ page }) => {
     await page.goto('/');
     
     // Wait for app to load
@@ -46,7 +46,7 @@ test.describe('Smoke Tests - Basic Application Health', () => {
     await expect(page.locator('#calculator-form button[type="submit"]')).toBeVisible();
   });
   
-  test('no broken imports or missing resources', async ({ page }) => {
+  test('no broken imports or missing resources @smoke @critical', async ({ page }) => {
     // Track failed requests
     const failedRequests = [];
     page.on('requestfailed', request => {
@@ -66,7 +66,7 @@ test.describe('Smoke Tests - Basic Application Health', () => {
     expect(failedRequests).toEqual([]);
   });
   
-  test('basic calculator functionality works', async ({ page }) => {
+  test('basic calculator functionality works @smoke @functionality', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('#app')).toBeVisible();
     
