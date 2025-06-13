@@ -7,8 +7,65 @@ on:
     branches: [master, main]
 
 jobs:
+  # Check what files changed to optimize CI runs
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      docs-only: ${{ steps.changes.outputs.docs-only }}
+      has-code-changes: ${{ steps.changes.outputs.has-code-changes }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect file changes
+        id: changes
+        run: |
+          # Get changed files (for push events, compare with previous commit)
+          if [ "${{ github.event_name }}" = "push" ]; then
+            CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
+          else
+            # For pull requests, compare with base branch
+            CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }})
+          fi
+          
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+          
+          # Check if only documentation files changed
+          CODE_PATTERN="^(src/|tests/|scripts/|\.js$|\.css$|package\.json|vite\.config\.js|tailwind\.config\.js|eslint\.config\.js|stylelint\.config\.cjs|vitest\.config\.js|playwright\.config\.js)"
+          DOCS_PATTERN="^(README\.md|TASKS\.md|CLAUDE\.md|docs/|LICENSE|\.gitignore)"
+          
+          HAS_CODE_CHANGES=false
+          DOCS_ONLY=true
+          
+          while IFS= read -r file; do
+            if [[ -n "$file" ]]; then
+              if echo "$file" | grep -E "$CODE_PATTERN"; then
+                HAS_CODE_CHANGES=true
+                DOCS_ONLY=false
+                echo "Code change detected: $file"
+              elif echo "$file" | grep -E "$DOCS_PATTERN"; then
+                echo "Documentation change detected: $file"
+              else
+                # Other files (like CI configs) should trigger full pipeline
+                HAS_CODE_CHANGES=true
+                DOCS_ONLY=false
+                echo "Other change detected: $file"
+              fi
+            fi
+          done <<< "$CHANGED_FILES"
+          
+          echo "has-code-changes=$HAS_CODE_CHANGES" >> $GITHUB_OUTPUT
+          echo "docs-only=$DOCS_ONLY" >> $GITHUB_OUTPUT
+          
+          echo "Final decision: HAS_CODE_CHANGES=$HAS_CODE_CHANGES, DOCS_ONLY=$DOCS_ONLY"
+
   code-quality:
     runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has-code-changes == 'true'
 
     strategy:
       matrix:
@@ -68,6 +125,38 @@ jobs:
           path: dist/
           retention-days: 30
 
+  # Lightweight job for documentation-only changes
+  docs-validation:
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.docs-only == 'true'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate documentation changes
+        run: |
+          echo "✅ Documentation-only changes detected"
+          echo "Skipping expensive CI operations (tests, builds, browser installation)"
+          echo "Changes detected in: README.md, TASKS.md, or docs/ directory"
+          
+          # Basic validation that files are readable
+          if [ -f "README.md" ]; then
+            echo "✅ README.md exists and is readable"
+          fi
+          
+          if [ -f "TASKS.md" ]; then
+            echo "✅ TASKS.md exists and is readable"
+          fi
+          
+          if [ -f "CLAUDE.md" ]; then
+            echo "✅ CLAUDE.md exists and is readable"
+          fi
+          
+          echo "📚 Documentation validation complete - no code testing required"
+
+  # Always run security audit (lightweight and important for dependency tracking)
   security-audit:
     runs-on: ubuntu-latest
 
