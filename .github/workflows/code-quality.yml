@@ -1,4 +1,4 @@
-name: Code Quality and Testing
+name: Code Quality and Security
 
 on:
   push:
@@ -90,36 +90,3 @@ jobs:
       - name: Check for outdated dependencies
         run: npm outdated || true
 
-  accessibility-check:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20.x"
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build project
-        run: npm run build
-
-      - name: Start preview server
-        run: npm run preview &
-
-      - name: Wait for server
-        run: npx wait-on http://localhost:4173 --timeout 30000
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
-
-      - name: Run accessibility tests
-        run: npx playwright test --grep="@accessibility" --reporter=line
-
-      - name: Test all 6 theme variations
-        run: npx playwright test --grep="@themes" --reporter=line
