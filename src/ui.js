@@ -360,20 +360,6 @@ function updateCalculateButtonState() {
 }
 
 
-function focusFirstInput() {
-	// Skip auto-focus on mobile devices to avoid jarring keyboard popup
-	if (isMobileDevice()) {
-		return;
-	}
-	
-	const activeSection = document.querySelector(`[data-section="${state.currentTab}"]`);
-	if (activeSection) {
-		const firstInput = activeSection.querySelector('input');
-		if (firstInput) {
-			firstInput.focus();
-		}
-	}
-}
 
 function isMobileDevice() {
 	// Check for mobile devices using multiple methods
@@ -1350,8 +1336,7 @@ function clearCurrentTab() {
 	// Hide loading if visible
 	loadingDiv.classList.add("hidden");
 	
-	// Focus first input (only on non-mobile devices)
-	focusFirstInput();
+	// Removed auto-focus to preserve natural tab order
 	
 	// Update button state after clearing
 	updateCalculateButtonState();
@@ -1463,8 +1448,7 @@ async function coreInitUI() {
 				restoreTabState(state.currentTab);
 				updateCalculateButtonState();
 				
-				// Focus first input after a short delay (only on non-mobile)
-				setTimeout(() => focusFirstInput(), 100);
+				// Removed auto-focus to preserve natural tab order
 			} catch (error) {
 				console.error('Error in tab click handler:', error);
 			}
@@ -1537,11 +1521,7 @@ async function coreInitUI() {
 	safeAddEventListener(savePrBtn, 'click', handleSavePR, 'save-pr-btn');
 	safeAddEventListener(updatePrBtn, 'click', handleUpdatePR, 'update-pr-btn');
 	
-	// Focus first input after everything is set up (only on non-mobile devices)
-	// Skip in test environment to avoid timer-related issues
-	if (typeof process === 'undefined' || process.env?.NODE_ENV !== 'test') {
-		setTimeout(() => focusFirstInput(), 100);
-	}
+	// Removed auto-focus to preserve natural tab order for accessibility
 	
 	console.log('✅ Core UI initialization completed successfully');
 }
