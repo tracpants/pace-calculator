@@ -15,7 +15,7 @@ test.describe('Accessibility Tests', () => {
     await expect(page.locator('h1')).toBeVisible();
     
     // Check for form elements
-    await expect(page.locator('form')).toBeVisible();
+    await expect(page.locator('#calculator-form')).toBeVisible();
     
     // Check that interactive elements have proper roles
     const buttons = page.locator('button');

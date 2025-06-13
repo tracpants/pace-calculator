@@ -310,7 +310,7 @@ test.describe("Pace Calculator - Tab Functionality", () => {
     await expect(page.locator("#pace-preset")).toBeVisible();
 
     // Select a preset (5K)
-    await page.selectOption("#pace-preset", { label: /5K/ });
+    await page.selectOption("#pace-preset", { label: "5K (5 km)" });
 
     // Distance input should be filled
     await expect(page.locator("#pace-distance")).toHaveValue("5");
