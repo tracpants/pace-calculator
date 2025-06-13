@@ -44,7 +44,8 @@ jobs:
         run: npm run build
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install --with-deps chromium
+        # Only install chromium since we only test chromium and mobile chrome (both use chromium engine)
 
       - name: Run critical E2E tests
         run: npx playwright test --grep="@critical|@smoke" --reporter=line
