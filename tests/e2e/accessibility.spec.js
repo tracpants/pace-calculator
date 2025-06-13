@@ -100,7 +100,7 @@ test.describe('Accessibility Tests', () => {
       
       // Each input should have either a label, aria-label, or aria-labelledby
       const hasLabel = await input.evaluate(el => {
-        const id = el.id;
+        const {id} = el;
         const hasAssociatedLabel = id && document.querySelector(`label[for="${id}"]`);
         const hasAriaLabel = el.getAttribute('aria-label');
         const hasAriaLabelledBy = el.getAttribute('aria-labelledby');

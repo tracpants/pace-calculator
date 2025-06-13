@@ -20,7 +20,7 @@ test.describe('Theme System Tests', () => {
   for (const theme of themes) {
     test(`should load and function correctly with ${theme.name} theme @themes @${theme.name}`, async ({ page }) => {
       // Apply theme by adding class to html element (as per CLAUDE.md)
-      await page.evaluate((themeClass) => {
+      await page.evaluate(themeClass => {
         document.documentElement.className = '';
         document.documentElement.classList.add(themeClass);
       }, theme.class);
@@ -99,7 +99,7 @@ test.describe('Theme System Tests', () => {
     
     for (const theme of accessibilityThemes) {
       // Apply accessibility theme
-      await page.evaluate((themeClass) => {
+      await page.evaluate(themeClass => {
         document.documentElement.className = '';
         document.documentElement.classList.add(themeClass);
       }, theme);
@@ -118,7 +118,6 @@ test.describe('Theme System Tests', () => {
       });
 
       // Verify that button has visible styling (not transparent)
-      // eslint-disable-next-line design-tokens/no-hardcoded-colors
       expect(buttonStyles.backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
       expect(buttonStyles.backgroundColor).not.toBe('transparent');
     }
@@ -129,7 +128,7 @@ test.describe('Theme System Tests', () => {
     
     for (const theme of accessibilityThemes) {
       // Apply accessibility theme
-      await page.evaluate((themeClass) => {
+      await page.evaluate(themeClass => {
         document.documentElement.className = '';
         document.documentElement.classList.add(themeClass);
       }, theme);
@@ -191,10 +190,7 @@ test.describe('Theme System Tests', () => {
     });
 
     // AMOLED should use true black or very dark colors
-    // eslint-disable-next-line design-tokens/no-hardcoded-colors  
-    expect(['rgb(0, 0, 0)', 'rgba(0, 0, 0, 1)', '#000000', 'black'].some(color => 
-      bodyStyles.includes('0, 0, 0') || bodyStyles.includes('black')
-    )).toBeTruthy();
+    expect(bodyStyles.includes('0, 0, 0') || bodyStyles.includes('black')).toBeTruthy();
   });
 
 });
