@@ -28,35 +28,17 @@ jobs:
         run: npm ci
 
       - name: Run ESLint
-        run: |
-          output=$(npm run lint:js)
-          echo "$output"
-          if ! echo "$output" | grep -E "(✖|✔) [0-9]+ problems" > /dev/null; then
-            echo "ERROR: No files were linted by ESLint!"
-            exit 1
-          fi
+        run: npm run lint:js:check
 
       - name: Run Stylelint
-        run: |
-          output=$(npm run lint:css)
-          echo "$output"
-          if ! echo "$output" | grep -E "[0-9]+ source.* checked" > /dev/null; then
-            echo "ERROR: No files were linted by Stylelint!"
-            exit 1
-          fi
+        run: npm run lint:css:check
 
       - name: Validate design tokens
         run: npm run validate:tokens
         continue-on-error: true # Allow existing violations while preventing new ones
 
       - name: Run unit tests
-        run: |
-          output=$(npm run test:run)
-          echo "$output"
-          if ! echo "$output" | grep -E "[0-9]+ (test|tests) run" > /dev/null; then
-            echo "ERROR: No unit tests were executed!"
-            exit 1
-          fi
+        run: npm run test:run
 
       - name: Build project
         run: npm run build
@@ -65,14 +47,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run critical E2E tests
-        run: |
-          output=$(npx playwright test --grep="@critical|@smoke" --reporter=line)
-          echo "$output"
-          if ! echo "$output" | grep -E "[0-9]+ passed" > /dev/null; then
-            echo "ERROR: No critical E2E tests passed!"
-            exit 1
-          fi
-        continue-on-error: true # Temporarily allow E2E failures while fixing ESLint issues
+        run: npx playwright test --grep="@critical|@smoke" --reporter=line
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
@@ -144,19 +119,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run accessibility tests
-        run: |
-          output=$(npx playwright test --grep="@accessibility" --reporter=line)
-          echo "$output"
-          if ! echo "$output" | grep -E "[0-9]+ passed" > /dev/null; then
-            echo "WARNING: No accessibility tests found, running basic smoke tests"
-            npx playwright test tests/e2e/smoke.spec.js --reporter=line
-          fi
+        run: npx playwright test --grep="@accessibility" --reporter=line
 
       - name: Test all 6 theme variations
-        run: |
-          output=$(npx playwright test --grep="@themes" --reporter=line)
-          echo "$output"
-          if ! echo "$output" | grep -E "[0-9]+ passed" > /dev/null; then
-            echo "WARNING: No theme tests found"
-            exit 1
-          fi
+        run: npx playwright test --grep="@themes" --reporter=line
