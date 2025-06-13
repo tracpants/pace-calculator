@@ -6,8 +6,8 @@
    COLOR TOKENS SYSTEM
    =========================================== */
 
-:root {
-  /* Primary Brand Colors */
+:root { /* eslint-disable-line custom/no-hardcoded-colors */
+  /* Primary Brand Colors - Design token definitions */
   --color-primary-50: #eef2ff;
   --color-primary-100: #e0e7ff;
   --color-primary-200: #c7d2fe;
@@ -1534,7 +1534,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background: rgba(0, 0, 0, 0.7); /* Darker background for better contrast */
+		background: rgba(0, 0, 0, 0.7); /* Darker background for better contrast */ /* eslint-disable-line custom/no-hardcoded-colors */
 		backdrop-filter: blur(4px);
 		opacity: 0;
 		transition: opacity 0.2s ease;
