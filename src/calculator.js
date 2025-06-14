@@ -3,7 +3,9 @@ const METERS_PER_KM = 1000;
 const METERS_PER_MILE = 1609.344; // Exact international mile
 const SECONDS_PER_MINUTE = 60;
 const SECONDS_PER_HOUR = 3600;
-const MAX_SECONDS_PER_DAY = 86400;
+const SECONDS_PER_DAY = 86400;
+const MAX_SECONDS_SINGLE_DAY = 86400; // 24 hours for regular races
+const MAX_SECONDS_MULTIDAY = 604800; // 7 days maximum for ultra events
 
 // Precision helpers
 const roundToDecimalPlaces = (num, places) => {
@@ -24,19 +26,39 @@ export function parseTime(timeStr) {
 		return minutes * SECONDS_PER_MINUTE + seconds;
 	}
 	
-	// Handle space-separated format (e.g., "4 30" = 4:30)
-	if (/^\d+\s+\d+(\s+\d+)?$/.test(trimmed)) {
+	// Handle space-separated format (e.g., "4 30" = 4:30 or "2 1 23 45" = 2 days 1:23:45)
+	if (/^\d+\s+\d+(\s+\d+)?(\s+\d+)?$/.test(trimmed)) {
 		const parts = trimmed.split(/\s+/).map(p => parseInt(p) || 0);
-		if (parts.length === 3) return parts[0] * SECONDS_PER_HOUR + parts[1] * SECONDS_PER_MINUTE + parts[2];
-		if (parts.length === 2) return parts[0] * SECONDS_PER_MINUTE + parts[1];
+		if (parts.length === 4) {
+			// Days Hours Minutes Seconds
+			return parts[0] * SECONDS_PER_DAY + parts[1] * SECONDS_PER_HOUR + parts[2] * SECONDS_PER_MINUTE + parts[3];
+		}
+		if (parts.length === 3) {
+			// Hours Minutes Seconds
+			return parts[0] * SECONDS_PER_HOUR + parts[1] * SECONDS_PER_MINUTE + parts[2];
+		}
+		if (parts.length === 2) {
+			// Minutes Seconds
+			return parts[0] * SECONDS_PER_MINUTE + parts[1];
+		}
 		return 0;
 	}
 	
-	// Handle colon-separated format (e.g., "4:30" or "1:23:45")
+	// Handle colon-separated format (e.g., "4:30", "1:23:45", or "2:1:23:45")
 	if (trimmed.includes(':')) {
 		const parts = trimmed.split(":").map(p => parseInt(p) || 0);
-		if (parts.length === 3) return parts[0] * SECONDS_PER_HOUR + parts[1] * SECONDS_PER_MINUTE + parts[2];
-		if (parts.length === 2) return parts[0] * SECONDS_PER_MINUTE + parts[1];
+		if (parts.length === 4) {
+			// Days:Hours:Minutes:Seconds
+			return parts[0] * SECONDS_PER_DAY + parts[1] * SECONDS_PER_HOUR + parts[2] * SECONDS_PER_MINUTE + parts[3];
+		}
+		if (parts.length === 3) {
+			// Hours:Minutes:Seconds
+			return parts[0] * SECONDS_PER_HOUR + parts[1] * SECONDS_PER_MINUTE + parts[2];
+		}
+		if (parts.length === 2) {
+			// Minutes:Seconds
+			return parts[0] * SECONDS_PER_MINUTE + parts[1];
+		}
 		return 0;
 	}
 	
@@ -47,22 +69,22 @@ export function parseTime(timeStr) {
 	return 0;
 }
 
-export function validateTimeInput(timeStr) {
+export function validateTimeInput(timeStr, allowMultiday = false) {
 	if (!timeStr || typeof timeStr !== 'string') return { valid: false, message: "Time is required" };
 	const trimmed = timeStr.trim();
 	if (!trimmed) return { valid: false, message: "Time is required" };
 	
-	// Check for valid formats
+	// Check for valid formats including multi-day
 	const validFormats = [
 		/^\d+(\.\d+)?$/, // Decimal: 4.5
-		/^\d+\s+\d+(\s+\d+)?$/, // Space: 4 30 or 1 23 45
-		/^\d+:\d+(:\d+)?$/, // Colon: 4:30 or 1:23:45
+		/^\d+\s+\d+(\s+\d+)?(\s+\d+)?$/, // Space: 4 30, 1 23 45, or 2 1 23 45 (days hours mins secs)
+		/^\d+:\d+(:\d+)?(:\d+)?$/, // Colon: 4:30, 1:23:45, or 2:1:23:45 (days:hours:mins:secs)
 		/^\d+$/ // Single number
 	];
 	
 	const isValidFormat = validFormats.some(format => format.test(trimmed));
 	if (!isValidFormat) {
-		return { valid: false, message: "Invalid format. Use MM:SS, H:MM:SS, or decimal minutes" };
+		return { valid: false, message: "Invalid format. Use MM:SS, H:MM:SS, or D:H:MM:SS for multi-day events" };
 	}
 	
 	const parsed = parseTime(timeStr);
@@ -70,9 +92,16 @@ export function validateTimeInput(timeStr) {
 		return { valid: false, message: "Time must be greater than 0" };
 	}
 	
-	// Check for reasonable limits (max 24 hours)
-	if (parsed > MAX_SECONDS_PER_DAY) {
-		return { valid: false, message: "Time cannot exceed 24 hours" };
+	// Check for reasonable limits based on context
+	if (allowMultiday) {
+		if (parsed > MAX_SECONDS_MULTIDAY) {
+			return { valid: false, message: "Time cannot exceed 7 days" };
+		}
+	} else {
+		// For single-day mode, reject anything > 24 hours (allow exactly 24 hours for backward compatibility)
+		if (parsed > MAX_SECONDS_SINGLE_DAY) {
+			return { valid: false, message: "Time cannot exceed 24 hours" };
+		}
 	}
 	
 	return { valid: true, value: parsed };
@@ -105,27 +134,40 @@ export function validateDistanceInput(distanceStr) {
 	return { valid: true, value: distance };
 }
 
-export function formatTime(seconds, includeHours = false) {
+export function formatTime(seconds, includeHours = false, allowMultiday = false) {
 	if (isNaN(seconds) || seconds < 0) return "00:00";
 	
 	// Round to nearest second to avoid display inconsistencies
 	const totalSeconds = Math.round(seconds);
 	
-	const hours = Math.floor(totalSeconds / SECONDS_PER_HOUR);
-	const minutes = Math.floor((totalSeconds % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
-	const secs = totalSeconds % SECONDS_PER_MINUTE;
+	// Calculate time components
+	const days = Math.floor(totalSeconds / SECONDS_PER_DAY);
+	const remainingAfterDays = totalSeconds % SECONDS_PER_DAY;
+	const hours = Math.floor(remainingAfterDays / SECONDS_PER_HOUR);
+	const minutes = Math.floor((remainingAfterDays % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
+	const secs = remainingAfterDays % SECONDS_PER_MINUTE;
 
-	if (includeHours && hours > 0) {
-		return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
-			2,
-			"0"
-		)}:${String(secs).padStart(2, "0")}`;
+	// Multi-day formatting (≥ 24 hours)
+	if (allowMultiday && totalSeconds >= SECONDS_PER_DAY) {
+		const dayText = days === 1 ? "day" : "days";
+		return `${days} ${dayText} ${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
 	}
-	const totalMinutes = hours * (SECONDS_PER_HOUR / SECONDS_PER_MINUTE) + minutes;
-	return `${String(totalMinutes).padStart(2, "0")}:${String(secs).padStart(
-		2,
-		"0"
-	)}`;
+	
+	// Single-day formatting
+	if (includeHours && totalSeconds >= SECONDS_PER_HOUR) {
+		// For times ≥ 1 hour, show HH:MM:SS
+		const totalHours = Math.floor(totalSeconds / SECONDS_PER_HOUR);
+		const remainingMinutes = Math.floor((totalSeconds % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
+		const remainingSecs = totalSeconds % SECONDS_PER_MINUTE;
+		
+		return `${String(totalHours).padStart(2, "0")}:${String(remainingMinutes).padStart(2, "0")}:${String(remainingSecs).padStart(2, "0")}`;
+	}
+	
+	// For times < 1 hour, show MM:SS (with total minutes if > 59)
+	const totalMinutes = Math.floor(totalSeconds / SECONDS_PER_MINUTE);
+	const remainingSecs = totalSeconds % SECONDS_PER_MINUTE;
+	
+	return `${String(totalMinutes).padStart(2, "0")}:${String(remainingSecs).padStart(2, "0")}`;
 }
 
 export function calculatePace(totalSeconds, distance, unit) {
@@ -181,7 +223,27 @@ export function formatDistance(distance, decimalPlaces = 2) {
 }
 
 // Utility function for consistent pace formatting
-export function formatPaceDisplay(paceSeconds) {
-	return formatTime(paceSeconds, false);
+export function formatPaceDisplay(paceSeconds, allowMultiday = false) {
+	return formatTime(paceSeconds, false, allowMultiday);
+}
+
+// Helper function to determine if a distance suggests multi-day racing
+export function isMultidayDistance(distanceKm) {
+	// Ultra distances that commonly involve multi-day times:
+	// 100K+ often takes > 24h for many runners
+	// 100 miles definitely multi-day for most
+	// 24-hour+ race distances are inherently multi-day
+	return distanceKm >= 100; // 100K and above often involve multi-day times
+}
+
+// Helper function to detect if time inputs suggest multi-day context
+export function shouldAllowMultiday(selectedDistance, currentTimeSeconds) {
+	// Allow multi-day if:
+	// 1. Selected distance is ultra-long (100K+)
+	// 2. Current time input is already > 20 hours (suggesting ultra context)
+	const distanceKm = selectedDistance || 0;
+	const timeHours = (currentTimeSeconds || 0) / SECONDS_PER_HOUR;
+	
+	return isMultidayDistance(distanceKm) || timeHours > 20;
 }
 

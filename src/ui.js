@@ -3,22 +3,16 @@ import { getRaceDistances, getDistanceSuggestions, getDistanceDisplayName, findD
 import { safeGetElements, safeAddEventListener, robustInit } from "./dom-ready.js";
 import * as pr from "./pr.js";
 import { state } from "./state.js";
+import { initializeMultidayUI, getTimeFromInputs, setTimeInputs, isMultidayActive, enableMultidayMode } from "./multiday-ui.js";
 
 // DOM Elements (will be initialized in initUI)
 let form, resultDiv, resultLabel, resultValue, loadingDiv, copyBtn, copyIcon, checkIcon, savePrBtn, updatePrBtn;
 
-// Segmented input utility functions
+// Segmented input utility functions (updated for multiday support)
 function getSegmentedTimeValue(prefix) {
-	const hoursInput = document.getElementById(`${prefix}-hours`);
-	const minutesInput = document.getElementById(`${prefix}-minutes`);
-	const secondsInput = document.getElementById(`${prefix}-seconds`);
-	
-	const hours = parseInt(hoursInput?.value || '0') || 0;
-	const minutes = parseInt(minutesInput?.value || '0') || 0;
-	const seconds = parseInt(secondsInput?.value || '0') || 0;
-	
-	// Convert to seconds
-	return hours * 3600 + minutes * 60 + seconds;
+	// Determine tab from prefix (pace-time -> pace, distance-time -> distance)
+	const tab = prefix.replace('-time', '');
+	return getTimeFromInputs(tab);
 }
 
 function getSegmentedPaceValue(prefix) {
@@ -34,14 +28,23 @@ function getSegmentedPaceValue(prefix) {
 
 function validateSegmentedTimeInput(prefix) {
 	const totalSeconds = getSegmentedTimeValue(prefix);
+	const tab = prefix.replace('-time', '');
 	
 	if (totalSeconds <= 0) {
 		return { valid: false, message: "Time must be greater than 0" };
 	}
 	
-	// Check for reasonable limits (max 24 hours)
-	if (totalSeconds > 86400) {
-		return { valid: false, message: "Time cannot exceed 24 hours" };
+	// Use context-aware validation for multiday support
+	const allowMultiday = isMultidayActive(tab);
+	
+	if (allowMultiday) {
+		if (totalSeconds > 7 * 86400) { // MAX_SECONDS_MULTIDAY
+			return { valid: false, message: "Time cannot exceed 7 days" };
+		}
+	} else {
+		if (totalSeconds > 86400) { // MAX_SECONDS_SINGLE_DAY
+			return { valid: false, message: "Time cannot exceed 24 hours" };
+		}
 	}
 	
 	return { valid: true, value: totalSeconds };
@@ -1349,6 +1352,9 @@ export { populatePresetSelects, populateAutocomplete, updateCalculatedResult, up
  */
 async function coreInitUI() {
 	console.log('🚀 Starting core UI initialization');
+	
+	// Initialize multiday UI adaptations first
+	initializeMultidayUI();
 	
 	// Get all required DOM elements with error handling
 	const elementIds = [

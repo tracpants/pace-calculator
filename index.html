@@ -90,6 +90,23 @@
 						<div>
 							<label class="text-label mb-2 block">Time</label>
 							<div class="input-segmented-container">
+								<!-- Days field (hidden by default, shown for multi-day events) -->
+								<div class="input-segmented-group multiday-field hidden" id="pace-time-days-group">
+									<input
+										type="number"
+										id="pace-time-days"
+										class="input-segmented"
+										placeholder="0"
+										min="0"
+										max="7"
+										inputmode="numeric"
+										autocomplete="off"
+										aria-label="Days"
+									/>
+									<label class="input-segment-label">DD</label>
+								</div>
+								<span class="input-separator multiday-field hidden" id="pace-time-days-separator">:</span>
+								
 								<div class="input-segmented-group">
 									<input
 										type="number"
@@ -235,6 +252,23 @@
 						<div>
 							<label class="text-label mb-2 block">Time</label>
 							<div class="input-segmented-container">
+								<!-- Days field (hidden by default, shown for multi-day events) -->
+								<div class="input-segmented-group multiday-field hidden" id="distance-time-days-group">
+									<input
+										type="number"
+										id="distance-time-days"
+										class="input-segmented"
+										placeholder="0"
+										min="0"
+										max="7"
+										inputmode="numeric"
+										autocomplete="off"
+										aria-label="Days"
+									/>
+									<label class="input-segment-label">DD</label>
+								</div>
+								<span class="input-separator multiday-field hidden" id="distance-time-days-separator">:</span>
+								
 								<div class="input-segmented-group">
 									<input
 										type="number"
