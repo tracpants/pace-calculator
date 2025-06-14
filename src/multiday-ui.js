@@ -50,6 +50,15 @@ function handlePresetChange(tab) {
 		// Get distance in kilometers
 		const distanceKm = getDistanceValue(selectedValue, 'km');
 		shouldShowDays = isMultidayDistance(distanceKm);
+		
+		// Provide immediate feedback about multiday mode
+		if (shouldShowDays) {
+			showMultidayPrompt(tab, 'enabled');
+		} else {
+			hideMultidayPrompt(tab);
+		}
+	} else {
+		hideMultidayPrompt(tab);
 	}
 	
 	updateMultidayVisibility(tab, shouldShowDays);
@@ -64,6 +73,15 @@ function handleTimeInputChange(tab) {
 	
 	// If user enters > 20 hours, suggest multiday context
 	const shouldShowDays = currentHours > 20;
+	
+	// Show helpful prompt when approaching multiday threshold
+	if (currentHours >= 18 && currentHours <= 20 && !multidayStates[tab]) {
+		showMultidayPrompt(tab, 'approaching');
+	} else if (currentHours > 20) {
+		showMultidayPrompt(tab, 'enabled');
+	} else {
+		hideMultidayPrompt(tab);
+	}
 	
 	updateMultidayVisibility(tab, shouldShowDays);
 }
@@ -135,9 +153,100 @@ function updateHintText(tab, isMultiday) {
 	if (!hintElement) return;
 	
 	if (isMultiday) {
-		hintElement.textContent = "Enter your running time (supports multi-day events)";
+		hintElement.innerHTML = `
+			<span class="text-body-small" style="color: var(--color-status-success);">
+				✓ Multi-day mode enabled - Use DD:HH:MM:SS format
+			</span>
+		`;
 	} else {
-		hintElement.textContent = "Enter your running time";
+		hintElement.innerHTML = `
+			<span class="text-body-small">Enter your running time</span>
+			<br>
+			<span class="text-caption" style="color: var(--color-text-tertiary);">
+				💡 For ultra events (≥100K): select an ultra preset or enter >20 hours to enable days field
+			</span>
+		`;
+	}
+}
+
+/**
+ * Show multiday prompt with specific message
+ */
+function showMultidayPrompt(tab, type) {
+	const hintElement = document.getElementById(`${tab}-time-hint`);
+	if (!hintElement) return;
+	
+	let message = '';
+	let ariaMessage = '';
+	
+	if (type === 'approaching') {
+		message = `
+			<span class="text-body-small">Enter your running time</span>
+			<br>
+			<span class="text-caption" style="color: var(--color-status-warning);">
+				⚠️ Approaching 24+ hours? Select an ultra distance preset to enable multi-day format
+			</span>
+		`;
+		ariaMessage = 'Approaching 24 hours. Consider selecting an ultra distance preset to enable multi-day format.';
+	} else if (type === 'enabled') {
+		message = `
+			<span class="text-body-small" style="color: var(--color-status-success);">
+				✓ Multi-day mode enabled - Use DD:HH:MM:SS format
+			</span>
+		`;
+		ariaMessage = 'Multi-day mode enabled. Use days, hours, minutes, seconds format.';
+	}
+	
+	if (message) {
+		hintElement.innerHTML = message;
+		// Update aria-live region for screen readers
+		announceToScreenReader(ariaMessage);
+	}
+}
+
+/**
+ * Announce messages to screen readers
+ */
+function announceToScreenReader(message) {
+	if (!message) return;
+	
+	let ariaLive = document.getElementById('multiday-announcements');
+	if (!ariaLive) {
+		ariaLive = document.createElement('div');
+		ariaLive.id = 'multiday-announcements';
+		ariaLive.setAttribute('aria-live', 'polite');
+		ariaLive.setAttribute('aria-atomic', 'true');
+		ariaLive.className = 'sr-only';
+		document.body.appendChild(ariaLive);
+	}
+	
+	// Clear and set new message
+	ariaLive.textContent = '';
+	setTimeout(() => {
+		ariaLive.textContent = message;
+	}, 100);
+}
+
+/**
+ * Hide multiday prompt and restore normal hint
+ */
+function hideMultidayPrompt(tab) {
+	updateHintText(tab, multidayStates[tab]);
+}
+
+/**
+ * Show/hide multiday availability prompt
+ */
+function updateMultidayPrompt(tab, show) {
+	const promptElement = document.getElementById(`${tab}-multiday-prompt`);
+	if (!promptElement) return;
+	
+	if (show) {
+		promptElement.classList.remove('hidden');
+		promptElement.classList.add('visible');
+	} else {
+		promptElement.classList.remove('visible');
+		promptElement.classList.add('hidden');
 	}
 }
 

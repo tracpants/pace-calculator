@@ -235,3 +235,97 @@ describe('Multi-day Time Support', () => {
 		});
 	});
 });
+
+describe('Accessibility Features', () => {
+	beforeEach(() => {
+		// Setup DOM elements for each test
+		document.body.innerHTML = `
+			<div id="pace-time-hint" class="input-hint"></div>
+			<input id="pace-time-hours" type="number" min="0" max="23">
+			<select id="pace-preset">
+				<option value="">Select distance</option>
+				<option value="ultra100k">100K Ultra</option>
+			</select>
+		`;
+		
+		// Clear any existing aria-live regions
+		const existing = document.getElementById('multiday-announcements');
+		if (existing) existing.remove();
+	});
+
+	it('should show warning prompt when approaching 24 hours', async () => {
+		const { initializeMultidayUI } = await import('../../src/multiday-ui.js');
+		initializeMultidayUI();
+
+		const hoursInput = document.getElementById('pace-time-hours');
+		const hintElement = document.getElementById('pace-time-hint');
+
+		// Simulate entering 19 hours (approaching threshold)
+		hoursInput.value = '19';
+		hoursInput.dispatchEvent(new Event('input'));
+
+		// Should show approaching prompt
+		expect(hintElement.innerHTML).toContain('Approaching 24+ hours?');
+		expect(hintElement.innerHTML).toContain('Select an ultra distance preset');
+	});
+
+	it('should show success prompt when multiday mode is enabled', async () => {
+		const { initializeMultidayUI } = await import('../../src/multiday-ui.js');
+		initializeMultidayUI();
+
+		const hoursInput = document.getElementById('pace-time-hours');
+		const hintElement = document.getElementById('pace-time-hint');
+
+		// Simulate entering 25 hours (above threshold)
+		hoursInput.value = '25';
+		hoursInput.dispatchEvent(new Event('input'));
+
+		// Should show enabled prompt
+		expect(hintElement.innerHTML).toContain('Multi-day mode enabled');
+		expect(hintElement.innerHTML).toContain('DD:HH:MM:SS format');
+	});
+
+	it('should create aria-live region for screen reader announcements', async () => {
+		const { initializeMultidayUI } = await import('../../src/multiday-ui.js');
+		initializeMultidayUI();
+
+		const hoursInput = document.getElementById('pace-time-hours');
+
+		// Simulate entering 25 hours
+		hoursInput.value = '25';
+		hoursInput.dispatchEvent(new Event('input'));
+
+		// Wait for async aria-live creation
+		await new Promise(resolve => setTimeout(resolve, 150));
+
+		// Check that aria-live region was created
+		const ariaLive = document.getElementById('multiday-announcements');
+		expect(ariaLive).toBeTruthy();
+		expect(ariaLive.getAttribute('aria-live')).toBe('polite');
+		expect(ariaLive.getAttribute('aria-atomic')).toBe('true');
+		expect(ariaLive.className).toContain('sr-only');
+		expect(ariaLive.textContent).toContain('Multi-day mode enabled');
+	});
+
+	it('should provide clear instructions for different contexts', async () => {
+		const { initializeMultidayUI } = await import('../../src/multiday-ui.js');
+		initializeMultidayUI();
+
+		const hintElement = document.getElementById('pace-time-hint');
+		const hoursInput = document.getElementById('pace-time-hours');
+
+		// Test that basic accessibility messages work
+		// Enter 21 hours to trigger enabled prompt (>20 hours threshold)
+		hoursInput.value = '21';
+		hoursInput.dispatchEvent(new Event('input'));
+		
+		expect(hintElement.innerHTML).toContain('Multi-day mode enabled');
+		
+		// Clear input to reset to default state
+		hoursInput.value = '';
+		hoursInput.dispatchEvent(new Event('input'));
+		
+		// Should show default help message
+		expect(hintElement.innerHTML).toContain('For ultra events');
+	});
+});

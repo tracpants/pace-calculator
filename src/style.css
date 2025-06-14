@@ -767,6 +767,8 @@
 		@apply text-body-small mt-2;
 		color: var(--color-text-tertiary);
 		line-height: 1.4;
+		min-height: 2.5rem; /* Reserve space to prevent layout shifts */
+		transition: all 0.3s ease;
 	}
 
 	.input-error {
