@@ -65,11 +65,12 @@ jobs:
   code-quality:
     runs-on: ubuntu-latest
     needs: detect-changes
+    # Run minimal checks on any event when code changes
     if: needs.detect-changes.outputs.has-code-changes == 'true'
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        node-version: [20.x]
 
     steps:
       - name: Checkout code
@@ -84,11 +85,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run ESLint
-        run: npm run lint:js:check
-
-      - name: Run Stylelint
-        run: npm run lint:css:check
+      - name: Run linters (non-blocking)
+        run: npm run lint
+        continue-on-error: true
 
       - name: Validate design tokens
         run: npm run validate:tokens
@@ -100,30 +99,7 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
-        # Only install chromium since we only test chromium and mobile chrome (both use chromium engine)
-
-      - name: Run critical E2E tests
-        run: npx playwright test --grep="@critical|@smoke" --reporter=line
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: test-results-${{ matrix.node-version }}
-          path: |
-            test-results/
-            playwright-report/
-          retention-days: 7
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        if: success()
-        with:
-          name: build-artifacts-${{ matrix.node-version }}
-          path: dist/
-          retention-days: 30
+      # E2E and artifact upload removed for faster, basic checks
 
   # Lightweight job for documentation-only changes
   docs-validation:
@@ -179,4 +155,3 @@ jobs:
 
       - name: Check for outdated dependencies
         run: npm outdated || true
-

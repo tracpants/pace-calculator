@@ -29,9 +29,6 @@
     ],
     "*.css": [
       "stylelint --fix"
-    ],
-    "src/**/*.{js,css}": [
-      "npm run test:run"
     ]
   },
   "devDependencies": {

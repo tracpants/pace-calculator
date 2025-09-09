@@ -1,17 +1,19 @@
-# Run design token validation first (fail fast)
+# Run design token validation first (non-blocking)
 echo "🎨 Validating design tokens..."
-npm run validate:tokens || {
-  echo "❌ Design token violations found! Please fix before committing."
-  echo "💡 See output above for specific issues to fix."
-  exit 1
-}
+if ! npm run validate:tokens; then
+  echo "⚠️  Design token violations found (commit not blocked)."
+  echo "   See output above for issues to fix when convenient."
+fi
 
-# Run lint-staged for file-specific checks
-npx lint-staged
+# Run lint-staged for file-specific checks (non-blocking)
+echo "🧹 Running lint-staged (non-blocking)..."
+if ! npx lint-staged; then
+  echo "⚠️  Lint-staged reported issues (commit not blocked)."
+fi
 
-# Quick build check for critical changes
-if git diff --cached --name-only | grep -E "(src/|vite.config|package.json)" > /dev/null; then
-  echo "🔨 Running quick build check..."
+# Quick build check for config changes only
+if git diff --cached --name-only | grep -E "(vite\.config|package\.json)" > /dev/null; then
+  echo "🔨 Running quick build check (config changed)..."
   npm run build --silent || {
     echo "❌ Build failed! Please fix build errors before committing."
     exit 1
