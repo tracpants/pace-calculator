@@ -146,6 +146,9 @@ function switchTab(tabName) {
 	// Save current form state
 	state.saveFormState();
 
+	// Clear validation state from previous tab
+	clearFieldErrors();
+
 	// Update state and UI
 	state.currentTab = tabName;
 
@@ -166,6 +169,9 @@ function switchTab(tabName) {
 	if (state.lastResult && state.lastResult.type !== tabName) {
 		hideResult();
 	}
+
+	// Update calculate button state for new tab
+	updateButtonStateQuietly();
 }
 
 function showLoading() {
@@ -240,6 +246,7 @@ function handleCalculation(e) {
 
 	if (!validateInputs()) {
 		console.log('❌ Validation failed - field-specific errors shown inline');
+		showResult('Cannot Calculate', 'Please fill in the required fields above.', true);
 		return; // Field-specific errors are already displayed inline
 	}
 
