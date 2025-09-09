@@ -8,7 +8,7 @@
  * time entry for ultra-distance events.
  */
 
-import { isMultidayDistance, shouldAllowMultiday } from './calculator.js';
+import { isMultidayDistance } from './calculator.js';
 import { getDistanceValue } from './distances.js';
 
 // Track current multiday state for each tab
@@ -232,22 +232,6 @@ function announceToScreenReader(message) {
  */
 function hideMultidayPrompt(tab) {
 	updateHintText(tab, multidayStates[tab]);
-}
-
-/**
- * Show/hide multiday availability prompt
- */
-function updateMultidayPrompt(tab, show) {
-	const promptElement = document.getElementById(`${tab}-multiday-prompt`);
-	if (!promptElement) return;
-	
-	if (show) {
-		promptElement.classList.remove('hidden');
-		promptElement.classList.add('visible');
-	} else {
-		promptElement.classList.remove('visible');
-		promptElement.classList.add('hidden');
-	}
 }
 
 /**

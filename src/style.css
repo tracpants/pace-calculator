@@ -456,7 +456,7 @@
 	/* Screen reader only text */
 	.sr-only {
 		@apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
-		clip: rect(0, 0, 0, 0);
+		clip-path: inset(50%);
 	}
 
 	/* Typography hierarchy - standardize text across all components */
@@ -1467,8 +1467,7 @@
 	
 	/* Responsive modal content spacing */
 	.modal-body > div {
-		word-wrap: break-word; /* Prevent text overflow */
-		overflow-wrap: break-word;
+		overflow-wrap: break-word; /* Prevent text overflow */
 		box-sizing: border-box; /* Ensure padding is included in width calculations */
 	}
 	

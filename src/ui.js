@@ -1,9 +1,9 @@
 import * as calc from "./calculator.js";
 import { getRaceDistances, getDistanceSuggestions, getDistanceDisplayName, findDistanceKey } from "./distances.js";
 import { safeGetElements, safeAddEventListener, robustInit } from "./dom-ready.js";
+import { initializeMultidayUI, getTimeFromInputs, isMultidayActive } from "./multiday-ui.js";
 import * as pr from "./pr.js";
 import { state } from "./state.js";
-import { initializeMultidayUI, getTimeFromInputs, setTimeInputs, isMultidayActive, enableMultidayMode } from "./multiday-ui.js";
 
 // DOM Elements (will be initialized in initUI)
 let form, resultDiv, resultLabel, resultValue, loadingDiv, copyBtn, copyIcon, checkIcon, savePrBtn, updatePrBtn;

@@ -316,7 +316,6 @@ test.describe("Multi-day Time Support", () => {
       
       // Should show days field on time tab too
       // Note: Days field IDs are different per tab
-      const timeDaysGroup = page.locator('#time-time-days-group');
       // This field might not exist in time tab - would need to check the HTML structure
       // For now, just verify the behavior is consistent
     });
