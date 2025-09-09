@@ -36,7 +36,11 @@ export default [
         expect: 'readonly',
         beforeEach: 'readonly',
         afterEach: 'readonly',
-        vi: 'readonly'
+        vi: 'readonly',
+        // Web API globals
+        FormData: 'readonly',
+        requestAnimationFrame: 'readonly',
+        getComputedStyle: 'readonly'
       }
     },
     plugins: {

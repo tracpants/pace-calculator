@@ -58,20 +58,8 @@ function applyAccentColor(color) {
 	document.documentElement.style.setProperty('--accent-color', `var(--color-${color})`);
 
 	// Update interactive colors to use the selected accent
-	const colorMap = {
-		indigo: '#4f46e5',
-		blue: '#2563eb',
-		emerald: '#059669',
-		amber: '#d97706',
-		rose: '#e11d48',
-		violet: '#7c3aed',
-		cyan: '#0891b2',
-		orange: '#ea580c'
-	};
-
-	if (colorMap[color]) {
-		document.documentElement.style.setProperty('--color-interactive-primary', colorMap[color]);
-	}
+	// Use CSS custom properties instead of hardcoded colors
+	document.documentElement.style.setProperty('--color-interactive-primary', `var(--color-${color})`);
 }
 
 

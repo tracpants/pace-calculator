@@ -108,7 +108,6 @@ function showFieldError(errorId, message) {
 	}
 
 	// Add error styling to associated input(s)
-	const inputClass = errorId.replace('-error', '');
 	const baseId = errorId.replace('-error', '');
 
 	// Handle segmented inputs differently
@@ -333,7 +332,7 @@ function setupPresetDropdowns() {
 function setupUnitToggle() {
 	document.querySelectorAll('[data-unit]').forEach(toggle => {
 		toggle.addEventListener('click', () => {
-			const unit = toggle.dataset.unit;
+			const {unit} = toggle.dataset;
 			state.distanceUnit = unit;
 
 			// Update settings
@@ -354,22 +353,6 @@ function setupUnitToggle() {
 // ============================================================================
 // Modal Management (Simplified)
 // ============================================================================
-function openModal(modalId) {
-	const modal = document.getElementById(modalId);
-	if (modal) {
-		modal.classList.remove('hidden');
-		document.body.style.overflow = 'hidden';
-	}
-}
-
-function closeModal(modalId) {
-	const modal = document.getElementById(modalId);
-	if (modal) {
-		modal.classList.add('hidden');
-		document.body.style.overflow = '';
-	}
-}
-
 function setupModals() {
 	// Initialize the comprehensive settings system
 	initSettings();
@@ -409,9 +392,6 @@ function setupRealtimeValidation() {
 
 	// Handle segmented input changes better
 	document.querySelectorAll('.input-segmented-group').forEach(group => {
-		const timeComponents = ['time-hours', 'time-minutes', 'time-seconds'];
-		const paceComponents = ['pace-minutes', 'pace-seconds'];
-
 		group.addEventListener('input', () => {
 			// Clear errors for the segmented group and update button state quietly
 			group.querySelectorAll('input').forEach(input => {
