@@ -1,67 +1,61 @@
 import * as calc from "./calculator.js";
-import { getRaceDistances, getDistanceSuggestions, getDistanceDisplayName, findDistanceKey } from "./distances.js";
-import { safeGetElements, safeAddEventListener, robustInit } from "./dom-ready.js";
+import { findDistanceKey, getDistanceDisplayName, getDistanceSuggestions, getRaceDistances } from "./distances.js";
+import { robustInit, safeAddEventListener, safeGetElements } from "./dom-ready.js";
 import * as pr from "./pr.js";
 import { state } from "./state.js";
-import { initializeMultidayUI, getTimeFromInputs, setTimeInputs, isMultidayActive, enableMultidayMode } from "./multiday-ui.js";
+
 
 // DOM Elements (will be initialized in initUI)
 let form, resultDiv, resultLabel, resultValue, loadingDiv, copyBtn, copyIcon, checkIcon, savePrBtn, updatePrBtn;
 
-// Segmented input utility functions (updated for multiday support)
+// Segmented input utility functions - simplified to allow unlimited hours
 function getSegmentedTimeValue(prefix) {
-	// Determine tab from prefix (pace-time -> pace, distance-time -> distance)
-	const tab = prefix.replace('-time', '');
-	return getTimeFromInputs(tab);
+	const hoursInput = document.getElementById(`${prefix}-hours`);
+	const minutesInput = document.getElementById(`${prefix}-minutes`);
+	const secondsInput = document.getElementById(`${prefix}-seconds`);
+
+	const hours = parseInt(hoursInput?.value || '0') || 0;
+	const minutes = parseInt(minutesInput?.value || '0') || 0;
+	const seconds = parseInt(secondsInput?.value || '0') || 0;
+
+	// Allow unlimited hours - no max restrictions
+	return hours * 3600 + minutes * 60 + seconds;
 }
 
 function getSegmentedPaceValue(prefix) {
 	const minutesInput = document.getElementById(`${prefix}-minutes`);
 	const secondsInput = document.getElementById(`${prefix}-seconds`);
-	
+
 	const minutes = parseInt(minutesInput?.value || '0') || 0;
 	const seconds = parseInt(secondsInput?.value || '0') || 0;
-	
+
 	// Convert to seconds
 	return minutes * 60 + seconds;
 }
 
 function validateSegmentedTimeInput(prefix) {
 	const totalSeconds = getSegmentedTimeValue(prefix);
-	const tab = prefix.replace('-time', '');
-	
+
 	if (totalSeconds <= 0) {
 		return { valid: false, message: "Time must be greater than 0" };
 	}
-	
-	// Use context-aware validation for multiday support
-	const allowMultiday = isMultidayActive(tab);
-	
-	if (allowMultiday) {
-		if (totalSeconds > 7 * 86400) { // MAX_SECONDS_MULTIDAY
-			return { valid: false, message: "Time cannot exceed 7 days" };
-		}
-	} else {
-		if (totalSeconds > 86400) { // MAX_SECONDS_SINGLE_DAY
-			return { valid: false, message: "Time cannot exceed 24 hours" };
-		}
-	}
-	
+
+	// Allow unlimited hours - no validation restrictions for time inputs
 	return { valid: true, value: totalSeconds };
 }
 
 function validateSegmentedPaceInput(prefix) {
 	const totalSeconds = getSegmentedPaceValue(prefix);
-	
+
 	if (totalSeconds <= 0) {
 		return { valid: false, message: "Pace must be greater than 0" };
 	}
-	
+
 	// Check for reasonable limits (max 1 hour per unit)
 	if (totalSeconds > 3600) {
 		return { valid: false, message: "Pace cannot exceed 1 hour per unit" };
 	}
-	
+
 	return { valid: true, value: totalSeconds };
 }
 
@@ -80,53 +74,53 @@ const ErrorManager = {
 	setError(inputId, message) {
 		const input = document.getElementById(inputId);
 		const errorElement = document.getElementById(`${inputId}-error`);
-		
+
 		if (input) {
 			input.classList.remove('valid');
 			input.classList.add('error');
 		}
-		
+
 		if (errorElement && message) {
 			errorElement.textContent = message;
 			errorElement.classList.remove('hidden');
 		}
 	},
-	
+
 	// Set valid state for an input
 	setValid(inputId) {
 		const input = document.getElementById(inputId);
 		const errorElement = document.getElementById(`${inputId}-error`);
-		
+
 		if (input) {
 			input.classList.remove('error');
 			input.classList.add('valid');
 		}
-		
+
 		if (errorElement) {
 			errorElement.textContent = '';
 			errorElement.classList.add('hidden');
 		}
 	},
-	
+
 	// Clear all validation states for an input
 	clearState(inputId) {
 		const input = document.getElementById(inputId);
 		const errorElement = document.getElementById(`${inputId}-error`);
-		
+
 		if (input) {
 			input.classList.remove('error', 'valid');
 		}
-		
+
 		if (errorElement) {
 			errorElement.textContent = '';
 			errorElement.classList.add('hidden');
 		}
 	},
-	
+
 	// Handle segmented input groups (like time inputs)
 	setSegmentedError(prefix, message) {
 		const errorElement = document.getElementById(`${prefix}-error`);
-		
+
 		// Apply error state to all segments
 		['hours', 'minutes', 'seconds'].forEach(segment => {
 			const input = document.getElementById(`${prefix}-${segment}`);
@@ -135,16 +129,16 @@ const ErrorManager = {
 				input.classList.add('error');
 			}
 		});
-		
+
 		if (errorElement && message) {
 			errorElement.textContent = message;
 			errorElement.classList.remove('hidden');
 		}
 	},
-	
+
 	setSegmentedValid(prefix) {
 		const errorElement = document.getElementById(`${prefix}-error`);
-		
+
 		// Apply valid state to all segments
 		['hours', 'minutes', 'seconds'].forEach(segment => {
 			const input = document.getElementById(`${prefix}-${segment}`);
@@ -153,16 +147,16 @@ const ErrorManager = {
 				input.classList.add('valid');
 			}
 		});
-		
+
 		if (errorElement) {
 			errorElement.textContent = '';
 			errorElement.classList.add('hidden');
 		}
 	},
-	
+
 	clearSegmentedState(prefix) {
 		const errorElement = document.getElementById(`${prefix}-error`);
-		
+
 		// Clear all segments
 		['hours', 'minutes', 'seconds'].forEach(segment => {
 			const input = document.getElementById(`${prefix}-${segment}`);
@@ -170,25 +164,25 @@ const ErrorManager = {
 				input.classList.remove('error', 'valid');
 			}
 		});
-		
+
 		if (errorElement) {
 			errorElement.textContent = '';
 			errorElement.classList.add('hidden');
 		}
 	},
-	
+
 	// Clear all errors in current tab
 	clearCurrentTab() {
 		const {currentTab} = state;
 		const currentSection = document.querySelector(`[data-section="${currentTab}"]`);
-		
+
 		if (!currentSection) return;
-		
+
 		// Clear regular inputs
 		currentSection.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
 			this.clearState(input.id);
 		});
-		
+
 		// Clear segmented inputs for current tab
 		if (currentTab === 'pace') {
 			this.clearSegmentedState('pace-time');
@@ -205,13 +199,13 @@ const ErrorManager = {
 function validateInput(inputElement, validationFn) {
 	const {value} = inputElement;
 	const result = validationFn(value);
-	
+
 	if (result.valid) {
 		ErrorManager.setValid(inputElement.id);
 	} else {
 		ErrorManager.setError(inputElement.id, result.message);
 	}
-	
+
 	return result;
 }
 
@@ -231,7 +225,7 @@ function setupInputValidation() {
 					}
 					updateCalculateButtonState();
 				});
-				
+
 				input.addEventListener('input', () => {
 					// Clear errors on input for immediate feedback
 					ErrorManager.clearSegmentedState(prefix);
@@ -241,7 +235,7 @@ function setupInputValidation() {
 			}
 		});
 	});
-	
+
 	// Segmented pace inputs (MM:SS)
 	const paceInputPrefixes = ['time-pace', 'distance-pace'];
 	paceInputPrefixes.forEach(prefix => {
@@ -257,7 +251,7 @@ function setupInputValidation() {
 					}
 					updateCalculateButtonState();
 				});
-				
+
 				input.addEventListener('input', () => {
 					// Clear errors on input for immediate feedback
 					ErrorManager.clearSegmentedState(prefix);
@@ -267,7 +261,7 @@ function setupInputValidation() {
 			}
 		});
 	});
-	
+
 	// Distance inputs
 	['pace-distance', 'time-distance'].forEach(id => {
 		const input = document.getElementById(id);
@@ -291,16 +285,16 @@ function resetPresetDropdown(distanceInputId) {
 	// Get the corresponding preset dropdown for the current tab
 	const currentTab = distanceInputId.split('-')[0]; // Extract 'pace' or 'time' from 'pace-distance'
 	const presetSelect = document.getElementById(`${currentTab}-preset`);
-	
+
 	if (presetSelect) {
 		// Check if the current distance matches any preset
 		const input = document.getElementById(distanceInputId);
 		const currentValue = parseFloat(input.value);
-		
+
 		if (currentValue) {
 			// Find matching preset using centralized function
 			const matchingKey = findDistanceKey(currentValue, state.distanceUnit, 0.001);
-			
+
 			if (matchingKey) {
 				// Set the dropdown to the matching preset
 				presetSelect.value = matchingKey;
@@ -317,41 +311,41 @@ function resetPresetDropdown(distanceInputId) {
 
 function areRequiredFieldsFilled() {
 	const tab = state.currentTab;
-	
+
 	if (tab === 'pace') {
 		// Pace tab needs: time (hours, minutes, seconds) + distance
 		const timeValidation = validateSegmentedInput('pace-time', true);
 		const distanceInput = document.getElementById('pace-distance');
 		const distanceValidation = calc.validateDistanceInput(distanceInput.value);
-		
+
 		return timeValidation.valid && distanceValidation.valid;
-		
+
 	} else if (tab === 'time') {
 		// Time tab needs: pace (minutes, seconds) + distance
 		const paceValidation = validateSegmentedInput('time-pace', false);
 		const distanceInput = document.getElementById('time-distance');
 		const distanceValidation = calc.validateDistanceInput(distanceInput.value);
-		
+
 		return paceValidation.valid && distanceValidation.valid;
-		
+
 	} else if (tab === 'distance') {
 		// Distance tab needs: time (hours, minutes, seconds) + pace (minutes, seconds)
 		const timeValidation = validateSegmentedInput('distance-time', true);
 		const paceValidation = validateSegmentedInput('distance-pace', false);
-		
+
 		return timeValidation.valid && paceValidation.valid;
 	}
-	
+
 	return false;
 }
 
 function updateCalculateButtonState() {
 	const calculateButton = document.querySelector('button[type="submit"]');
 	const isFormValid = areRequiredFieldsFilled();
-	
+
 	if (calculateButton) {
 		calculateButton.disabled = !isFormValid;
-		
+
 		if (isFormValid) {
 			calculateButton.classList.remove('opacity-50', 'cursor-not-allowed');
 			calculateButton.classList.add('cursor-pointer');
@@ -367,14 +361,14 @@ function updateCalculateButtonState() {
 function isMobileDevice() {
 	// Check for mobile devices using multiple methods
 	const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-	
+
 	// Check for touch capability and small screen
 	const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 	const isSmallScreen = window.matchMedia('(max-width: 768px)').matches;
-	
+
 	// Check user agent for mobile indicators
 	const isMobileUserAgent = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
-	
+
 	return hasTouch && (isSmallScreen || isMobileUserAgent);
 }
 
@@ -389,13 +383,13 @@ function handleKeyboardNavigation(e) {
 		}
 		return;
 	}
-	
+
 	// Arrow keys for tab navigation when focused on tabs
 	if (e.target.matches('[role="tab"]')) {
 		const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
 		const currentIndex = tabs.indexOf(e.target);
 		let targetIndex = currentIndex;
-		
+
 		if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
 			targetIndex = (currentIndex + 1) % tabs.length;
 		} else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
@@ -407,7 +401,7 @@ function handleKeyboardNavigation(e) {
 		} else {
 			return;
 		}
-		
+
 		e.preventDefault();
 		tabs[targetIndex].focus();
 	}
@@ -432,7 +426,7 @@ function updateTabNavigation() {
 function populateAutocomplete() {
 	const datalist = document.getElementById('distance-suggestions');
 	const suggestions = getDistanceSuggestions()[state.distanceUnit];
-	
+
 	datalist.innerHTML = suggestions
 		.map(distance => `<option value="${distance}">${distance} ${state.distanceUnit}</option>`)
 		.join('');
@@ -440,22 +434,22 @@ function populateAutocomplete() {
 
 function updateHintTexts() {
 	const unit = state.distanceUnit;
-	
+
 	// Update pace hint texts
 	const timePaceHint = document.getElementById('time-pace-hint');
 	const distancePaceHint = document.getElementById('distance-pace-hint');
-	
+
 	if (timePaceHint) {
 		timePaceHint.textContent = `Enter your pace per ${unit}`;
 	}
 	if (distancePaceHint) {
 		distancePaceHint.textContent = `Enter your pace per ${unit}`;
 	}
-	
+
 	// Update distance hint texts
 	const paceDistanceHint = document.getElementById('pace-distance-hint');
 	const timeDistanceHint = document.getElementById('time-distance-hint');
-	
+
 	if (paceDistanceHint) {
 		paceDistanceHint.textContent = `Enter distance in ${unit}`;
 	}
@@ -475,7 +469,7 @@ function saveCurrentTabState() {
 		};
 	}
 	const currentTabState = state.tabStates[state.currentTab];
-	
+
 	// Save all input values for current tab
 	const currentSection = document.querySelector(`[data-section="${state.currentTab}"]`);
 	if (currentSection) {
@@ -488,14 +482,14 @@ function saveCurrentTabState() {
 				hasValid: input.classList.contains('valid')
 			};
 		});
-		
+
 		// Save preset selection
 		const presetSelect = currentSection.querySelector('.preset-select');
 		if (presetSelect) {
 			currentTabState.presetSelection = presetSelect.value;
 		}
 	}
-	
+
 	// Save current result if it exists
 	if (state.lastResult && state.lastResult.type === state.currentTab) {
 		currentTabState.result = state.lastResult;
@@ -514,9 +508,9 @@ function restoreTabState(tabName) {
 	}
 	const tabState = state.tabStates[tabName];
 	const targetSection = document.querySelector(`[data-section="${tabName}"]`);
-	
+
 	if (!targetSection) return;
-	
+
 	// Restore input values
 	Object.entries(tabState.inputs).forEach(([inputId, value]) => {
 		const input = document.getElementById(inputId);
@@ -524,7 +518,7 @@ function restoreTabState(tabName) {
 			input.value = value;
 		}
 	});
-	
+
 	// Restore validation states
 	Object.entries(tabState.validationStates).forEach(([inputId, validationState]) => {
 		const input = document.getElementById(inputId);
@@ -537,13 +531,13 @@ function restoreTabState(tabName) {
 			}
 		}
 	});
-	
+
 	// Restore preset selection
 	const presetSelect = targetSection.querySelector('.preset-select');
 	if (presetSelect && tabState.presetSelection) {
 		presetSelect.value = tabState.presetSelection;
 	}
-	
+
 	// Restore result if it exists
 	if (tabState.result) {
 		state.lastResult = tabState.result;
@@ -570,12 +564,12 @@ function generateComprehensiveResult() {
 		const timeSeconds = getSegmentedTimeValue('pace-time');
 		const time = calc.formatTime(timeSeconds, true);
 		const distance = `${distInput.value} ${state.distanceUnit}`;
-		
+
 		result = `Running Pace Calculation:\n`;
 		result += `Distance: ${distance}\n`;
 		result += `Time: ${time}\n`;
 		result += `Pace: ${calc.formatTime(data.pacePerKm)} /km (${calc.formatTime(data.pacePerMile)} /mile)`;
-		
+
 		// Add PR comparison if available
 		if (data.prComparison) {
 			const comparison = data.prComparison;
@@ -590,7 +584,7 @@ function generateComprehensiveResult() {
 		const paceSeconds = getSegmentedPaceValue('time-pace');
 		const pace = `${calc.formatTime(paceSeconds)} /${state.distanceUnit}`;
 		const distance = `${distInput.value} ${state.distanceUnit}`;
-		
+
 		result = `Running Time Calculation:\n`;
 		result += `Distance: ${distance}\n`;
 		result += `Pace: ${pace}\n`;
@@ -600,7 +594,7 @@ function generateComprehensiveResult() {
 		const paceSeconds = getSegmentedPaceValue('distance-pace');
 		const time = calc.formatTime(timeSeconds, true);
 		const pace = `${calc.formatTime(paceSeconds)} /${state.distanceUnit}`;
-		
+
 		result = `Running Distance Calculation:\n`;
 		result += `Time: ${time}\n`;
 		result += `Pace: ${pace}\n`;
@@ -614,7 +608,7 @@ function animateCopySuccess() {
 	// Animate copy icon out
 	copyIcon.classList.add('animate-icon-transition-out');
 	copyBtn.classList.add('animate-pulse-success');
-	
+
 	// After copy icon fades out, show checkmark with animation
 	setTimeout(() => {
 		copyIcon.classList.add('hidden');
@@ -622,13 +616,13 @@ function animateCopySuccess() {
 		checkIcon.classList.remove('hidden');
 		checkIcon.classList.add('animate-icon-transition-in');
 	}, 200);
-	
+
 	// Reset after 2 seconds total
 	setTimeout(() => {
 		// Animate checkmark out
 		checkIcon.classList.remove('animate-icon-transition-in');
 		checkIcon.classList.add('animate-icon-transition-out');
-		
+
 		// After checkmark fades out, show copy icon with animation
 		setTimeout(() => {
 			checkIcon.classList.add('hidden');
@@ -636,7 +630,7 @@ function animateCopySuccess() {
 			copyIcon.classList.remove('hidden');
 			copyIcon.classList.add('animate-icon-transition-in');
 			copyBtn.classList.remove('animate-pulse-success');
-			
+
 			// Clean up animation class
 			setTimeout(() => {
 				copyIcon.classList.remove('animate-icon-transition-in');
@@ -659,7 +653,7 @@ async function copyToClipboard(text) {
 			textArea.select();
 			document.execCommand('copy');
 			document.body.removeChild(textArea);
-			
+
 			animateCopySuccess();
 			return true;
 		} catch (fallbackErr) {
@@ -684,7 +678,7 @@ async function shareContent(text) {
 			return false;
 		}
 	}
-	
+
 	// Fallback to clipboard
 	return await copyToClipboard(text);
 }
@@ -704,14 +698,14 @@ function hideLoading() {
 function scrollToResults() {
 	// Check if results are visible and if scrolling is needed
 	if (resultDiv.classList.contains('hidden')) return;
-	
+
 	// Get the results element position
 	const resultsRect = resultDiv.getBoundingClientRect();
 	const viewportHeight = window.innerHeight;
-	
+
 	// Check if results are already fully visible
 	const isFullyVisible = resultsRect.top >= 0 && resultsRect.bottom <= viewportHeight;
-	
+
 	// Only scroll if results are not fully visible
 	if (!isFullyVisible) {
 		// Calculate scroll position to center the results in viewport
@@ -719,7 +713,7 @@ function scrollToResults() {
 		const elementHeight = resultsRect.height;
 		const offset = (viewportHeight - elementHeight) / 2;
 		const targetPosition = elementTop - Math.max(offset, 60); // Minimum 60px from top
-		
+
 		// Smooth scroll to the calculated position
 		window.scrollTo({
 			top: Math.max(0, targetPosition), // Ensure we don't scroll above page top
@@ -730,10 +724,10 @@ function scrollToResults() {
 
 function generateRaceSplits() {
 	if (!state.lastResult) return null;
-	
+
 	const { type, data } = state.lastResult;
 	let distance, pacePerUnit;
-	
+
 	// Determine distance and pace based on calculation type
 	if (type === "pace") {
 		// Get distance from input
@@ -752,16 +746,16 @@ function generateRaceSplits() {
 	} else {
 		return null;
 	}
-	
+
 	// Don't show splits for very short distances
 	if (distance < 0.5) return null;
-	
+
 	const unit = state.distanceUnit;
 	const splits = [];
-	
+
 	// Generate splits for each full unit (1km, 2km, 3km, etc.)
 	const totalSplits = Math.floor(distance);
-	
+
 	for (let i = 1; i <= totalSplits; i++) {
 		const cumulativeTime = pacePerUnit * i;
 		splits.push({
@@ -771,7 +765,7 @@ function generateRaceSplits() {
 			timeSeconds: cumulativeTime
 		});
 	}
-	
+
 	// Add final split for fractional distance if needed
 	const remainder = distance - totalSplits;
 	if (remainder > 0.01) { // More than 0.01 units (10m for km, ~50ft for miles)
@@ -784,7 +778,7 @@ function generateRaceSplits() {
 			isFinish: true
 		});
 	}
-	
+
 	return {
 		splits,
 		totalDistance: distance,
@@ -797,20 +791,20 @@ function generateRaceSplits() {
 function createSplitsAccordion() {
 	const splitsData = generateRaceSplits();
 	if (!splitsData) return '';
-	
+
 	const { splits, totalDistance, pacePerUnit } = splitsData;
-	
+
 	const splitsHtml = splits.map(split => {
 		// Determine split type styling and label
 		let splitLabel, splitClass = '';
-		
+
 		if (split.isFinish) {
 			splitLabel = `Finish (${split.distance} ${state.distanceUnit})`;
 			splitClass = 'font-semibold border-t pt-2 mt-1';
 		} else {
 			splitLabel = `${split.distance} ${state.distanceUnit}`;
 		}
-		
+
 		return `
 			<div class="splits-row flex justify-between items-center py-1 px-2 ${splitClass}">
 				<span class="text-sm">
@@ -820,12 +814,12 @@ function createSplitsAccordion() {
 			</div>
 		`;
 	}).join('');
-	
+
 	return `
 		<div class="mt-4 border rounded-lg overflow-hidden" style="border-color: var(--color-border-subtle);">
-			<button 
-				id="splits-toggle" 
-				class="w-full flex items-center justify-between py-3 px-4 text-left transition-colors" 
+			<button
+				id="splits-toggle"
+				class="w-full flex items-center justify-between py-3 px-4 text-left transition-colors"
 				style="background: linear-gradient(to right, var(--color-surface), var(--color-surface-secondary)); border-bottom: 1px solid var(--color-border-subtle);"
 				aria-expanded="false"
 				aria-controls="splits-content"
@@ -842,9 +836,9 @@ function createSplitsAccordion() {
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
 				</svg>
 			</button>
-			<div 
-				id="splits-content" 
-				class="hidden px-4 py-3" 
+			<div
+				id="splits-content"
+				class="hidden px-4 py-3"
 				style="background-color: var(--color-surface);"
 				aria-hidden="true"
 			>
@@ -867,12 +861,12 @@ function setupSplitsAccordion() {
 	const splitsToggle = document.getElementById('splits-toggle');
 	const splitsContent = document.getElementById('splits-content');
 	const splitsChevron = document.getElementById('splits-chevron');
-	
+
 	if (!splitsToggle || !splitsContent || !splitsChevron) return;
-	
+
 	splitsToggle.addEventListener('click', () => {
 		const isExpanded = splitsToggle.getAttribute('aria-expanded') === 'true';
-		
+
 		if (isExpanded) {
 			// Collapse
 			splitsContent.classList.add('hidden');
@@ -885,7 +879,7 @@ function setupSplitsAccordion() {
 			splitsContent.setAttribute('aria-hidden', 'false');
 			splitsToggle.setAttribute('aria-expanded', 'true');
 			splitsChevron.style.transform = 'rotate(180deg)';
-			
+
 			// Auto-scroll to ensure expanded content is visible
 			setTimeout(() => {
 				scrollToExpandedSplits();
@@ -897,21 +891,21 @@ function setupSplitsAccordion() {
 function scrollToExpandedSplits() {
 	const splitsContent = document.getElementById('splits-content');
 	if (!splitsContent || splitsContent.classList.contains('hidden')) return;
-	
+
 	// Get the splits content position and dimensions
 	const splitsRect = splitsContent.getBoundingClientRect();
 	const viewportHeight = window.innerHeight;
-	
+
 	// Check if the bottom of the expanded content is visible
 	const isBottomVisible = splitsRect.bottom <= viewportHeight;
-	
+
 	// Only scroll if the bottom is cut off
 	if (!isBottomVisible) {
 		// Calculate how much we need to scroll to show the bottom with some padding
 		const scrollOffset = splitsRect.bottom - viewportHeight + 20; // 20px padding
 		const currentScrollTop = window.pageYOffset;
 		const targetScrollTop = currentScrollTop + scrollOffset;
-		
+
 		// Smooth scroll to show the expanded content
 		window.scrollTo({
 			top: targetScrollTop,
@@ -925,7 +919,7 @@ function populatePresetSelects() {
 	const unit = state.distanceUnit;
 	const raceDistances = getRaceDistances();
 	const options =
-		`<option value="">-- Pick an event --</option>${ 
+		`<option value="">-- Pick an event --</option>${
 		Object.entries(raceDistances)
 			.map(
 				([key, value]) =>
@@ -942,10 +936,10 @@ function populatePresetSelects() {
 
 function handleFormSubmit(e) {
 	e.preventDefault();
-	
+
 	// Show loading state
 	showLoading();
-	
+
 	// Simulate small delay for loading effect
 	setTimeout(() => {
 		let label = "",
@@ -954,22 +948,22 @@ function handleFormSubmit(e) {
 		try {
 		if (state.currentTab === "pace") {
 			const distInput = document.getElementById("pace-distance");
-			
+
 			// Validate inputs
 			const timeValidation = validateSegmentedInput('pace-time', true);
 			const distValidation = validateInput(distInput, calc.validateDistanceInput);
-			
+
 			if (!timeValidation.valid) {
 				ErrorManager.setSegmentedError('pace-time', timeValidation.message);
 			}
 			if (!distValidation.valid) {
 				// Distance validation error display handled by validateInput
 			}
-			
+
 			if (!timeValidation.valid || !distValidation.valid) {
 				throw new Error("Please fix the input errors before calculating.");
 			}
-			
+
 			const { pacePerKm, pacePerMile } = calc.calculatePace(
 				timeValidation.value,
 				distValidation.value,
@@ -981,14 +975,14 @@ function handleFormSubmit(e) {
 			} else {
 				value = `${calc.formatTime(pacePerMile)} /mile`;
 			}
-			
+
 			// Check for PR comparison
 			const prComparison = pr.comparePaceWithPR(
 				timeValidation.value,
 				distValidation.value,
 				state.distanceUnit
 			);
-			
+
 			// Store the result for unit conversion
 			const result = {
 				type: state.currentTab,
@@ -998,22 +992,22 @@ function handleFormSubmit(e) {
 			state.tabStates[state.currentTab].result = result;
 		} else if (state.currentTab === "time") {
 			const distInput = document.getElementById("time-distance");
-			
+
 			// Validate inputs
 			const paceValidation = validateSegmentedInput('time-pace', false);
 			const distValidation = validateInput(distInput, calc.validateDistanceInput);
-			
+
 			if (!paceValidation.valid) {
 				ErrorManager.setSegmentedError('time-pace', paceValidation.message);
 			}
 			if (!distValidation.valid) {
 				// Distance validation error display handled by validateInput
 			}
-			
+
 			if (!paceValidation.valid || !distValidation.valid) {
 				throw new Error("Please fix the input errors before calculating.");
 			}
-			
+
 			const totalSeconds = calc.calculateTime(
 				paceValidation.value,
 				distValidation.value,
@@ -1033,18 +1027,18 @@ function handleFormSubmit(e) {
 			// Validate inputs
 			const timeValidation = validateSegmentedInput('distance-time', true);
 			const paceValidation = validateSegmentedInput('distance-pace', false);
-			
+
 			if (!timeValidation.valid) {
 				ErrorManager.setSegmentedError('distance-time', timeValidation.message);
 			}
 			if (!paceValidation.valid) {
 				ErrorManager.setSegmentedError('distance-pace', paceValidation.message);
 			}
-			
+
 			if (!timeValidation.valid || !paceValidation.valid) {
 				throw new Error("Please fix the input errors before calculating.");
 			}
-			
+
 			const { km, miles } = calc.calculateDistance(
 				timeValidation.value,
 				paceValidation.value,
@@ -1076,7 +1070,7 @@ function handleFormSubmit(e) {
 function showResult(label, value, type = 'success') {
 	resultLabel.textContent = label;
 	resultValue.innerHTML = value;
-	
+
 	// Add PR comparison if available for pace calculations
 	if (state.lastResult && state.lastResult.data && state.lastResult.data.prComparison) {
 		const comparison = state.lastResult.data.prComparison;
@@ -1100,7 +1094,7 @@ function showResult(label, value, type = 'success') {
 					<div class="flex justify-between items-center pt-2 border-t" style="border-color: var(--color-border-subtle);">
 						<span class="text-sm font-medium" style="color: var(--color-text-secondary);">Time Difference:</span>
 						<span class="font-mono text-sm font-bold" style="color: ${comparison.isFaster ? 'var(--color-status-success)' : 'var(--color-status-error)'};">
-							${comparison.isFaster ? '-' : '+'}${comparison.timeDifferenceFormatted} 
+							${comparison.isFaster ? '-' : '+'}${comparison.timeDifferenceFormatted}
 							(${comparison.isFaster ? 'faster' : 'slower'})
 						</span>
 					</div>
@@ -1115,7 +1109,7 @@ function showResult(label, value, type = 'success') {
 		`;
 		resultValue.innerHTML += comparisonHtml;
 	}
-	
+
 	// Add race splits accordion for successful calculations
 	if (type === 'success') {
 		const splitsHtml = createSplitsAccordion();
@@ -1123,26 +1117,26 @@ function showResult(label, value, type = 'success') {
 			resultValue.innerHTML += splitsHtml;
 		}
 	}
-	
+
 	// Reset all classes
 	resultDiv.classList.remove('hidden', 'success', 'error', 'opacity-0', 'scale-95');
 	resultDiv.classList.remove('success', 'error');
-	
+
 	// Add appropriate classes based on type
 	if (type === 'success') {
 		resultDiv.classList.add('success');
 	} else if (type === 'error') {
 		resultDiv.classList.add('error');
 	}
-	
+
 	// Show with animation
 	resultDiv.classList.add('show', 'animate-bounce-in');
-	
+
 	// Auto-scroll to results after a brief delay to ensure element is visible
 	setTimeout(() => {
 		scrollToResults();
 	}, 200);
-	
+
 	// Remove animation class and setup interactions after animation completes
 	setTimeout(() => {
 		resultDiv.classList.remove('animate-bounce-in');
@@ -1161,7 +1155,7 @@ function updatePRButtonVisibility() {
 	}
 
 	const { type } = state.lastResult;
-	
+
 	// Only show PR buttons for pace calculations (not time or distance calculations)
 	if (type !== 'pace') {
 		if (savePrBtn) savePrBtn.classList.add('hidden');
@@ -1172,7 +1166,7 @@ function updatePRButtonVisibility() {
 	// Get current calculation distance
 	const distanceInput = document.getElementById("pace-distance");
 	const distance = parseFloat(distanceInput.value);
-	
+
 	if (!distance || distance <= 0) {
 		if (savePrBtn) savePrBtn.classList.add('hidden');
 		if (updatePrBtn) updatePrBtn.classList.add('hidden');
@@ -1181,14 +1175,14 @@ function updatePRButtonVisibility() {
 
 	// Normalize distance to km for PR lookup
 	const distanceKm = state.distanceUnit === "km" ? distance : distance * 1.609344;
-	
+
 	// Check if there's an existing PR for this distance
 	const existingPR = pr.getPRForDistance(distanceKm);
-	
+
 	if (existingPR) {
 		// Get current time from calculation
 		const currentTimeSeconds = getSegmentedTimeValue('pace-time');
-		
+
 		// Show update button if current time is better (faster) than existing PR
 		if (currentTimeSeconds < existingPR.timeSeconds) {
 			if (savePrBtn) savePrBtn.classList.add('hidden');
@@ -1213,21 +1207,21 @@ function updatePRButtonVisibility() {
 
 function handleSavePR() {
 	if (!state.lastResult || state.lastResult.type !== 'pace') return;
-	
+
 	const distanceInput = document.getElementById("pace-distance");
 	const distance = parseFloat(distanceInput.value);
 	const timeSeconds = getSegmentedTimeValue('pace-time');
-	
+
 	if (!distance || !timeSeconds) return;
-	
+
 	// Save the PR
 	const success = pr.setPR(distance, state.distanceUnit, timeSeconds);
-	
+
 	if (success) {
 		// Show brief success feedback
 		savePrBtn.style.color = 'var(--color-status-success)';
 		savePrBtn.title = 'Personal Record Saved!';
-		
+
 		// Reset after 2 seconds
 		setTimeout(() => {
 			savePrBtn.style.color = 'var(--color-text-tertiary)';
@@ -1238,21 +1232,21 @@ function handleSavePR() {
 
 function handleUpdatePR() {
 	if (!state.lastResult || state.lastResult.type !== 'pace') return;
-	
+
 	const distanceInput = document.getElementById("pace-distance");
 	const distance = parseFloat(distanceInput.value);
 	const timeSeconds = getSegmentedTimeValue('pace-time');
-	
+
 	if (!distance || !timeSeconds) return;
-	
+
 	// Update the PR (this will overwrite the existing one)
 	const success = pr.setPR(distance, state.distanceUnit, timeSeconds);
-	
+
 	if (success) {
 		// Show brief success feedback
 		updatePrBtn.style.color = 'var(--color-status-success)';
 		updatePrBtn.title = 'Personal Record Updated!';
-		
+
 		// Reset after 2 seconds
 		setTimeout(() => {
 			updatePrBtn.style.color = 'var(--color-text-tertiary)';
@@ -1263,10 +1257,10 @@ function handleUpdatePR() {
 
 function updateCalculatedResult() {
 	if (!state.lastResult || resultDiv.classList.contains("hidden")) return;
-	
+
 	const { type, data } = state.lastResult;
 	let label = "", value = "";
-	
+
 	if (type === "pace") {
 		label = "Your Pace:";
 		if (state.distanceUnit === "km") {
@@ -1285,30 +1279,30 @@ function updateCalculatedResult() {
 			value = `${calc.formatDistance(data.miles)} miles`;
 		}
 	}
-	
+
 	showResult(label, value);
-	// Update PR button visibility when result is updated  
+	// Update PR button visibility when result is updated
 	updatePRButtonVisibility();
 }
 
 function clearCurrentTab() {
 	const {currentTab} = state;
 	const currentSection = document.querySelector(`[data-section="${currentTab}"]`);
-	
+
 	if (!currentSection) return;
-	
+
 	// Clear only inputs in the current tab (preserving placeholders)
 	currentSection.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
 		input.value = '';
 		input.classList.remove('error', 'valid');
 	});
-	
+
 	// Clear validation errors for current tab only
 	currentSection.querySelectorAll('[id$="-error"]').forEach(error => {
 		error.classList.add('hidden');
 		error.textContent = '';
 	});
-	
+
 	// Clear segmented input errors for current tab only
 	if (currentTab === 'pace') {
 		ErrorManager.clearSegmentedState('pace-time');
@@ -1318,13 +1312,13 @@ function clearCurrentTab() {
 		ErrorManager.clearSegmentedState('distance-time');
 		ErrorManager.clearSegmentedState('distance-pace');
 	}
-	
+
 	// Reset preset dropdown for current tab only
 	const presetSelect = currentSection.querySelector('.preset-select');
 	if (presetSelect) {
 		presetSelect.selectedIndex = 0;
 	}
-	
+
 	// Clear result only if it belongs to current tab
 	if (state.lastResult && state.lastResult.type === currentTab) {
 		resultDiv.classList.add("hidden");
@@ -1335,31 +1329,30 @@ function clearCurrentTab() {
 			state.tabStates[currentTab].result = null;
 		}
 	}
-	
+
 	// Hide loading if visible
 	loadingDiv.classList.add("hidden");
-	
+
 	// Removed auto-focus to preserve natural tab order
-	
+
 	// Update button state after clearing
 	updateCalculateButtonState();
 }
 
-export { populatePresetSelects, populateAutocomplete, updateCalculatedResult, updateHintTexts };
+export { populateAutocomplete, populatePresetSelects, updateCalculatedResult, updateHintTexts };
 
 /**
  * Core UI initialization logic (called by robustInitUI)
  */
 async function coreInitUI() {
 	console.log('🚀 Starting core UI initialization');
-	
-	// Initialize multiday UI adaptations first
-	initializeMultidayUI();
-	
+
+
+
 	// Get all required DOM elements with error handling
 	const elementIds = [
 		'calculator-form',
-		'result', 
+		'result',
 		'result-label',
 		'result-value',
 		'loading',
@@ -1368,18 +1361,18 @@ async function coreInitUI() {
 		'check-icon',
 		'clear-btn'
 	];
-	
+
 	const optionalElementIds = [
 		'save-pr-btn',
 		'update-pr-btn'
 	];
-	
+
 	// Get required elements
 	const elements = safeGetElements(elementIds, true);
-	
+
 	// Get optional elements
 	const optionalElements = safeGetElements(optionalElementIds, false);
-	
+
 	// Assign to module variables
 	form = elements['calculator-form'];
 	resultDiv = elements['result'];
@@ -1391,29 +1384,29 @@ async function coreInitUI() {
 	checkIcon = elements['check-icon'];
 	savePrBtn = optionalElements['save-pr-btn'];
 	updatePrBtn = optionalElements['update-pr-btn'];
-	
+
 	// Verify tab elements exist
 	const tabElements = document.querySelectorAll("[data-tab]");
 	const sectionElements = document.querySelectorAll("[data-section]");
-	
+
 	if (tabElements.length === 0) {
 		throw new Error('No tab elements found - check [data-tab] selectors');
 	}
-	
+
 	if (sectionElements.length === 0) {
 		throw new Error('No section elements found - check [data-section] selectors');
 	}
-	
+
 	console.log(`✅ Found ${tabElements.length} tab elements and ${sectionElements.length} section elements`);
-	
+
 	// Initial setup
 	updateTabNavigation();
 	setupInputValidation();
 	updateCalculateButtonState();
-	
+
 	// Add global keyboard event listeners
 	safeAddEventListener(document, 'keydown', handleKeyboardNavigation, 'document (keyboard nav)');
-	
+
 	// Enter key to submit form from any input
 	safeAddEventListener(document, 'keydown', e => {
 		if (e.key === 'Enter' && e.target.matches('input')) {
@@ -1423,43 +1416,43 @@ async function coreInitUI() {
 			}
 		}
 	}, 'document (enter key)');
-	
+
 	// Setup tab click handlers
 	tabElements.forEach((tab, index) => {
 		safeAddEventListener(tab, 'click', () => {
 			try {
 				state.currentTab = tab.dataset.tab;
-				
+
 				// Save current tab state before switching
 				saveCurrentTabState();
-				
+
 				// Update tab visual states
 				document.querySelectorAll(".btn-tab").forEach(t => t.classList.remove("active"));
 				tab.classList.add("active");
 				updateTabNavigation();
-				
+
 				// Update section visibility
 				document.querySelectorAll(".form-section").forEach(s => s.classList.add("hidden"));
-				
+
 				const targetSection = document.querySelector(`[data-section="${state.currentTab}"]`);
 				if (targetSection) {
 					targetSection.classList.remove("hidden");
 				} else {
 					console.error('Target section not found for:', state.currentTab);
 				}
-				
+
 				if (loadingDiv) loadingDiv.classList.add("hidden");
-				
+
 				// Restore the target tab's state
 				restoreTabState(state.currentTab);
 				updateCalculateButtonState();
-				
+
 				// Removed auto-focus to preserve natural tab order
 			} catch (error) {
 				console.error('Error in tab click handler:', error);
 			}
 		}, `tab-${index}`);
-		
+
 		// Tab keyboard navigation
 		safeAddEventListener(tab, 'keydown', e => {
 			if (e.key === 'Enter' || e.key === ' ') {
@@ -1468,42 +1461,42 @@ async function coreInitUI() {
 			}
 		}, `tab-${index} (keyboard)`);
 	});
-	
+
 	// Setup preset select handlers
 	document.querySelectorAll(".preset-select").forEach((select, index) => {
 		safeAddEventListener(select, 'change', e => {
 			const presetKey = e.target.value;
 			if (!presetKey) return;
-			
+
 			const distanceInput = document.getElementById(`${state.currentTab}-distance`);
 			if (distanceInput) {
 				const raceDistances = getRaceDistances();
 				distanceInput.value = raceDistances[presetKey][state.distanceUnit];
-				
+
 				// Save preset selection to tab state
 				if (!state.tabStates[state.currentTab]) {
 					state.tabStates[state.currentTab] = { inputs: {}, validationStates: {}, result: null, presetSelection: "" };
 				}
 				state.tabStates[state.currentTab].presetSelection = presetKey;
-				
+
 				// Validate the new value
 				validateInput(distanceInput, calc.validateDistanceInput);
 				updateCalculateButtonState();
 			}
 		}, `preset-select-${index}`);
 	});
-	
+
 	// Setup form submission
 	safeAddEventListener(form, 'submit', handleFormSubmit, 'calculator-form');
-	
+
 	// Setup clear button
 	const clearBtn = elements['clear-btn'];
 	safeAddEventListener(clearBtn, 'click', clearCurrentTab, 'clear-btn');
-	
+
 	// Setup copy button
 	safeAddEventListener(copyBtn, 'click', async () => {
 		const comprehensiveText = generateComprehensiveResult();
-		
+
 		if (isMobileDevice() && navigator.share) {
 			// Use native share sheet on mobile
 			const success = await shareContent(comprehensiveText);
@@ -1522,13 +1515,13 @@ async function coreInitUI() {
 			}
 		}
 	}, 'copy-btn');
-	
+
 	// Setup PR buttons (optional)
 	safeAddEventListener(savePrBtn, 'click', handleSavePR, 'save-pr-btn');
 	safeAddEventListener(updatePrBtn, 'click', handleUpdatePR, 'update-pr-btn');
-	
+
 	// Removed auto-focus to preserve natural tab order for accessibility
-	
+
 	console.log('✅ Core UI initialization completed successfully');
 }
 
@@ -1546,7 +1539,7 @@ export async function initUI() {
 			throw error;
 		}
 	}
-	
+
 	// In browser environment, use robust DOM-ready handling
 	try {
 		const result = await robustInit(coreInitUI, {
@@ -1555,7 +1548,7 @@ export async function initUI() {
 			requiredElements: [
 				'#app',
 				'[data-tab="pace"]',
-				'[data-tab="time"]', 
+				'[data-tab="time"]',
 				'[data-tab="distance"]',
 				'[data-section="pace"]',
 				'[data-section="time"]',
