@@ -6,7 +6,7 @@ import { state } from "./state.js";
 
 
 // DOM Elements (will be initialized in initUI)
-let form, resultDiv, resultLabel, resultValue, loadingDiv, copyBtn, copyIcon, checkIcon, savePrBtn, updatePrBtn;
+let form, resultDiv, resultLabel, resultValue, loadingDiv, copyBtn, copyIcon, checkIcon, copyFeedback, savePrBtn, updatePrBtn;
 
 // Segmented input utility functions - simplified to allow unlimited hours
 function getSegmentedTimeValue(prefix) {
@@ -605,9 +605,14 @@ function generateComprehensiveResult() {
 }
 
 function animateCopySuccess() {
-	// Animate copy icon out
-	copyIcon.classList.add('animate-icon-transition-out');
-	copyBtn.classList.add('animate-pulse-success');
+        // Animate copy icon out
+        copyIcon.classList.add('animate-icon-transition-out');
+        copyBtn.classList.add('animate-pulse-success');
+
+        // Announce copy success for assistive technologies
+        if (copyFeedback) {
+                copyFeedback.textContent = 'Result copied to clipboard';
+        }
 
 	// After copy icon fades out, show checkmark with animation
 	setTimeout(() => {
@@ -617,11 +622,11 @@ function animateCopySuccess() {
 		checkIcon.classList.add('animate-icon-transition-in');
 	}, 200);
 
-	// Reset after 2 seconds total
-	setTimeout(() => {
-		// Animate checkmark out
-		checkIcon.classList.remove('animate-icon-transition-in');
-		checkIcon.classList.add('animate-icon-transition-out');
+        // Reset after 2 seconds total
+        setTimeout(() => {
+                // Animate checkmark out
+                checkIcon.classList.remove('animate-icon-transition-in');
+                checkIcon.classList.add('animate-icon-transition-out');
 
 		// After checkmark fades out, show copy icon with animation
 		setTimeout(() => {
@@ -631,12 +636,19 @@ function animateCopySuccess() {
 			copyIcon.classList.add('animate-icon-transition-in');
 			copyBtn.classList.remove('animate-pulse-success');
 
-			// Clean up animation class
-			setTimeout(() => {
-				copyIcon.classList.remove('animate-icon-transition-in');
-			}, 200);
-		}, 200);
-	}, 2000);
+                        // Clean up animation class
+                        setTimeout(() => {
+                                copyIcon.classList.remove('animate-icon-transition-in');
+                        }, 200);
+                }, 200);
+        }, 2000);
+
+        // Clear live region message after announcement
+        if (copyFeedback) {
+                setTimeout(() => {
+                        copyFeedback.textContent = '';
+                }, 2000);
+        }
 }
 
 async function copyToClipboard(text) {
@@ -1350,17 +1362,18 @@ async function coreInitUI() {
 
 
 	// Get all required DOM elements with error handling
-	const elementIds = [
-		'calculator-form',
-		'result',
-		'result-label',
-		'result-value',
-		'loading',
-		'copy-result-btn',
-		'copy-icon',
-		'check-icon',
-		'clear-btn'
-	];
+        const elementIds = [
+                'calculator-form',
+                'result',
+                'result-label',
+                'result-value',
+                'loading',
+                'copy-result-btn',
+                'copy-icon',
+                'check-icon',
+                'clear-btn',
+                'copy-feedback'
+        ];
 
 	const optionalElementIds = [
 		'save-pr-btn',
@@ -1379,9 +1392,10 @@ async function coreInitUI() {
 	resultLabel = elements['result-label'];
 	resultValue = elements['result-value'];
 	loadingDiv = elements['loading'];
-	copyBtn = elements['copy-result-btn'];
-	copyIcon = elements['copy-icon'];
-	checkIcon = elements['check-icon'];
+        copyBtn = elements['copy-result-btn'];
+        copyIcon = elements['copy-icon'];
+        checkIcon = elements['check-icon'];
+        copyFeedback = elements['copy-feedback'];
 	savePrBtn = optionalElements['save-pr-btn'];
 	updatePrBtn = optionalElements['update-pr-btn'];
 
