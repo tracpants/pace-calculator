@@ -541,6 +541,15 @@ body {
   overflow-y: auto;
 }
 
+/* Modal size variants */
+.modal-md .modal-content {
+  max-width: 32rem;
+}
+
+.modal-lg .modal-content {
+  max-width: 42rem;
+}
+
 .modal-header {
   display: flex;
   align-items: center;

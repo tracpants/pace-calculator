@@ -108,29 +108,36 @@ function handleAccentColorSelect(e) {
 
 // Apply distance unit
 function applyDistanceUnit(unit) {
-	state.distanceUnit = unit;
+    state.distanceUnit = unit;
 
-	// Update unit toggles in modal and trigger UI updates
-	unitToggles.forEach(toggle => {
-		const isActive = toggle.dataset.unit === unit;
-		if (isActive) {
-			toggle.classList.add("active");
-			toggle.setAttribute('aria-selected', 'true');
-			toggle.setAttribute('tabindex', '0');
-		} else {
-			toggle.classList.remove("active");
-			toggle.setAttribute('aria-selected', 'false');
-			toggle.setAttribute('tabindex', '-1');
-		}
-	});
+    // Update unit toggles in modal and trigger UI updates
+    unitToggles.forEach(toggle => {
+        const isActive = toggle.dataset.unit === unit;
+        if (isActive) {
+            toggle.classList.add("active");
+            toggle.setAttribute('aria-selected', 'true');
+            toggle.setAttribute('tabindex', '0');
+        } else {
+            toggle.classList.remove("active");
+            toggle.setAttribute('aria-selected', 'false');
+            toggle.setAttribute('tabindex', '-1');
+        }
+    });
 
-	// Trigger UI update for presets
-	populatePresetSelects();
-	updateCalculatedResult();
-	updateHintTexts();
+    // Trigger UI update for presets
+    populatePresetSelects();
+    // In simplified builds where ui.js hasn't initialized its globals yet,
+    // updateCalculatedResult can throw. Guard to avoid breaking event binding.
+    try {
+        updateCalculatedResult();
+    } catch (err) {
+        // Non-fatal during early init; UI will refresh after first calculation.
+        console.warn('updateCalculatedResult skipped during init:', err?.message || err);
+    }
+    updateHintTexts();
 
-	// Update default distance dropdown if in settings modal
-	populateDefaultDistanceSelect();
+    // Update default distance dropdown if in settings modal
+    populateDefaultDistanceSelect();
 }
 
 // Populate default distance dropdown based on current unit
@@ -386,7 +393,9 @@ function openPRManagement() {
 	prManagementModal.classList.remove('hidden');
 
 	// Focus close button
-	closePrManagementBtn.focus();
+	if (closePrManagementBtn) {
+		closePrManagementBtn.focus();
+	}
 
 	// Prevent body scroll
 	document.body.style.overflow = 'hidden';
