@@ -27,6 +27,11 @@ describe('Calculator Core Functions', () => {
         expect(parseTime('0')).toBe(0)
         expect(parseTime('1')).toBe(60)
       })
+
+      it('should round fractional seconds to nearest whole second', () => {
+        expect(parseTime('4.999')).toBe(300)
+        expect(parseTime('4.001')).toBe(240)
+      })
     })
 
     describe('colon format', () => {

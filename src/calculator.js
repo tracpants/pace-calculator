@@ -20,11 +20,11 @@ export function parseTime(timeStr) {
 
 	// Handle decimal format (e.g., "4.5" = 4:30)
 	if (/^\d+(\.\d+)?$/.test(trimmed)) {
-		const decimal = parseFloat(trimmed);
-		const minutes = Math.floor(decimal);
-		const seconds = Math.floor((decimal - minutes) * SECONDS_PER_MINUTE);
-		return minutes * SECONDS_PER_MINUTE + seconds;
-	}
+                const decimal = parseFloat(trimmed);
+                const minutes = Math.floor(decimal);
+                const seconds = Math.round((decimal - minutes) * SECONDS_PER_MINUTE);
+                return minutes * SECONDS_PER_MINUTE + seconds;
+        }
 
 	// Handle space-separated format (e.g., "4 30" = 4:30 or "2 1 23 45" = 2 days 1:23:45)
 	if (/^\d+\s+\d+(\s+\d+)?(\s+\d+)?$/.test(trimmed)) {
