@@ -62,7 +62,7 @@ vi.mock('../../src/calculator.js', () => ({
     return { valid: true, value: minutes * 60 }
   }),
   formatTime: vi.fn((seconds, includeHours = false) => {
-    if (includeHours && seconds >= 3600) {
+    if (includeHours) {
       const hours = Math.floor(seconds / 3600)
       const mins = Math.floor((seconds % 3600) / 60)
       const secs = seconds % 60
@@ -325,7 +325,7 @@ describe('Personal Records (PR) Module', () => {
       expect(result).toHaveLength(3)
       expect(result[0].distanceKm).toBe(5)
       expect(result[0].displayName).toBe('5K') // Standard distance
-      expect(result[0].timeFormatted).toBe('20:00') // Mocked format
+      expect(result[0].timeFormatted).toBe('00:20:00') // Mocked format
       
       expect(result[2].distanceKm).toBe(10) // Should be sorted by distance
       expect(result[2].displayName).toBe('10K')

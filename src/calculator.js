@@ -153,21 +153,20 @@ export function formatTime(seconds, includeHours = false, allowMultiday = false)
 		return `${days} ${dayText} ${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
 	}
 
-	// Single-day formatting
-	if (includeHours && totalSeconds >= SECONDS_PER_HOUR) {
-		// For times ≥ 1 hour, show HH:MM:SS
-		const totalHours = Math.floor(totalSeconds / SECONDS_PER_HOUR);
-		const remainingMinutes = Math.floor((totalSeconds % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
-		const remainingSecs = totalSeconds % SECONDS_PER_MINUTE;
+        // Single-day formatting
+        if (includeHours) {
+                const totalHours = Math.floor(totalSeconds / SECONDS_PER_HOUR);
+                const remainingMinutes = Math.floor((totalSeconds % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
+                const remainingSecs = totalSeconds % SECONDS_PER_MINUTE;
 
-		return `${String(totalHours).padStart(2, "0")}:${String(remainingMinutes).padStart(2, "0")}:${String(remainingSecs).padStart(2, "0")}`;
-	}
+                return `${String(totalHours).padStart(2, "0")}:${String(remainingMinutes).padStart(2, "0")}:${String(remainingSecs).padStart(2, "0")}`;
+        }
 
-	// For times < 1 hour, show MM:SS (with total minutes if > 59)
-	const totalMinutes = Math.floor(totalSeconds / SECONDS_PER_MINUTE);
-	const remainingSecs = totalSeconds % SECONDS_PER_MINUTE;
+        // For times < 1 hour or when hours aren't requested, show MM:SS
+        const totalMinutes = Math.floor(totalSeconds / SECONDS_PER_MINUTE);
+        const remainingSecs = totalSeconds % SECONDS_PER_MINUTE;
 
-	return `${String(totalMinutes).padStart(2, "0")}:${String(remainingSecs).padStart(2, "0")}`;
+        return `${String(totalMinutes).padStart(2, "0")}:${String(remainingSecs).padStart(2, "0")}`;
 }
 
 export function calculatePace(totalSeconds, distance, unit) {

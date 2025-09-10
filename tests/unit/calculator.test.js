@@ -226,9 +226,9 @@ describe('Calculator Core Functions', () => {
         expect(formatTime(86399, true)).toBe('23:59:59') // 23:59:59
       })
 
-      it('should use MM:SS format when no hours even if includeHours=true', () => {
-        expect(formatTime(270, true)).toBe('04:30')
-        expect(formatTime(3599, true)).toBe('59:59')
+      it('should include hours when requested even if zero', () => {
+        expect(formatTime(270, true)).toBe('00:04:30')
+        expect(formatTime(3599, true)).toBe('00:59:59')
       })
     })
 
