@@ -103,6 +103,7 @@ describe('Tab Functionality', () => {
           <svg id="copy-icon"></svg>
           <svg id="check-icon" class="hidden"></svg>
         </button>
+        <span id="copy-feedback" role="status" aria-live="polite"></span>
         <button id="clear-btn">Clear</button>
         <button id="save-pr-btn" class="hidden">Save PR</button>
         <button id="update-pr-btn" class="hidden">Update PR</button>
