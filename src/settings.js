@@ -178,7 +178,7 @@ function handleDefaultDistanceChange(e) {
 }
 
 // Apply default distance to all distance input fields if set
-function applyDefaultDistance() {
+function applyDefaultDistance(forceApply = false) {
 	const settings = loadSettings();
 
 	if (!settings.defaultDistance) {
@@ -192,7 +192,7 @@ function applyDefaultDistance() {
 		return; // Invalid preset
 	}
 
-	console.log('Applying default distance:', distance, state.distanceUnit);
+	console.log('Applying default distance:', distance, state.distanceUnit, forceApply ? '(forced)' : '(empty fields only)');
 
 	// Apply to all distance input fields
 	['pace-distance', 'time-distance'].forEach(inputId => {
@@ -201,9 +201,10 @@ function applyDefaultDistance() {
 			const isEmpty = !input.value || input.value.trim() === '';
 			console.log(`Field ${inputId}: exists=${!!input}, isEmpty=${isEmpty}, currentValue="${input.value}"`);
 
-			if (isEmpty) { // Only set if field is empty
+			// Apply if field is empty OR if force apply is enabled (for fresh page loads)
+			if (isEmpty || forceApply) {
 				input.value = distance;
-				console.log(`Set ${inputId} to ${distance}`);
+				console.log(`Set ${inputId} to ${distance}${forceApply ? ' (forced)' : ''}`);
 
 				// Update corresponding preset dropdown
 				const tabPrefix = inputId.split('-')[0]; // 'pace' or 'time'
@@ -812,6 +813,13 @@ export function initSettings() {
 
 	// Listen for system theme changes
 	window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', handleSystemThemeChange);
+
+	// Apply default distance after initialization is complete
+	// Use setTimeout to ensure all DOM elements are fully ready
+	// Force apply on initial page load to override restored form state
+	setTimeout(() => {
+		applyDefaultDistance(true);
+	}, 0);
 
 	// Make updateUnitToggles available globally for backward compatibility
 	window.updateUnitToggles = () => {
