@@ -138,6 +138,9 @@ function applyDistanceUnit(unit) {
 
     // Update default distance dropdown if in settings modal
     populateDefaultDistanceSelect();
+
+    // Apply default distance whenever unit changes
+    applyDefaultDistance();
 }
 
 // Populate default distance dropdown based on current unit
@@ -166,9 +169,12 @@ function handleDefaultDistanceChange(e) {
 	const selectedPreset = e.target.value;
 
 	// Save the setting immediately
-	const currentSettings = loadSettings();
-	currentSettings.defaultDistance = selectedPreset || null;
-	saveSettings(currentSettings);
+        const currentSettings = loadSettings();
+        currentSettings.defaultDistance = selectedPreset || null;
+        saveSettings(currentSettings);
+
+        // Immediately apply the selected default distance
+        applyDefaultDistance();
 }
 
 // Apply default distance to all distance input fields if set
