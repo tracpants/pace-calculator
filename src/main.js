@@ -1,3 +1,4 @@
+import { initAutoAdvance } from "./auto-advance.js";
 import * as calc from "./calculator.js";
 import { getRaceDistances } from "./distances.js";
 import { applyTheme, initSettings, loadSettings, saveSettings } from "./settings.js";
@@ -495,6 +496,9 @@ function initApp() {
 	setupUnitToggle();
 	setupModals();
 	setupRealtimeValidation(); // Add real-time validation
+
+	// Initialize auto-advance for segmented inputs
+	initAutoAdvance();
 
 	// Perform initial validation to enable button if default values are valid
 	updateButtonStateQuietly();
