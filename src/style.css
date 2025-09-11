@@ -901,8 +901,10 @@ body {
   }
 
   .modern-card {
-    margin: 0.5rem;
+    margin: 1rem auto;
     margin-top: 1rem;
+    width: calc(100vw - 2rem);
+    max-width: calc(28rem - 2rem);
   }
 }
 
