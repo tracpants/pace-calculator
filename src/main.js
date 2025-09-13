@@ -2,6 +2,7 @@ import { initAutoAdvance } from "./auto-advance.js";
 import * as calc from "./calculator.js";
 import { getRaceDistances } from "./distances.js";
 import { applyTheme, initSettings, loadSettings, saveSettings } from "./settings.js";
+import { createSplitsAccordion, setupSplitsAccordion } from "./splits.js";
 import { state } from "./state.js";
 import "./style.css";
 
@@ -180,40 +181,38 @@ function showLoading() {
 }
 
 function hideLoading() {
-	loadingDiv.classList.add('hidden');
+        loadingDiv.classList.add('hidden');
 }
 
+
 function showResult(label, value, isError = false) {
-	console.log('🎯 showResult called:', { label, value, isError });
-	console.log('📱 Result elements:', {
-		resultDiv: !!resultDiv,
-		resultLabel: !!resultLabel,
-		resultValue: !!resultValue
-	});
+        resultLabel.textContent = label;
+        resultValue.innerHTML = value;
+        resultDiv.classList.toggle('error', isError);
 
-	resultLabel.textContent = label;
-	resultValue.textContent = value;
-	resultDiv.classList.toggle('error', isError);
+        if (!isError) {
+                const splitsHtml = createSplitsAccordion();
+                if (splitsHtml) {
+                        resultValue.innerHTML += splitsHtml;
+                        setTimeout(() => {
+                                setupSplitsAccordion();
+                        }, 0);
+                }
+        }
 
-	// Show result with proper animation
-	resultDiv.classList.remove('hidden');
-	console.log('👁️ Removed hidden class, current classes:', resultDiv.className);
+        // Show result with proper animation
+        resultDiv.classList.remove('hidden');
 
-	// Trigger animation on next frame to ensure smooth transition
-	requestAnimationFrame(() => {
-		resultDiv.style.opacity = '1';
-		resultDiv.style.transform = 'scale(1)';
-		console.log('✨ Applied animation styles:', {
-			opacity: resultDiv.style.opacity,
-			transform: resultDiv.style.transform,
-			display: getComputedStyle(resultDiv).display
-		});
-	});
+        // Trigger animation on next frame to ensure smooth transition
+        requestAnimationFrame(() => {
+                resultDiv.style.opacity = '1';
+                resultDiv.style.transform = 'scale(1)';
+        });
 
-	// Auto-scroll to results
-	setTimeout(() => {
-		resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-	}, 100);
+        // Auto-scroll to results
+        setTimeout(() => {
+                resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
 }
 
 function hideResult() {
@@ -241,14 +240,12 @@ function clearForm() {
 }
 
 function handleCalculation(e) {
-	e.preventDefault();
-	console.log('🧮 Starting calculation for tab:', state.currentTab);
+        e.preventDefault();
 
-	if (!validateInputs()) {
-		console.log('❌ Validation failed - field-specific errors shown inline');
-		showResult('Cannot Calculate', 'Please fill in the required fields above.', true);
-		return; // Field-specific errors are already displayed inline
-	}
+        if (!validateInputs()) {
+                showResult('Cannot Calculate', 'Please fill in the required fields above.', true);
+                return; // Field-specific errors are already displayed inline
+        }
 
 	showLoading();
 
@@ -259,8 +256,7 @@ function handleCalculation(e) {
 
 			if (state.currentTab === 'pace') {
 				const timeSeconds = getTimeValue('pace-time');
-				const distance = parseFloat(document.getElementById('pace-distance').value);
-				console.log('📊 Pace calculation inputs:', { timeSeconds, distance, unit: state.distanceUnit });
+                                const distance = parseFloat(document.getElementById('pace-distance').value);
 
 				const { pacePerKm, pacePerMile } = calc.calculatePace(timeSeconds, distance, state.distanceUnit);
 
@@ -269,42 +265,36 @@ function handleCalculation(e) {
 					? `${calc.formatTime(pacePerKm)} /km`
 					: `${calc.formatTime(pacePerMile)} /mile`;
 
-				state.lastResult = { type: 'pace', pacePerKm, pacePerMile };
-				console.log('✅ Pace result:', { label, value });
+                                state.lastResult = { type: 'pace', pacePerKm, pacePerMile };
 
 			} else if (state.currentTab === 'time') {
 				const paceSeconds = getPaceValue('time-pace');
-				const distance = parseFloat(document.getElementById('time-distance').value);
-				console.log('📊 Time calculation inputs:', { paceSeconds, distance, unit: state.distanceUnit });
+                                const distance = parseFloat(document.getElementById('time-distance').value);
 
 				const totalSeconds = calc.calculateTime(paceSeconds, distance, state.distanceUnit, state.distanceUnit);
 
 				label = 'Your Time:';
 				value = calc.formatTime(totalSeconds, true);
-				state.lastResult = { type: 'time', totalSeconds };
-				console.log('✅ Time result:', { label, value });
+                                state.lastResult = { type: 'time', totalSeconds };
 
 			} else if (state.currentTab === 'distance') {
 				const timeSeconds = getTimeValue('distance-time');
-				const paceSeconds = getPaceValue('distance-pace');
-				console.log('📊 Distance calculation inputs:', { timeSeconds, paceSeconds, unit: state.distanceUnit });
+                                const paceSeconds = getPaceValue('distance-pace');
 
 				const { km, miles } = calc.calculateDistance(timeSeconds, paceSeconds, state.distanceUnit);
 
 				label = 'Your Distance:';
 				value = state.distanceUnit === 'km' ? `${calc.formatDistance(km)} km` : `${calc.formatDistance(miles)} miles`;
-				state.lastResult = { type: 'distance', km, miles };
-				console.log('✅ Distance result:', { label, value });
-			}
+                                state.lastResult = { type: 'distance', km, miles };
+                        }
 
-			hideLoading();
-			console.log('🎯 Showing result:', { label, value });
-			showResult(label, value);
-		} catch (error) {
-			console.error('❌ Calculation error:', error);
-			hideLoading();
-			showResult('Error', 'Calculation failed. Please check your inputs.', true);
-		}
+                        hideLoading();
+                        showResult(label, value);
+                } catch (error) {
+                        void error;
+                        hideLoading();
+                        showResult('Error', 'Calculation failed. Please check your inputs.', true);
+                }
 	}, 200);
 }
 
@@ -472,10 +462,9 @@ function initApp() {
 	resultValue = document.getElementById('result-value');
 	loadingDiv = document.getElementById('loading');
 
-	if (!form || !resultDiv || !resultLabel || !resultValue || !loadingDiv) {
-		console.error('Required DOM elements not found');
-		return;
-	}
+        if (!form || !resultDiv || !resultLabel || !resultValue || !loadingDiv) {
+                return;
+        }
 
 	// Load and apply settings
 	const settings = loadSettings();
@@ -500,21 +489,19 @@ function initApp() {
 	// Initialize auto-advance for segmented inputs
 	initAutoAdvance();
 
-	// Perform initial validation to enable button if default values are valid
-	updateButtonStateQuietly();
+        // Perform initial validation to enable button if default values are valid
+        updateButtonStateQuietly();
 
-	// Listen for system theme changes
-	window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', () => {
-		const currentSettings = loadSettings();
-		if (currentSettings.theme === 'system') {
-			applyTheme('system');
-		}
-	});
+        // Listen for system theme changes
+        window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', () => {
+                const currentSettings = loadSettings();
+                if (currentSettings.theme === 'system') {
+                        applyTheme('system');
+                }
+        });
 
-	console.log('🚀 Simplified Pace Calculator initialized');
-
-	// Make app visible now that everything is loaded
-	document.getElementById('app').classList.add('ready');
+        // Make app visible now that everything is loaded
+        document.getElementById('app').classList.add('ready');
 }
 
 // Initialize when DOM is ready
