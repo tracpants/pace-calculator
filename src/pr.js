@@ -178,14 +178,16 @@ export function getDistanceName(distance, unit) {
 
 // Format date for display
 export function formatDate(isoString) {
-	if (!isoString) return '';
-	
-	try {
-		const date = new Date(isoString);
-		return date.toLocaleDateString();
-	} catch {
-		return '';
-	}
+        if (!isoString) return '';
+
+        const date = new Date(isoString);
+
+        // If the date is invalid, return the same string Node would produce
+        if (isNaN(date.getTime())) {
+                return 'Invalid Date';
+        }
+
+        return date.toLocaleDateString();
 }
 
 // Get date in YYYY-MM-DD format for date input
