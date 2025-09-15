@@ -218,22 +218,20 @@ describe('Auto-Advance Functionality', () => {
       initAutoAdvance()
     })
 
-    it('should move to previous field on backspace when current field is empty', done => {
+    it('should move to previous field on backspace when current field is empty', () => {
       const hoursInput = document.getElementById('pace-time-hours')
       const minutesInput = document.getElementById('pace-time-minutes')
-      
+
       // Mock focus and selection methods
-      hoursInput.focus = vi.fn(() => {
-        // Test that focus was called
-        expect(hoursInput.focus).toHaveBeenCalled()
-        done()
-      })
+      hoursInput.focus = vi.fn()
       hoursInput.setSelectionRange = vi.fn()
       hoursInput.value = '02' // Set some value to move cursor to end
-      
+
       // Clear minutes input and press backspace
       minutesInput.value = ''
       fireEvent.keyDown(minutesInput, { key: 'Backspace' })
+
+      expect(hoursInput.focus).toHaveBeenCalled()
     })
 
     it('should not move to previous field if current field has value', () => {
