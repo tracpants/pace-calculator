@@ -896,15 +896,20 @@ body {
     font-size: 1.25rem;
   }
 
+  .input-segmented-container {
+    gap: clamp(0.5rem, 2.5vw, 0.75rem);
+  }
+
   .modal-content {
     margin: 0.5rem;
   }
 
   .modern-card {
-    margin: 1rem auto;
-    margin-top: 1rem;
-    width: calc(100vw - 2rem);
-    max-width: calc(28rem - 2rem);
+    margin: 0;
+    width: 100%;
+    max-width: none;
+    border-radius: 0;
+    padding: clamp(1.25rem, 4vw + 1rem, 2.25rem) clamp(1rem, 4vw, 1.75rem);
   }
 }
 
