@@ -881,6 +881,10 @@ body {
 
 /* Responsive adjustments */
 @media (max-width: 640px) {
+  body {
+    background: var(--bg-primary);
+  }
+
   .btn {
     min-height: 48px;
     font-size: 1.125rem;
