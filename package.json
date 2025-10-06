@@ -49,8 +49,8 @@
     "stylelint": "^16.24.0",
     "stylelint-config-standard": "^39.0.0",
     "stylelint-order": "^7.0.0",
-    "tailwindcss": "^4.1.13",
-    "vite": "^7.1.7",
+    "tailwindcss": "^4.1.14",
+    "vite": "^7.1.9",
     "vitest": "^3.2.4"
   }
 }
