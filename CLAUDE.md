@@ -6,9 +6,11 @@ This document outlines code style conventions and workflow guidelines for the Pa
 
 The Pace Calculator is a modern, accessible running pace calculator built with:
 - **Vanilla JavaScript** (ES6+ modules)
-- **Vite** (build tool and dev server)
-- **TailwindCSS** (utility-first styling)
+- **Vite 7.x** (build tool and dev server with HMR)
+- **TailwindCSS 4.x** (utility-first styling with semantic design tokens)
 - **WCAG 2.1 AA** compliance for accessibility
+- **Comprehensive testing** (Vitest unit tests + Playwright E2E tests)
+- **Quality tooling** (ESLint, Stylelint, design token validation)
 
 ## Code Style Guidelines
 
@@ -21,7 +23,14 @@ The Pace Calculator is a modern, accessible running pace calculator built with:
   - `ui.js` - UI interactions and DOM manipulation
   - `settings.js` - Settings management and modals
   - `state.js` - Application state management
-  - `main.js` - Application initialization
+  - `main.js` - Application entry point and initialization
+  - `pr.js` - Personal records functionality
+  - `distances.js` - Distance configuration and utilities
+  - `splits.js` - Race splits generation and display
+  - `auto-advance.js` - Input auto-advancement logic
+  - `touch.js` - Touch and mobile interactions
+  - `dom-ready.js` - DOM initialization utilities
+  - `modal-positioning.js` - Modal positioning system
 
 #### Naming Conventions
 - **Functions**: camelCase, descriptive names
@@ -38,6 +47,10 @@ The Pace Calculator is a modern, accessible running pace calculator built with:
   ```javascript
   const timeInput = document.getElementById('pace-time-minutes');
   ```
+- **Files**: kebab-case for all files
+  - Source files: `*.js`
+  - Unit tests: `*.test.js`
+  - E2E tests: `*.spec.js`
 
 #### Code Organization
 - Group related constants at the top of files
@@ -94,7 +107,7 @@ The Pace Calculator is a modern, accessible running pace calculator built with:
   /* ✅ Correct - adapts to all themes */
   color: var(--color-text-primary);
   background: var(--color-surface);
-  
+
   /* ❌ Incorrect - breaks theme switching */
   color: #1f2937;
   background: white;
@@ -103,6 +116,12 @@ The Pace Calculator is a modern, accessible running pace calculator built with:
   ```html
   <div style="background-color: var(--color-surface);">
   ```
+
+**Design Token Validation**
+- Automated validation via `npm run validate:tokens`
+- Script: `scripts/validate-tokens.js` - checks for hardcoded colors in CSS/HTML
+- Runs in pre-commit hook (non-blocking warning)
+- Enforced in CI pipeline
 
 #### TailwindCSS Usage
 - Prefer utility classes over custom CSS
@@ -236,6 +255,7 @@ The Pace Calculator is a modern, accessible running pace calculator built with:
   ```bash
   npm run test        # Run tests in watch mode during development
   npm run test:run    # Run tests once for CI/verification
+  npm run test:all    # Run both unit and E2E tests
   ```
 
 #### Unit Testing Guidelines
@@ -246,18 +266,61 @@ The Pace Calculator is a modern, accessible running pace calculator built with:
 - **Precision handling** - Account for floating-point precision in calculations
 - **Boundary conditions** - Test edge cases, limits, and error conditions
 
+#### E2E Testing Requirements
+- **Test file naming** - Use `.spec.js` suffix (e.g., `tabs.spec.js`)
+- **Critical paths** - Tag important flows with `@smoke` or `@critical` annotations
+- **Framework** - Use Playwright for cross-browser E2E testing
+- **Test suites**:
+  - `smoke.spec.js` - Basic functionality and page loading
+  - `essential-flows.spec.js` - Core user workflows
+  - `tabs.spec.js` - Tab switching and state preservation
+  - `modals.spec.js` - Modal interactions and accessibility
+  - `accessibility.spec.js` - A11Y features and keyboard navigation
+  - `themes.spec.js` - Theme switching and visual consistency
+
 #### Testing Workflow
 1. **Before starting** - Run existing tests to ensure clean baseline
 2. **During development** - Write tests alongside code (TDD encouraged)
 3. **Before committing** - Ensure all tests pass with `npm run test:run`
 4. **Feature completion** - Verify comprehensive test coverage for new functionality
 
+#### Code Quality Tools
+
+**Linting**
+- **ESLint** - JavaScript linting with modern ES2022 configuration
+  - Config: `eslint.config.js` (flat config format)
+  - Plugins: import, jsdoc
+  - Rules: enforces best practices, import ordering, JSDoc validation
+- **Stylelint** - CSS linting for style consistency
+  - Config: `stylelint.config.cjs`
+  - Plugins: stylelint-order
+  - Rules: enforces property ordering, naming conventions
+- **Commands**:
+  ```bash
+  npm run lint       # Run all linters
+  npm run lint:fix   # Auto-fix linting issues
+  ```
+
+**Design Token Validation**
+- Custom script validates CSS custom property usage
+- Detects hardcoded colors and non-semantic tokens
+- Run with: `npm run validate:tokens`
+- Integrated into pre-commit hook (non-blocking)
+
+**Git Hooks (Husky)**
+- Pre-commit hook runs:
+  1. Design token validation (non-blocking warning)
+  2. Lint-staged for changed files (non-blocking)
+  3. Build check if config files changed (blocking on failure)
+- Located in `.husky/pre-commit`
+- Keeps local development fast while maintaining quality
+
 #### Manual Testing Checklist
 - **Cross-browser** - test in Chrome, Firefox, Safari, Edge
 - **Mobile devices** - test on iOS and Android
 - **Accessibility tools** - use screen readers, keyboard-only navigation
 - **Zoom levels** - test up to 200% zoom
-- **Theme switching** - verify all themes work correctly
+- **Theme switching** - verify all 6 themes work correctly
 
 #### Code Quality
 - **Input validation** - comprehensive edge case handling
@@ -290,12 +353,18 @@ The Pace Calculator is a modern, accessible running pace calculator built with:
 7. **Test across all themes** including accessibility variants
 8. **Verify contrast ratios** in high-contrast and monochrome themes
 9. **Run unit tests** to ensure all functionality works correctly (`npm run test:run`)
-10. **Test thoroughly** across devices and accessibility modes
-11. **Update this guide** if new patterns emerge
+10. **Write E2E tests** for critical user workflows
+11. **Run linters** and fix any issues (`npm run lint:fix`)
+12. **Validate design tokens** (`npm run validate:tokens`)
+13. **Test thoroughly** across devices and accessibility modes
+14. **Update this guide** if new patterns emerge
 
 #### Feature Completion Checklist
 - [ ] **Unit tests written** - Comprehensive test coverage for new functionality
-- [ ] **All tests passing** - `npm run test:run` completes successfully
+- [ ] **E2E tests added** - Critical workflows covered
+- [ ] **All tests passing** - `npm run test:all` completes successfully
+- [ ] **Linting clean** - `npm run lint` reports no errors
+- [ ] **Tokens validated** - `npm run validate:tokens` passes
 - [ ] **No hardcoded colors** - Use semantic tokens only
 - [ ] **Multi-theme support** - Works in all 6 themes (light, dark, system, amoled, high-contrast, monochrome)
 - [ ] **Accessibility compliance** - Maintains proper contrast ratios in accessibility themes
@@ -306,26 +375,39 @@ The Pace Calculator is a modern, accessible running pace calculator built with:
 ### Development Commands
 
 ```bash
-# Start development server
-npm run dev
+# Development
+npm run dev              # Start Vite dev server with HMR
 
-# Run unit tests (watch mode for development)
-npm run test
+# Building
+npm run build            # Build for production
+npm run preview          # Preview production build
 
-# Run unit tests once (for verification before commit)
-npm run test:run
+# Testing
+npm run test             # Run unit tests in watch mode
+npm run test:run         # Run unit tests once (CI mode)
+npm run test:e2e         # Run essential E2E tests
+npm run test:all         # Run all tests (unit + E2E)
 
-# Build for production
-npm run build
+# Code Quality
+npm run lint             # Run ESLint + Stylelint
+npm run lint:fix         # Auto-fix linting issues
+npm run validate:tokens  # Validate design token usage
+npm run validate:all     # Run all validation (lint + tokens)
 
-# Preview production build
-npm run preview
+# Maintenance
+npm run clean            # Remove dist, coverage, test results
+npm run reset            # Clean + remove node_modules + fresh install
+npm run audit:security   # Check for security vulnerabilities
+npm run audit:fix        # Auto-fix security issues
+npm run outdated         # Check for outdated dependencies
 
-# Full update (install, build, test)
-./update.sh
+# CI/CD
+npm run ci               # Full CI pipeline (install, validate, test, build)
+npm run prepare          # Initialize Husky (runs on npm install)
 
-# Development mode
-./update.sh --dev
+# Utility Scripts
+./update.sh              # Full update (install, build, test)
+./update.sh --dev        # Start development server
 ```
 
 **Important**: Always run `npm run test:run` before committing to ensure all tests pass.
@@ -337,50 +419,166 @@ pace-calculator/
 ├── src/                    # Source code
 │   ├── main.js            # Application entry point and initialization
 │   ├── calculator.js      # Core calculation logic and validation
-│   ├── ui.js             # UI interactions and DOM manipulation
-│   ├── settings.js       # Settings, modals, and preferences
-│   ├── state.js          # Application state management
-│   ├── touch.js          # Touch and mobile interactions
-│   ├── auto-advance.js   # Input auto-advancement logic
-│   ├── pr.js            # Personal records functionality
-│   ├── distances.js      # Distance configuration and utilities
-│   ├── dom-ready.js      # DOM initialization utilities
+│   ├── ui.js              # UI interactions and DOM manipulation
+│   ├── settings.js        # Settings, modals, and preferences
+│   ├── state.js           # Application state management
+│   ├── pr.js              # Personal records functionality
+│   ├── distances.js       # Distance configuration and utilities
+│   ├── splits.js          # Race splits generation and display
+│   ├── auto-advance.js    # Input auto-advancement logic
+│   ├── touch.js           # Touch and mobile interactions
+│   ├── dom-ready.js       # DOM initialization utilities
 │   ├── modal-positioning.js # Modal positioning system
-│   └── style.css         # Global styles and design tokens
+│   └── style.css          # Global styles and design tokens
 ├── tests/                  # Testing infrastructure
 │   ├── unit/              # Unit tests (run with Vitest)
 │   │   ├── setup.js       # Test setup and configuration
-│   │   ├── calculator.test.js # Tests for calculation functions
-│   │   ├── pr.test.js     # Tests for Personal Records
-│   │   └── tabs.test.js   # Tests for UI tab functionality
+│   │   ├── calculator.test.js    # Tests for calculation functions
+│   │   ├── pr.test.js            # Tests for Personal Records
+│   │   ├── tabs.test.js          # Tests for UI tab functionality
+│   │   ├── auto-advance.test.js  # Tests for input auto-advancement
+│   │   ├── splits.test.js        # Tests for race splits
+│   │   └── default-distance.test.js # Tests for default distance behavior
 │   └── e2e/               # End-to-end tests (run with Playwright)
-│       └── tabs.spec.js   # E2E tests for tab functionality
+│       ├── smoke.spec.js         # Basic smoke tests
+│       ├── essential-flows.spec.js # Core user workflows
+│       ├── tabs.spec.js          # Tab switching and state
+│       ├── modals.spec.js        # Modal interactions
+│       ├── accessibility.spec.js # A11Y features
+│       └── themes.spec.js        # Theme switching
+├── scripts/                # Utility scripts
+│   └── validate-tokens.js # Design token validation script
 ├── public/                 # Static assets
-│   ├── favicon.svg        
-│   └── vite.svg          
+│   ├── favicon.svg
+│   └── vite.svg
+├── .husky/                 # Git hooks
+│   └── pre-commit         # Pre-commit validation
+├── .vscode/                # VSCode configuration
+│   ├── settings.json      # Editor settings
+│   ├── extensions.json    # Recommended extensions
+│   ├── launch.json        # Debug configurations
+│   └── tasks.json         # Build tasks
+├── .github/                # GitHub configuration
+│   └── workflows/         # CI/CD workflows
 ├── dist/                   # Build output (generated)
 ├── node_modules/           # Dependencies (generated)
+├── coverage/               # Test coverage reports (generated)
+├── test-results/           # E2E test results (generated)
+├── playwright-report/      # Playwright HTML reports (generated)
 ├── index.html             # Main HTML file
 ├── package.json           # Project configuration and dependencies
+├── package-lock.json      # Dependency lock file
 ├── vite.config.js         # Vite build configuration
 ├── vitest.config.js       # Unit test configuration
 ├── playwright.config.js   # E2E test configuration
+├── eslint.config.js       # ESLint configuration (flat config)
+├── stylelint.config.cjs   # Stylelint configuration
 ├── tailwind.config.js     # TailwindCSS configuration
 ├── postcss.config.js      # PostCSS configuration
 ├── update.sh              # Development utility script
 ├── CLAUDE.md              # Development guidelines (this file)
-└── README.md              # Project documentation
+├── AGENTS.md              # Repository structure for AI agents
+├── README.md              # Project documentation
+└── LICENSE                # MIT License
 ```
 
 ### Testing Structure
 
 - **Unit Tests** (`tests/unit/`): Fast, isolated tests for individual functions and modules
+  - Currently 115+ passing tests
+  - Cover calculation logic, UI interactions, state management, and utilities
+  - Mock DOM and external dependencies as needed
+
 - **E2E Tests** (`tests/e2e/`): Browser-based tests for complete user workflows
+  - Test critical paths and accessibility features
+  - Run in multiple browsers (Chromium, Firefox, WebKit)
+  - Include visual regression and interaction testing
+
 - **Test Commands**:
   ```bash
   npm run test           # Run unit tests in watch mode
-  npm run test:run      # Run unit tests once
-  npm run test:e2e      # Run E2E tests
+  npm run test:run       # Run unit tests once
+  npm run test:e2e       # Run E2E tests
+  npm run test:all       # Run all tests
   ```
 
-This clean, organized architecture supports maintainable, accessible, and user-friendly development while keeping concerns properly separated. The comprehensive test suite ensures code quality and prevents regressions.
+## Architecture Deep Dive
+
+### Module Responsibilities
+
+**Core Logic**
+- `calculator.js` - Pure calculation functions, input validation, unit conversions
+- `distances.js` - Distance presets, custom distance validation, distance utilities
+- `splits.js` - Race split calculations based on pace and distance
+
+**UI Layer**
+- `ui.js` - Main UI controller, tab switching, result display, clipboard operations
+- `auto-advance.js` - Automatic input field advancement for better UX
+- `touch.js` - Touch-specific interactions and mobile optimizations
+- `modal-positioning.js` - Dynamic modal positioning system
+
+**State & Settings**
+- `state.js` - Centralized application state (minimal, focused)
+- `settings.js` - User preferences, theme management, localStorage persistence
+- `pr.js` - Personal records CRUD operations and display
+
+**Infrastructure**
+- `main.js` - App initialization, event listener setup, module coordination
+- `dom-ready.js` - DOM readiness utilities and initialization helpers
+- `style.css` - Design token definitions, global styles, theme implementations
+
+### Event System
+
+The app uses a custom event system for loose coupling:
+```javascript
+// Emit events for cross-module communication
+document.dispatchEvent(new CustomEvent('calculation-complete', {
+  detail: { result, type }
+}));
+
+// Listen for events
+document.addEventListener('calculation-complete', handleResult);
+```
+
+### State Management Pattern
+
+- Minimal centralized state in `state.js`
+- Tab-specific state stored in DOM elements
+- User preferences in localStorage
+- No external state management library needed
+
+## Additional Documentation
+
+- **AGENTS.md** - Concise repository structure guide for AI agents
+- **README.md** - User-facing project documentation
+- **.vscode/** - VSCode workspace configuration and recommended extensions
+
+## Development Best Practices
+
+### Performance
+- Debounce expensive operations (validation, calculations)
+- Use event delegation for dynamic elements
+- Minimize DOM queries with caching
+- Batch DOM updates to prevent reflows
+
+### Accessibility
+- Test with keyboard only
+- Use screen reader to verify experience
+- Ensure 4.5:1 contrast ratio minimum
+- Provide text alternatives for visual information
+
+### Code Review
+- Verify tests pass and cover new code
+- Check design token usage (no hardcoded colors)
+- Ensure accessibility features are implemented
+- Validate cross-browser compatibility
+
+### Maintenance
+- Keep dependencies updated regularly (`npm run outdated`)
+- Run security audits (`npm run audit:security`)
+- Monitor test coverage trends
+- Update documentation when patterns change
+
+---
+
+This clean, organized architecture supports maintainable, accessible, and user-friendly development while keeping concerns properly separated. The comprehensive test suite and quality tooling ensure code quality and prevent regressions.
