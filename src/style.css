@@ -341,6 +341,40 @@ body {
   border-color: var(--border-hover);
 }
 
+/* Quick Preset Buttons */
+.quick-preset-btn {
+  padding: 0.5rem 0.75rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  color: var(--color-text-secondary);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  cursor: pointer;
+  min-height: 44px;
+  outline: none;
+  text-align: center;
+}
+
+.quick-preset-btn:hover {
+  background-color: var(--color-interactive-primary);
+  color: var(--color-surface);
+  border-color: var(--color-interactive-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.quick-preset-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.quick-preset-btn:focus {
+  outline: 2px solid var(--color-interactive-primary);
+  outline-offset: 2px;
+}
+
 /* Input System */
 .input-base {
   width: 100%;
