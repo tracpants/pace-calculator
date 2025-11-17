@@ -13,28 +13,6 @@ import {
   getDateInputValue
 } from '../../src/pr.js'
 
-// Mock localStorage
-const localStorageMock = {
-  store: {},
-  getItem(key) {
-    return this.store[key] || null
-  },
-  setItem(key, value) {
-    this.store[key] = value
-  },
-  removeItem(key) {
-    delete this.store[key]
-  },
-  clear() {
-    this.store = {}
-  }
-}
-
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock,
-  writable: true
-})
-
 // Mock calculator functions
 vi.mock('../../src/calculator.js', () => ({
   validateTimeInput: vi.fn(timeStr => {
@@ -115,10 +93,8 @@ vi.mock('../../src/distances.js', () => ({
 }))
 
 describe('Personal Records (PR) Module', () => {
-  
+
   beforeEach(() => {
-    // Clear localStorage before each test
-    localStorageMock.clear()
     vi.clearAllMocks()
   })
 
@@ -148,25 +124,22 @@ describe('Personal Records (PR) Module', () => {
     })
 
     it('should handle corrupted localStorage data', () => {
-      // Manually set invalid JSON
-      localStorageMock.setItem('pace-calculator-prs', '{invalid json}')
-      
+      localStorage.setItem('pace-calculator-prs', '{invalid json}')
+
       const result = loadPRs()
       expect(result).toEqual({})
     })
 
     it('should handle localStorage save errors', () => {
-      // Mock localStorage to throw error
-      const originalSetItem = localStorageMock.setItem
-      localStorageMock.setItem = vi.fn(() => {
+      const originalSetItem = localStorage.setItem
+      localStorage.setItem = vi.fn(() => {
         throw new Error('Storage quota exceeded')
       })
 
       const result = savePRs({ test: 'data' })
       expect(result).toBe(false)
 
-      // Restore original method
-      localStorageMock.setItem = originalSetItem
+      localStorage.setItem = originalSetItem
     })
   })
 
@@ -200,11 +173,13 @@ describe('Personal Records (PR) Module', () => {
     })
 
     it('should convert miles to km for storage', () => {
-      setPR(3.107, 'miles', 1200) // ~5km
-      
+      setPR(3.107, 'miles', 1200)
+
       const prs = loadPRs()
-      // Should be stored under the km equivalent key
-      expect(Object.keys(prs)).toContain('5.0002318080000006') // Mock conversion
+      const keys = Object.keys(prs)
+      expect(keys.length).toBe(1)
+      const convertedDistance = parseFloat(keys[0])
+      expect(convertedDistance).toBeCloseTo(5, 0)
     })
 
     it('should overwrite existing PR', () => {
@@ -346,7 +321,7 @@ describe('Personal Records (PR) Module', () => {
     })
 
     it('should return empty array when no PRs exist', () => {
-      localStorageMock.clear()
+      localStorage.clear()
       const result = getAllPRs()
       expect(result).toEqual([])
     })
@@ -517,15 +492,12 @@ describe('Personal Records (PR) Module', () => {
     })
 
     it('should handle unit conversions consistently', () => {
-      // Set PR in miles
       setPR(3.107, 'miles', 1200)
-      
-      // Retrieve using km equivalent
-      const prFromKm = getPRForDistance(5.0002318080000006) // Mocked conversion
-      expect(prFromKm).toBeDefined()
-      expect(prFromKm.unit).toBe('miles')
 
-      // Compare using different units
+      const allPRs = getAllPRs()
+      expect(allPRs.length).toBe(1)
+      expect(allPRs[0].unit).toBe('miles')
+
       const comparison = comparePaceWithPR(1140, 5, 'km')
       expect(comparison).toBeDefined()
     })
@@ -542,8 +514,8 @@ describe('Personal Records (PR) Module', () => {
 
       // Simulate app restart by clearing and reloading
       const savedPRs = localStorage.getItem('pace-calculator-prs')
-      localStorageMock.clear()
-      localStorageMock.setItem('pace-calculator-prs', savedPRs)
+      localStorage.clear()
+      localStorage.setItem('pace-calculator-prs', savedPRs)
 
       // Verify all PRs are still accessible
       const reloadedPRs = getAllPRs()

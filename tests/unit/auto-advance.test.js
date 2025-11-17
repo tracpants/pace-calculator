@@ -4,9 +4,9 @@ import { initAutoAdvance, cleanupAutoAdvance, reinitAutoAdvance } from '../../sr
 
 describe('Auto-Advance Functionality', () => {
   beforeEach(() => {
-    // Clean up any existing auto-advance state
+    vi.useFakeTimers()
     cleanupAutoAdvance()
-    
+
     // Create test HTML structure with segmented time inputs
     document.body.innerHTML = `
       <div id="app">
@@ -48,6 +48,7 @@ describe('Auto-Advance Functionality', () => {
 
   afterEach(() => {
     cleanupAutoAdvance()
+    vi.useRealTimers()
   })
 
   describe('Auto-Advance Initialization', () => {
@@ -137,16 +138,10 @@ describe('Auto-Advance Functionality', () => {
       minutesInput.focus = vi.fn()
       minutesInput.select = vi.fn()
 
-      // Enter 2-digit hour value
       fireEvent.input(hoursInput, { target: { value: '01' } })
 
-      // Should auto-advance to minutes
-      await new Promise(resolve => {
-        setTimeout(() => {
-          expect(minutesInput.focus).toHaveBeenCalled()
-          resolve()
-        }, 15)
-      })
+      await vi.advanceTimersByTimeAsync(15)
+      expect(minutesInput.focus).toHaveBeenCalled()
     })
 
     it('should advance from minutes to seconds when minutes field is complete', async () => {
@@ -157,16 +152,10 @@ describe('Auto-Advance Functionality', () => {
       secondsInput.focus = vi.fn()
       secondsInput.select = vi.fn()
 
-      // Enter 2-digit minute value
       fireEvent.input(minutesInput, { target: { value: '30' } })
 
-      // Should auto-advance to seconds
-      await new Promise(resolve => {
-        setTimeout(() => {
-          expect(secondsInput.focus).toHaveBeenCalled()
-          resolve()
-        }, 15)
-      })
+      await vi.advanceTimersByTimeAsync(15)
+      expect(secondsInput.focus).toHaveBeenCalled()
     })
 
     it('should not advance from last field (seconds)', async () => {
@@ -180,16 +169,10 @@ describe('Auto-Advance Functionality', () => {
         }
       })
       
-      // Enter 2-digit second value
       fireEvent.input(secondsInput, { target: { value: '45' } })
 
-      // Should NOT auto-advance
-      await new Promise(resolve => {
-        setTimeout(() => {
-          expect(focusSpy).not.toHaveBeenCalled()
-          resolve()
-        }, 15)
-      })
+      await vi.advanceTimersByTimeAsync(15)
+      expect(focusSpy).not.toHaveBeenCalled()
     })
 
     it('should handle overflow values correctly', async () => {
@@ -200,18 +183,12 @@ describe('Auto-Advance Functionality', () => {
       secondsInput.focus = vi.fn()
       secondsInput.select = vi.fn()
 
-      // Enter value that exceeds max (first digit 6 makes it impossible to be valid)
       fireEvent.input(minutesInput, { target: { value: '65' } })
 
-      // Should take first digit only and advance with second digit
       expect(minutesInput.value).toBe('6')
-      await new Promise(resolve => {
-        setTimeout(() => {
-          expect(secondsInput.focus).toHaveBeenCalled()
-          expect(secondsInput.value).toBe('5')
-          resolve()
-        }, 15)
-      })
+      await vi.advanceTimersByTimeAsync(15)
+      expect(secondsInput.focus).toHaveBeenCalled()
+      expect(secondsInput.value).toBe('5')
     })
   })
 
@@ -325,13 +302,8 @@ describe('Auto-Advance Functionality', () => {
 
       fireEvent.focus(input)
 
-      // Should select all text after small delay
-      await new Promise(resolve => {
-        setTimeout(() => {
-          expect(input.select).toHaveBeenCalled()
-          resolve()
-        }, 15)
-      })
+      await vi.advanceTimersByTimeAsync(15)
+      expect(input.select).toHaveBeenCalled()
     })
   })
 
@@ -348,16 +320,10 @@ describe('Auto-Advance Functionality', () => {
       secondsInput.focus = vi.fn()
       secondsInput.select = vi.fn()
 
-      // Enter valid minute value
       fireEvent.input(minutesInput, { target: { value: '04' } })
 
-      // Should auto-advance to seconds
-      await new Promise(resolve => {
-        setTimeout(() => {
-          expect(secondsInput.focus).toHaveBeenCalled()
-          resolve()
-        }, 15)
-      })
+      await vi.advanceTimersByTimeAsync(15)
+      expect(secondsInput.focus).toHaveBeenCalled()
     })
 
     it('should handle HH:MM:SS format inputs correctly', async () => {
@@ -371,25 +337,15 @@ describe('Auto-Advance Functionality', () => {
       secondsInput.focus = vi.fn()
       secondsInput.select = vi.fn()
 
-      // Test hour to minute advancement
       fireEvent.input(hoursInput, { target: { value: '01' } })
 
-      await new Promise(resolve => {
-        setTimeout(() => {
-          expect(minutesInput.focus).toHaveBeenCalled()
-          resolve()
-        }, 15)
-      })
+      await vi.advanceTimersByTimeAsync(15)
+      expect(minutesInput.focus).toHaveBeenCalled()
 
-      // Test minute to second advancement
       fireEvent.input(minutesInput, { target: { value: '23' } })
 
-      await new Promise(resolve => {
-        setTimeout(() => {
-          expect(secondsInput.focus).toHaveBeenCalled()
-          resolve()
-        }, 15)
-      })
+      await vi.advanceTimersByTimeAsync(15)
+      expect(secondsInput.focus).toHaveBeenCalled()
     })
   })
 
