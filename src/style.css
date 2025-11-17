@@ -196,39 +196,50 @@ body {
   padding: 0.75rem 1rem;
   font-weight: 500;
   border-radius: 0.5rem;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   border: none;
   cursor: pointer;
   min-height: 44px;
   text-decoration: none;
   outline: none;
+  position: relative;
+  overflow: hidden;
 }
 
 .btn:focus {
-  outline: 2px solid #c7d2fe;
+  outline: 3px solid var(--color-interactive-primary-focus);
   outline-offset: 2px;
+}
+
+.btn:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
 }
 
 .btn-primary {
   background-color: var(--interactive-primary);
   color: var(--text-inverse);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
 
 .btn-primary:hover {
   background-color: var(--interactive-primary-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px -4px rgba(79, 70, 229, 0.3), 0 4px 8px -2px rgba(0, 0, 0, 0.1);
 }
 
 .btn-secondary {
   background-color: var(--bg-secondary);
   color: var(--text-primary);
   border: 1px solid var(--border);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-secondary:hover {
   background-color: var(--bg-tertiary);
   border-color: var(--border-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .btn-ghost {
@@ -244,7 +255,7 @@ body {
 .btn-icon {
   padding: 0.5rem;
   border-radius: 0.5rem;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--text-tertiary);
   min-width: 44px;
   min-height: 44px;
@@ -259,6 +270,12 @@ body {
 .btn-icon:hover {
   background-color: var(--bg-secondary);
   color: var(--text-primary);
+  transform: scale(1.05);
+}
+
+.btn-icon:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease;
 }
 
 .btn-full {
@@ -271,22 +288,25 @@ body {
   padding: 0.75rem 1rem;
   font-weight: 500;
   border-radius: 0.5rem;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--text-tertiary);
   background: transparent;
   border: none;
   cursor: pointer;
+  position: relative;
 }
 
 .btn-tab:hover:not(.active) {
   background-color: var(--bg-secondary);
   color: var(--text-secondary);
+  transform: translateY(-1px);
 }
 
 .btn-tab.active {
   background-color: var(--bg-primary);
   color: var(--interactive-primary);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(79, 70, 229, 0.1);
+  transform: translateY(-1px);
 }
 
 /* Tab-style buttons for calculate and clear */
@@ -347,31 +367,34 @@ body {
   font-weight: 500;
   font-size: 0.875rem;
   border-radius: 0.5rem;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--color-text-secondary);
   background-color: var(--color-surface);
-  border: 1px solid var(--color-border-subtle);
+  border: 2px solid var(--color-border-subtle);
   cursor: pointer;
   min-height: 44px;
   outline: none;
   text-align: center;
+  position: relative;
+  overflow: hidden;
 }
 
 .quick-preset-btn:hover {
   background-color: var(--color-interactive-primary);
   color: var(--color-surface);
   border-color: var(--color-interactive-primary);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 12px -2px rgba(79, 70, 229, 0.3), 0 3px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .quick-preset-btn:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.98);
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: transform 0.1s ease;
 }
 
 .quick-preset-btn:focus {
-  outline: 2px solid var(--color-interactive-primary);
+  outline: 3px solid var(--color-interactive-primary-focus);
   outline-offset: 2px;
 }
 
@@ -380,8 +403,8 @@ body {
   width: 100%;
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  transition: all 0.2s ease;
+  border: 2px solid var(--border);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   background-color: var(--bg-primary);
   color: var(--text-primary);
   min-height: 48px;
@@ -391,15 +414,18 @@ body {
 
 .input-base::placeholder {
   color: var(--text-tertiary);
+  transition: color 0.2s ease;
 }
 
 .input-base:hover:not(:focus) {
   border-color: var(--border-hover);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
 }
 
 .input-base:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-light);
+  box-shadow: 0 0 0 4px var(--primary-light), 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
 .input-base.error {
@@ -471,8 +497,8 @@ body {
   text-align: center;
   font-weight: 700;
   border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  transition: all 0.2s ease;
+  border: 2px solid var(--border);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   background-color: var(--bg-primary);
   color: var(--text-primary);
   padding: 0.75rem 0.5rem;
@@ -481,10 +507,15 @@ body {
   outline: none;
 }
 
+.input-segmented:hover:not(:focus) {
+  border-color: var(--border-hover);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
 .input-segmented:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-light);
-  transform: scale(1.02);
+  box-shadow: 0 0 0 4px var(--primary-light), 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  transform: scale(1.03);
 }
 
 .input-separator {
@@ -557,6 +588,7 @@ body {
   padding: 1rem;
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease-out;
 }
 
 .modal-container.hidden {
@@ -570,9 +602,21 @@ body {
   border-radius: 0.75rem;
   background-color: var(--bg-primary);
   border: 1px solid var(--border);
-  box-shadow: var(--shadow-xl);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   max-height: calc(100vh - 2rem);
   overflow-y: auto;
+  animation: modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* Modal size variants */
@@ -610,7 +654,7 @@ body {
 .modal-close {
   padding: 0.25rem;
   border-radius: 0.5rem;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--text-tertiary);
   background: transparent;
   border: none;
@@ -620,6 +664,12 @@ body {
 .modal-close:hover {
   background-color: var(--bg-secondary);
   color: var(--text-primary);
+  transform: scale(1.1) rotate(90deg);
+}
+
+.modal-close:active {
+  transform: scale(0.95) rotate(90deg);
+  transition: transform 0.1s ease;
 }
 
 .modal-body {
@@ -733,12 +783,13 @@ body {
   /* Negative horizontal margin to align content with form elements */
   margin-left: -10.5px;
   margin-right: -10.5px;
-  border-radius: 0.5rem;
-  transition: all 0.3s ease;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border-subtle);
+  border-radius: 0.75rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(135deg, var(--color-surface) 0%, color-mix(in srgb, var(--color-surface) 98%, var(--color-interactive-primary)) 100%);
+  border: 2px solid var(--color-border-subtle);
   opacity: 0;
   transform: scale(0.95);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 /* On small screens and up, increase spacing to align with layout */
@@ -752,6 +803,7 @@ body {
 #result.show {
   opacity: 1;
   transform: scale(1);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(79, 70, 229, 0.05);
 }
 
 #result.hidden {
@@ -759,11 +811,26 @@ body {
 }
 
 /* Action buttons in result area */
+#save-pr-btn,
+#update-pr-btn,
+#copy-result-btn {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 #save-pr-btn:hover,
 #update-pr-btn:hover,
 #copy-result-btn:hover {
   background-color: var(--bg-secondary);
   color: var(--text-primary);
+  transform: scale(1.1);
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+}
+
+#save-pr-btn:active,
+#update-pr-btn:active,
+#copy-result-btn:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease;
 }
 
 /* Spacing utilities */
@@ -964,5 +1031,73 @@ body {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Bounce-in animation for results */
+.animate-bounce-in {
+  animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(20px);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.05) translateY(-5px);
+  }
+  70% {
+    transform: scale(0.98) translateY(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Icon transition animations */
+.animate-icon-transition-in {
+  animation: iconFadeIn 0.2s ease-out;
+}
+
+.animate-icon-transition-out {
+  animation: iconFadeOut 0.2s ease-out;
+}
+
+@keyframes iconFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) rotate(-10deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes iconFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8) rotate(10deg);
+  }
+}
+
+/* Success pulse animation */
+.animate-pulse-success {
+  animation: pulseSuccess 0.6s ease-in-out;
+}
+
+@keyframes pulseSuccess {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0.3);
   }
 }
