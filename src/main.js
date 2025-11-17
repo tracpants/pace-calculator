@@ -320,6 +320,29 @@ function setupPresetDropdowns() {
 	});
 }
 
+function setupQuickPresets() {
+	document.querySelectorAll('.quick-preset-btn').forEach(button => {
+		button.addEventListener('click', () => {
+			const presetKey = button.dataset.quickPreset;
+			const tabName = button.dataset.tab;
+			const raceDistances = getRaceDistances();
+
+			if (presetKey && raceDistances[presetKey]) {
+				const distanceValue = raceDistances[presetKey][state.distanceUnit];
+				const distanceInput = document.getElementById(`${tabName}-distance`);
+
+				if (distanceInput) {
+					distanceInput.value = distanceValue;
+
+					clearFieldErrors();
+
+					updateButtonStateQuietly();
+				}
+			}
+		});
+	});
+}
+
 function setupUnitToggle() {
 	document.querySelectorAll('[data-unit]').forEach(toggle => {
 		toggle.addEventListener('click', () => {
@@ -482,6 +505,7 @@ function initApp() {
 
 	// Setup other UI components
 	setupPresetDropdowns();
+	setupQuickPresets();
 	setupUnitToggle();
 	setupModals();
 	setupRealtimeValidation(); // Add real-time validation
