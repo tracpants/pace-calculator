@@ -49,7 +49,17 @@ class StateManager {
 		this._listeners = new Map();
 		this._persistenceConfig = new Map();
 
+		// Setup persistence configuration before hydration
+		this._setupPersistence();
 		this.hydrate();
+	}
+
+	_setupPersistence() {
+		// Configure which state paths should persist to localStorage
+		this.persist('settings.distanceUnit', 'pace-calculator-settings-unit');
+		this.persist('settings.theme', 'pace-calculator-settings-theme');
+		this.persist('settings.defaultDistance', 'pace-calculator-settings-default-distance');
+		this.persist('settings.accentColor', 'pace-calculator-settings-accent-color');
 	}
 
 	_initializeState() {
@@ -261,9 +271,14 @@ class StateManager {
 	persist(path, storageKey) {
 		this._persistenceConfig.set(path, storageKey);
 
-		const currentValue = this.get(path);
-		if (currentValue !== null && currentValue !== undefined) {
-			this._persistValue(path, currentValue);
+		// Only persist current value if there's no existing stored value
+		// This prevents overwriting existing localStorage during initialization
+		const existing = localStorage.getItem(storageKey);
+		if (!existing) {
+			const currentValue = this.get(path);
+			if (currentValue !== null && currentValue !== undefined) {
+				this._persistValue(path, currentValue);
+			}
 		}
 	}
 
@@ -338,11 +353,6 @@ class StateManager {
 }
 
 const stateManager = new StateManager();
-
-stateManager.persist('settings.distanceUnit', 'pace-calculator-settings-unit');
-stateManager.persist('settings.theme', 'pace-calculator-settings-theme');
-stateManager.persist('settings.defaultDistance', 'pace-calculator-settings-default-distance');
-stateManager.persist('settings.accentColor', 'pace-calculator-settings-accent-color');
 
 export { stateManager };
 export default stateManager;

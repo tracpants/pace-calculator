@@ -719,12 +719,10 @@ export function initSettings() {
 	// Migrate legacy settings before applying
 	migrateLegacySettings();
 
-	const theme = stateManager.get('settings.theme');
 	const distanceUnit = stateManager.get('settings.distanceUnit');
 	const accentColor = stateManager.get('settings.accentColor');
 
-	// Apply initial settings
-	applyTheme(theme);
+	// Apply initial settings (theme will be applied in main.js after all initialization)
 	applyDistanceUnit(distanceUnit);
 	applyAccentColor(accentColor);
 
