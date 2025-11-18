@@ -5,20 +5,20 @@ import { getSegmentedPaceValue } from "./utils/time-utils.js";
 function generateRaceSplits() {
   if (!state.lastResult) return null;
 
-  const { type } = state.lastResult;
+  const { type, data } = state.lastResult;
   let distance;
   let pacePerUnit;
 
   if (type === "pace") {
     const distInput = document.getElementById("pace-distance");
     distance = parseFloat(distInput?.value);
-    pacePerUnit = state.distanceUnit === "km" ? state.lastResult.pacePerKm : state.lastResult.pacePerMile;
+    pacePerUnit = state.distanceUnit === "km" ? data.pacePerKm : data.pacePerMile;
   } else if (type === "time") {
     const distInput = document.getElementById("time-distance");
     distance = parseFloat(distInput?.value);
     pacePerUnit = getSegmentedPaceValue("time-pace");
   } else if (type === "distance") {
-    distance = state.distanceUnit === "km" ? state.lastResult.km : state.lastResult.miles;
+    distance = state.distanceUnit === "km" ? data.km : data.miles;
     pacePerUnit = getSegmentedPaceValue("distance-pace");
   } else {
     return null;
