@@ -17,6 +17,9 @@ const INPUT_CONFIGS = {
 // Track which inputs have auto-advance enabled
 const autoAdvanceInputs = new Set();
 
+// Track previous values to prevent auto-advance when using arrow keys/spinners
+const previousValues = new WeakMap();
+
 /**
  * Initialize auto-advance for all segmented time inputs
  */
@@ -92,8 +95,11 @@ function setupAutoAdvanceInput(input, segment, prefix, segments, segmentIndex) {
 		handleBackspace(e, input, segment, prefix, segments, segmentIndex);
 	});
 	
-	// Focus event to select all text for easy editing
+	// Focus event to select all text for easy editing and track previous value
 	input.addEventListener('focus', e => {
+		// Store the current value as the previous value for this input
+		previousValues.set(e.target, e.target.value);
+
 		// Small delay to ensure the focus has fully completed
 		setTimeout(() => {
 			e.target.select();
@@ -117,16 +123,20 @@ function setupAutoAdvanceInput(input, segment, prefix, segments, segmentIndex) {
  * @param config
  */
 function handleAutoAdvance(e, input, segment, prefix, segments, segmentIndex, config) {
+	// Get previous value to determine if we should auto-advance
+	const prevValue = previousValues.get(e.target) || '';
+	const prevLength = prevValue.replace(/\D/g, '').length;
+
 	let {value} = e.target;
-	
+
 	// Remove non-numeric characters
 	value = value.replace(/\D/g, '');
-	
+
 	// Enforce max length
 	if (value.length > config.maxLength) {
 		value = value.slice(0, config.maxLength);
 	}
-	
+
 	// Validate max value
 	const numValue = parseInt(value);
 	if (!isNaN(numValue) && numValue > config.maxValue) {
@@ -134,7 +144,7 @@ function handleAutoAdvance(e, input, segment, prefix, segments, segmentIndex, co
 		if (value.length === 2) {
 			const firstDigit = value[0];
 			const secondDigit = value[1];
-			
+
 			// For minutes/seconds: if first digit makes it impossible to be valid (e.g., 6X), use just first digit
 			if (segment === 'minutes' || segment === 'seconds') {
 				if (parseInt(firstDigit) > 5) {
@@ -155,12 +165,23 @@ function handleAutoAdvance(e, input, segment, prefix, segments, segmentIndex, co
 			value = config.maxValue.toString();
 		}
 	}
-	
+
 	// Update the input value
 	e.target.value = value;
-	
-	// Auto-advance if we have a complete valid value
-	if (value.length === config.maxLength && segmentIndex < segments.length - 1) {
+
+	// Store the new value as previous for next input event
+	previousValues.set(e.target, value);
+
+	// Only auto-advance if:
+	// 1. The value is now at max length
+	// 2. We're not at the last segment
+	// 3. The previous value was NOT already at max length (prevents auto-advance on arrow key edits)
+	const shouldAutoAdvance =
+		value.length === config.maxLength &&
+		segmentIndex < segments.length - 1 &&
+		prevLength < config.maxLength;
+
+	if (shouldAutoAdvance) {
 		advanceToNext(input, prefix, segments, segmentIndex);
 	}
 }
