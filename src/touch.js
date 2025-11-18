@@ -1,21 +1,11 @@
-import { state } from "./state.js";
+import { stateManager } from "./state-manager.js";
 
-// Touch gesture configuration
 const SWIPE_CONFIG = {
-	minDistance: 50, // Minimum distance for a swipe
-	maxTime: 300, // Maximum time for a swipe gesture (ms)
-	maxVerticalDistance: 100, // Maximum vertical movement to still be considered horizontal swipe
+	minDistance: 50,
+	maxTime: 300,
+	maxVerticalDistance: 100,
 };
 
-// Touch state
-let touchState = {
-	startX: 0,
-	startY: 0,
-	startTime: 0,
-	isTracking: false,
-};
-
-// Tab order for navigation
 const tabOrder = ['pace', 'time', 'distance'];
 
 // Get next/previous tab
@@ -41,60 +31,50 @@ function isTouchDevice() {
 	return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 }
 
-// Handle touch start
 function handleTouchStart(e) {
 	if (!isTouchDevice()) return;
-	
+
 	const touch = e.touches[0];
-	touchState = {
-		startX: touch.clientX,
-		startY: touch.clientY,
-		startTime: Date.now(),
-		isTracking: true,
-	};
+	stateManager.set('touch.startX', touch.clientX);
+	stateManager.set('touch.startY', touch.clientY);
+	stateManager.set('touch.startTime', Date.now());
+	stateManager.set('touch.isTracking', true);
 }
 
-// Handle touch move
 function handleTouchMove(e) {
-	if (!touchState.isTracking || !isTouchDevice()) return;
-	
-	// Prevent default scrolling behavior during potential swipe
+	if (!stateManager.get('touch.isTracking') || !isTouchDevice()) return;
+
 	const touch = e.touches[0];
-	const deltaX = Math.abs(touch.clientX - touchState.startX);
-	const deltaY = Math.abs(touch.clientY - touchState.startY);
-	
-	// If horizontal movement is greater than vertical, prevent default scroll
+	const deltaX = Math.abs(touch.clientX - stateManager.get('touch.startX'));
+	const deltaY = Math.abs(touch.clientY - stateManager.get('touch.startY'));
+
 	if (deltaX > deltaY && deltaX > 10) {
 		e.preventDefault();
 	}
 }
 
-// Handle touch end
 function handleTouchEnd(e) {
-	if (!touchState.isTracking || !isTouchDevice()) return;
-	
+	if (!stateManager.get('touch.isTracking') || !isTouchDevice()) return;
+
 	const touch = e.changedTouches[0];
 	const endTime = Date.now();
-	const deltaTime = endTime - touchState.startTime;
-	const deltaX = touch.clientX - touchState.startX;
-	const deltaY = Math.abs(touch.clientY - touchState.startY);
-	
-	touchState.isTracking = false;
-	
-	// Check if this qualifies as a swipe
+	const deltaTime = endTime - stateManager.get('touch.startTime');
+	const deltaX = touch.clientX - stateManager.get('touch.startX');
+	const deltaY = Math.abs(touch.clientY - stateManager.get('touch.startY'));
+
+	stateManager.set('touch.isTracking', false);
+
 	if (
 		deltaTime < SWIPE_CONFIG.maxTime &&
 		Math.abs(deltaX) > SWIPE_CONFIG.minDistance &&
 		deltaY < SWIPE_CONFIG.maxVerticalDistance
 	) {
-		// Determine swipe direction
+		const currentTab = stateManager.get('app.currentTab');
 		if (deltaX > 0) {
-			// Swipe right - go to next tab
-			const nextTab = getNextTab(state.currentTab, 'next');
+			const nextTab = getNextTab(currentTab, 'next');
 			switchToTab(nextTab);
 		} else {
-			// Swipe left - go to previous tab
-			const prevTab = getNextTab(state.currentTab, 'prev');
+			const prevTab = getNextTab(currentTab, 'prev');
 			switchToTab(prevTab);
 		}
 	}
