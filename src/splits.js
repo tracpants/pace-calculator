@@ -122,7 +122,9 @@ function scrollToExpandedSplits() {
   const rect = content.getBoundingClientRect();
   const viewportHeight = window.innerHeight;
 
-  if (rect.bottom > viewportHeight) {
+  const isFullyVisible = rect.top >= 0 && rect.bottom <= viewportHeight;
+
+  if (!isFullyVisible && rect.bottom > viewportHeight) {
     const scrollOffset = rect.bottom - viewportHeight + 20;
     const currentScrollTop = window.pageYOffset;
     window.scrollTo({ top: currentScrollTop + scrollOffset, behavior: "smooth" });
