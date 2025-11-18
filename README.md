@@ -1,6 +1,6 @@
 # Pace Calculator
 
-[![Vitest](https://img.shields.io/badge/Tests-115%20passing-brightgreen.svg)](https://vitest.dev/)
+[![Vitest](https://img.shields.io/badge/Tests-115%2B%20passing-brightgreen.svg)](https://vitest.dev/)
 [![Accessibility](https://img.shields.io/badge/WCAG-2.1%20AA-blue.svg)](https://www.w3.org/WAI/WCAG21/quickref/)
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)](https://github.com/actions)
 
@@ -8,14 +8,29 @@ A modern, accessible running pace calculator built with vanilla JavaScript and W
 
 ## Features
 
+### Core Functionality
 - **Tri-directional calculations**: Calculate pace, time, or distance from any two inputs
 - **Flexible input formats**: Decimal, colon notation (MM:SS, H:MM:SS), and space-separated formats
-- **Real-time validation** with immediate visual feedback
-- **Personal Records tracking** with localStorage persistence
+- **Race splits generation**: Automatically calculate kilometer/mile splits for any distance
+- **Quick preset distances**: One-click access to common race distances (5K, 10K, Half Marathon, Marathon)
+- **Real-time validation** with immediate visual feedback and error recovery
+- **Personal Records tracking** with localStorage persistence and CRUD operations
+
+### User Experience
 - **Copy-to-clipboard** functionality for easy result sharing
-- **6 Theme System**: Light, Dark, System, AMOLED, High-Contrast, Monochrome
-- **Accessibility-first**: Screen reader support, keyboard navigation, focus management
-- **Mobile optimized**: Touch-friendly targets, input auto-advancement, responsive design
+- **Input auto-advancement**: Automatic field progression for seamless data entry
+- **Touch-optimized**: Mobile-friendly interactions and gestures
+- **Keyboard navigation**: Full functionality without mouse required
+- **Tab isolation**: Each calculation tab maintains independent state
+
+### Theming & Accessibility
+- **6 Theme System**: Light, Dark, System (auto-detect), AMOLED (pure black), High-Contrast, Monochrome
+- **Semantic design tokens**: Automatic theme adaptation with WCAG AA contrast compliance
+- **Accent color customization**: Multiple color options (disabled for accessibility themes)
+- **OpenDyslexic font**: Optional dyslexia-friendly typeface
+- **Screen reader support**: Comprehensive ARIA labels and live regions
+- **Focus management**: Visible focus indicators and logical tab order
+- **Responsive design**: Works at 200% zoom without horizontal scrolling
 
 ## Technology Stack
 
@@ -46,60 +61,158 @@ npm run preview          # Preview production build
 # Testing
 npm run test             # Unit tests in watch mode
 npm run test:run         # Unit tests once (CI mode)
-npm run test:e2e         # Full E2E test suite
+npm run test:e2e         # Essential E2E tests
+npm run test:all         # Run all tests (unit + E2E)
 
 # Code Quality
 npm run lint             # Run all linting (ESLint + Stylelint)
 npm run lint:fix         # Auto-fix linting issues
 npm run validate:tokens  # Validate design token usage
+npm run validate:all     # Run all validation (lint + tokens)
+
+# Maintenance
+npm run clean            # Remove dist, coverage, test results
+npm run reset            # Clean + remove node_modules + fresh install
+npm run audit:security   # Check for security vulnerabilities
+npm run audit:fix        # Auto-fix security issues
+npm run outdated         # Check for outdated dependencies
+
+# CI/CD
+npm run ci               # Full CI pipeline (install, validate, test, build)
+npm run prepare          # Initialize Husky (runs on npm install)
+
+# Utility Scripts
+./update.sh              # Full update (install, build, test)
+./update.sh --dev        # Start development server
 ```
 
 ## Project Structure
 
 ```
 pace-calculator/
-├── src/                    # Source code
-│   ├── calculator.js       # Core calculation logic and validation
-│   ├── ui.js              # UI interactions and DOM manipulation
-│   ├── state.js           # Application state management
-│   ├── settings.js        # Settings management and modals
-│   ├── pr.js             # Personal records functionality
-│   ├── distances.js      # Distance configuration and utilities
-│   └── style.css         # Global styles and design tokens
-├── tests/                  # Testing infrastructure
-│   ├── unit/              # Unit tests (Vitest)
-│   └── e2e/               # End-to-end tests (Playwright)
-├── index.html             # Main HTML file
-├── package.json           # Project configuration
-└── CLAUDE.md              # Development guidelines
+├── src/                         # Source code
+│   ├── main.js                 # Application entry point and initialization
+│   ├── calculator.js           # Core calculation logic and validation
+│   ├── ui.js                   # UI interactions and DOM manipulation
+│   ├── settings.js             # Settings, modals, and preferences
+│   ├── state.js                # Application state management
+│   ├── pr.js                   # Personal records functionality
+│   ├── distances.js            # Distance configuration and utilities
+│   ├── splits.js               # Race splits generation and display
+│   ├── auto-advance.js         # Input auto-advancement logic
+│   ├── touch.js                # Touch and mobile interactions
+│   ├── dom-ready.js            # DOM initialization utilities
+│   ├── modal-positioning.js    # Modal positioning system
+│   └── style.css               # Global styles and design tokens
+├── tests/                       # Testing infrastructure
+│   ├── unit/                   # Unit tests (Vitest) - 115+ passing tests
+│   │   ├── setup.js           # Test setup and configuration
+│   │   ├── calculator.test.js # Core calculation tests
+│   │   ├── pr.test.js         # Personal records tests
+│   │   ├── tabs.test.js       # Tab functionality tests
+│   │   ├── auto-advance.test.js # Auto-advancement tests
+│   │   ├── splits.test.js     # Race splits tests
+│   │   ├── quick-presets.test.js # Quick preset tests
+│   │   └── default-distance.test.js # Default distance tests
+│   └── e2e/                    # End-to-end tests (Playwright)
+│       ├── smoke.spec.js      # Basic smoke tests
+│       ├── essential-flows.spec.js # Core user workflows
+│       ├── tabs.spec.js       # Tab switching and state
+│       ├── modals.spec.js     # Modal interactions
+│       ├── accessibility.spec.js # A11Y features
+│       └── themes.spec.js     # Theme switching
+├── scripts/                     # Utility scripts
+│   └── validate-tokens.js      # Design token validation script
+├── .husky/                      # Git hooks
+│   └── pre-commit             # Pre-commit validation
+├── .vscode/                     # VSCode configuration
+│   ├── settings.json          # Editor settings
+│   ├── extensions.json        # Recommended extensions
+│   ├── launch.json            # Debug configurations
+│   └── tasks.json             # Build tasks
+├── index.html                   # Main HTML file
+├── package.json                 # Project configuration and dependencies
+├── vite.config.js              # Vite build configuration
+├── vitest.config.js            # Unit test configuration
+├── playwright.config.js        # E2E test configuration
+├── eslint.config.js            # ESLint configuration (flat config)
+├── stylelint.config.cjs        # Stylelint configuration
+├── tailwind.config.js          # TailwindCSS configuration
+├── update.sh                    # Development utility script
+├── CLAUDE.md                    # Development guidelines
+├── AGENTS.md                    # Repository structure for AI agents
+└── README.md                    # Project documentation (this file)
 ```
 
 ## Architecture
 
 ### Design Token System
-Semantic CSS custom properties that automatically adapt to themes:
+Semantic CSS custom properties that automatically adapt to all 6 themes:
 
 ```css
 /* Semantic tokens that change based on theme */
---color-interactive-primary
---color-surface
---color-text-primary
---color-border-subtle
---color-status-success
---color-status-error
+--color-interactive-primary    /* Primary interactive elements */
+--color-surface               /* Background surfaces */
+--color-text-primary          /* Primary text color */
+--color-border-subtle         /* Subtle borders */
+--color-status-success        /* Success states */
+--color-status-error          /* Error states */
 ```
 
-### Modular JavaScript
-- **ES6 modules** with explicit imports/exports
-- **Separation of concerns** - calculator logic, UI, state, and settings in separate modules
-- **Comprehensive input validation** with user-friendly error messages
-- **Event-driven architecture** with custom event system
+**Theme Architecture**:
+- **Base themes**: Light, Dark, System (auto-detects user preference)
+- **Accessibility themes**: AMOLED (pure black for OLED), High-Contrast, Monochrome
+- **Accent colors**: Disabled for accessibility themes to ensure WCAG AA compliance
+- **Automated validation**: `npm run validate:tokens` checks for hardcoded colors
+
+### Modular JavaScript Architecture
+
+**Core Logic Modules**:
+- `calculator.js` - Pure calculation functions, input validation, unit conversions
+- `distances.js` - Distance presets, custom distance validation, utilities
+- `splits.js` - Race split calculations based on pace and distance
+
+**UI Layer Modules**:
+- `ui.js` - Main UI controller, tab switching, result display, clipboard operations
+- `auto-advance.js` - Automatic input field advancement for better UX
+- `touch.js` - Touch-specific interactions and mobile optimizations
+- `modal-positioning.js` - Dynamic modal positioning system
+
+**State & Settings Modules**:
+- `state.js` - Centralized application state (minimal, focused)
+- `settings.js` - User preferences, theme management, localStorage persistence
+- `pr.js` - Personal records CRUD operations and display
+
+**Infrastructure Modules**:
+- `main.js` - App initialization, event listener setup, module coordination
+- `dom-ready.js` - DOM readiness utilities and initialization helpers
+
+### Event System
+Custom event-driven architecture for loose coupling between modules:
+
+```javascript
+// Cross-module communication
+document.dispatchEvent(new CustomEvent('calculation-complete', {
+  detail: { result, type }
+}));
+```
 
 ### Testing Strategy
-- **115+ unit tests** covering core calculation logic, edge cases, and error conditions
-- **E2E tests** for critical user paths and accessibility features
-- **Automated accessibility auditing** with Lighthouse CI (95% threshold)
-- **Pre-commit hooks** with multi-stage validation
+- **115+ unit tests** with Vitest covering:
+  - Core calculation logic and edge cases
+  - UI interactions and state management
+  - Personal records and splits functionality
+  - Auto-advancement and input validation
+- **Comprehensive E2E tests** with Playwright covering:
+  - Critical user workflows (smoke tests)
+  - Tab switching and state preservation
+  - Modal interactions and keyboard navigation
+  - Theme switching and accessibility features
+- **Pre-commit hooks** with Husky:
+  - Design token validation (non-blocking)
+  - Linting with ESLint and Stylelint
+  - Build verification on config changes
+- **CI/CD pipeline**: Full validation, testing, and build process
 
 ## Development Guidelines
 
