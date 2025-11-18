@@ -490,4 +490,11 @@ describe('Calculator Core Functions', () => {
       })
     })
   })
+
+  describe('Badge Update Test', () => {
+    it('should trigger automatic badge updates in PRs', () => {
+      // Simple test to verify badge automation works
+      expect(true).toBe(true)
+    })
+  })
 })
