@@ -67,7 +67,6 @@ export const ErrorManager = {
 		const errorElement = document.getElementById(`${inputId}-error`);
 
 		if (input) {
-			input.classList.remove('valid');
 			input.classList.add('error');
 		}
 
@@ -83,7 +82,6 @@ export const ErrorManager = {
 
 		if (input) {
 			input.classList.remove('error');
-			input.classList.add('valid');
 		}
 
 		if (errorElement) {
@@ -97,7 +95,7 @@ export const ErrorManager = {
 		const errorElement = document.getElementById(`${inputId}-error`);
 
 		if (input) {
-			input.classList.remove('error', 'valid');
+			input.classList.remove('error');
 		}
 
 		if (errorElement) {
@@ -112,7 +110,6 @@ export const ErrorManager = {
 		['hours', 'minutes', 'seconds'].forEach(segment => {
 			const input = document.getElementById(`${prefix}-${segment}`);
 			if (input) {
-				input.classList.remove('valid');
 				input.classList.add('error');
 			}
 		});
@@ -130,7 +127,6 @@ export const ErrorManager = {
 			const input = document.getElementById(`${prefix}-${segment}`);
 			if (input) {
 				input.classList.remove('error');
-				input.classList.add('valid');
 			}
 		});
 
@@ -146,7 +142,7 @@ export const ErrorManager = {
 		['hours', 'minutes', 'seconds'].forEach(segment => {
 			const input = document.getElementById(`${prefix}-${segment}`);
 			if (input) {
-				input.classList.remove('error', 'valid');
+				input.classList.remove('error');
 			}
 		});
 

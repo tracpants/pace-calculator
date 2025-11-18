@@ -835,7 +835,6 @@ describe('UI Module Extended Coverage', () => {
       state.currentTab = 'pace';
       const distanceInput = document.getElementById('pace-distance');
       distanceInput.value = '5';
-      distanceInput.classList.add('valid');
 
       const timeTab = document.querySelector('[data-tab="time"]');
       timeTab.click();
@@ -853,7 +852,6 @@ describe('UI Module Extended Coverage', () => {
       state.currentTab = 'pace';
       const distanceInput = document.getElementById('pace-distance');
       distanceInput.value = '5';
-      distanceInput.classList.add('valid');
 
       const timeTab = document.querySelector('[data-tab="time"]');
       timeTab.click();
@@ -865,7 +863,7 @@ describe('UI Module Extended Coverage', () => {
 
       await new Promise(resolve => setTimeout(resolve, 100));
 
-      expect(distanceInput.classList.contains('valid')).toBe(true);
+      expect(distanceInput.value).toBe('5');
     });
 
     it('should save preset selection when switching tabs', async () => {

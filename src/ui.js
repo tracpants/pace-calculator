@@ -312,8 +312,7 @@ function saveCurrentTabState() {
 		updates.inputs[input.id] = input.value;
 		// Save validation states
 		updates.validationStates[input.id] = {
-			hasError: input.classList.contains('error'),
-			hasValid: input.classList.contains('valid')
+			hasError: input.classList.contains('error')
 		};
 	});
 
@@ -350,11 +349,9 @@ function restoreTabState(tabName) {
 	Object.entries(tabState.validationStates).forEach(([inputId, validationState]) => {
 		const input = document.getElementById(inputId);
 		if (input) {
-			input.classList.remove('error', 'valid');
+			input.classList.remove('error');
 			if (validationState.hasError) {
 				input.classList.add('error');
-			} else if (validationState.hasValid) {
-				input.classList.add('valid');
 			}
 		}
 	});
@@ -963,7 +960,7 @@ function clearCurrentTab() {
 	// Clear only inputs in the current tab (preserving placeholders)
 	currentSection.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
 		input.value = '';
-		input.classList.remove('error', 'valid');
+		input.classList.remove('error');
 	});
 
 	// Clear validation errors for current tab only
