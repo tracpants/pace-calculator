@@ -3,6 +3,8 @@
  * Handles all timing scenarios and provides comprehensive error handling
  */
 
+import { logger } from "./utils/logger.js";
+
 /**
  * Wait for DOM to be fully ready
  * @returns {Promise} Resolves when DOM is ready
@@ -80,7 +82,7 @@ export function safeGetElement(id, required = true) {
   }
   
   if (!element) {
-    console.warn(`⚠️ Optional element not found: ${id}`);
+    logger.warn(`⚠️ Optional element not found: ${id}`);
   }
   
   return element;
@@ -110,7 +112,7 @@ export function safeGetElements(ids, allRequired = true) {
     if (allRequired) {
       throw new Error(`Required elements not found: ${missing.join(', ')}`);
     } else {
-      console.warn(`⚠️ Some elements not found: ${missing.join(', ')}`);
+      logger.warn(`⚠️ Some elements not found: ${missing.join(', ')}`);
     }
   }
   
@@ -127,16 +129,16 @@ export function safeGetElements(ids, allRequired = true) {
  */
 export function safeAddEventListener(element, event, handler, elementName = 'unknown', options = {}) {
   if (!element) {
-    console.warn(`⚠️ Cannot add ${event} listener to ${elementName}: element is null`);
+    logger.warn(`⚠️ Cannot add ${event} listener to ${elementName}: element is null`);
     return false;
   }
   
   try {
     element.addEventListener(event, handler, options);
-    console.log(`✅ Added ${event} listener to ${elementName}`);
+    logger.log(`✅ Added ${event} listener to ${elementName}`);
     return true;
   } catch (error) {
-    console.error(`❌ Failed to add ${event} listener to ${elementName}:`, error);
+    logger.error(`❌ Failed to add ${event} listener to ${elementName}:`, error);
     return false;
   }
 }
@@ -155,17 +157,17 @@ export async function robustInit(initFunction, options = {}) {
     retries = 3
   } = options;
   
-  console.log(`🚀 Starting robust initialization for ${name}`);
+  logger.log(`🚀 Starting robust initialization for ${name}`);
   
   try {
     // Wait for DOM to be ready
     await waitForDOM();
-    console.log('✅ DOM is ready');
+    logger.log('✅ DOM is ready');
     
     // Wait for required elements if specified
     if (requiredElements.length > 0) {
       await waitForElements(requiredElements, timeout);
-      console.log('✅ All required elements found');
+      logger.log('✅ All required elements found');
     }
     
     // Small delay to ensure everything is settled
@@ -173,15 +175,15 @@ export async function robustInit(initFunction, options = {}) {
     
     // Call the initialization function
     const result = await initFunction();
-    console.log(`✅ ${name} initialized successfully`);
+    logger.log(`✅ ${name} initialized successfully`);
     
     return result;
   } catch (error) {
-    console.error(`❌ ${name} initialization failed:`, error);
+    logger.error(`❌ ${name} initialization failed:`, error);
     
     // Retry logic
     if (retries > 0) {
-      console.log(`🔄 Retrying ${name} initialization (${retries} attempts left)`);
+      logger.log(`🔄 Retrying ${name} initialization (${retries} attempts left)`);
       await new Promise(resolve => setTimeout(resolve, 100));
       return robustInit(initFunction, { ...options, retries: retries - 1 });
     }

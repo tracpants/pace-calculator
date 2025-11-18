@@ -4,8 +4,9 @@ import { applyTheme, initSettings } from "./settings.js";
 import { stateManager } from "./state.js";
 import "./style.css";
 import { initTouch } from "./touch.js";
-import { initUI } from "./ui.js";
 import { initUIEnhancements } from "./ui-enhancements.js";
+import { initUI } from "./ui.js";
+import { logger } from "./utils/logger.js";
 
 /**
  * Main application initialization
@@ -19,37 +20,37 @@ import { initUIEnhancements } from "./ui-enhancements.js";
  */
 
 async function initApp() {
-	console.log('🚀 Initializing Pace Calculator application');
+	logger.log('🚀 Initializing Pace Calculator application');
 
 	try {
 		// Initialize core UI first (tabs, forms, validation, etc.)
 		await initUI();
-		console.log('✅ UI initialized');
+		logger.log('✅ UI initialized');
 
 		// Initialize Lucide icons
 		initIcons();
-		console.log('✅ Icons initialized');
+		logger.log('✅ Icons initialized');
 
 		// Initialize modern UI enhancements (toasts, confetti, animations)
 		initUIEnhancements();
-		console.log('✅ UI enhancements initialized');
+		logger.log('✅ UI enhancements initialized');
 
 		// Initialize settings system (modals, theme, preferences)
 		initSettings();
-		console.log('✅ Settings initialized');
+		logger.log('✅ Settings initialized');
 
 		// Initialize auto-advance for segmented time/pace inputs
 		initAutoAdvance();
-		console.log('✅ Auto-advance initialized');
+		logger.log('✅ Auto-advance initialized');
 
 		// Initialize touch and mobile interactions
 		initTouch();
-		console.log('✅ Touch interactions initialized');
+		logger.log('✅ Touch interactions initialized');
 
 		// Apply saved theme
 		const theme = stateManager.get('settings.theme');
 		applyTheme(theme);
-		console.log(`✅ Theme applied: ${theme}`);
+		logger.log(`✅ Theme applied: ${theme}`);
 
 		// Listen for system theme changes
 		window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', () => {
@@ -63,12 +64,12 @@ async function initApp() {
 		const appElement = document.getElementById('app');
 		if (appElement) {
 			appElement.classList.add('ready');
-			console.log('✅ App ready and visible');
+			logger.log('✅ App ready and visible');
 		}
 
-		console.log('🎉 Pace Calculator initialized successfully');
+		logger.log('🎉 Pace Calculator initialized successfully');
 	} catch (error) {
-		console.error('❌ Failed to initialize Pace Calculator:', error);
+		logger.error('❌ Failed to initialize Pace Calculator:', error);
 		// Don't throw - let the app continue if possible
 	}
 }
