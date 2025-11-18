@@ -2,6 +2,7 @@ import * as calc from "./calculator.js";
 import { findDistanceKey, getDistanceDisplayName, getDistanceSuggestions, getRaceDistances } from "./distances.js";
 import { robustInit, safeAddEventListener, safeGetElements } from "./dom-ready.js";
 import * as pr from "./pr.js";
+import { sanitizeHTML } from "./sanitizer.js";
 import { state } from "./state.js";
 
 
@@ -1081,7 +1082,7 @@ function handleFormSubmit(e) {
 
 function showResult(label, value, type = 'success') {
 	resultLabel.textContent = label;
-	resultValue.innerHTML = value;
+	resultValue.innerHTML = sanitizeHTML(value);
 
 	// Add PR comparison if available for pace calculations
 	if (state.lastResult && state.lastResult.data && state.lastResult.data.prComparison) {
@@ -1119,14 +1120,14 @@ function showResult(label, value, type = 'success') {
 				</div>
 			</div>
 		`;
-		resultValue.innerHTML += comparisonHtml;
+		resultValue.innerHTML += sanitizeHTML(comparisonHtml);
 	}
 
 	// Add race splits accordion for successful calculations
 	if (type === 'success') {
 		const splitsHtml = createSplitsAccordion();
 		if (splitsHtml) {
-			resultValue.innerHTML += splitsHtml;
+			resultValue.innerHTML += sanitizeHTML(splitsHtml);
 		}
 	}
 

@@ -3,6 +3,7 @@ import { getDistanceDisplayName, getDistanceValue, getRaceDistances } from "./di
 import * as pr from "./pr.js";
 import { state } from "./state.js";
 import { populatePresetSelects, updateCalculatedResult, updateHintTexts } from "./ui.js";
+import { escapeHTML, stripHTML } from "./sanitizer.js";
 
 // Settings preferences with defaults
 const defaultSettings = {
@@ -431,20 +432,28 @@ function populatePRList() {
 	prEmptyState.classList.add('hidden');
 	prListActions.classList.remove('hidden');
 
-	prList.innerHTML = prs.map(prRecord => `
+	prList.innerHTML = prs.map(prRecord => {
+		const displayName = escapeHTML(prRecord.displayName || `${prRecord.distance} ${prRecord.unit}`);
+		const timeFormatted = escapeHTML(prRecord.timeFormatted);
+		const dateFormatted = prRecord.dateSet ? escapeHTML(pr.formatDate(prRecord.dateSet)) : '';
+		const notesEscaped = escapeHTML(prRecord.notes || '');
+		const notesForData = escapeHTML(prRecord.notes || '');
+		const dateForData = escapeHTML(prRecord.dateSet || '');
+
+		return `
 		<div class="flex justify-between items-center p-2 rounded-lg" style="background-color: var(--color-surface-secondary);">
 			<div>
 				<div>
 					<span class="font-medium modal-title">
-						${prRecord.displayName || `${prRecord.distance} ${prRecord.unit}`}
+						${displayName}
 					</span>
-					<span class="ml-2 modal-text">${prRecord.timeFormatted}</span>
+					<span class="ml-2 modal-text">${timeFormatted}</span>
 				</div>
 				${prRecord.dateSet ? `<div class="text-xs mt-1 modal-text-tertiary">
-					${pr.formatDate(prRecord.dateSet)}
+					${dateFormatted}
 				</div>` : ''}
 				${prRecord.notes ? `<div class="text-xs mt-1 italic modal-text-tertiary">
-					"${prRecord.notes}"
+					"${notesEscaped}"
 				</div>` : ''}
 			</div>
 			<div class="flex gap-1">
@@ -452,8 +461,8 @@ function populatePRList() {
 						data-distance="${prRecord.distance}"
 						data-unit="${prRecord.unit}"
 						data-time="${prRecord.timeSeconds}"
-						data-date="${prRecord.dateSet || ''}"
-						data-notes="${prRecord.notes || ''}"
+						data-date="${dateForData}"
+						data-notes="${notesForData}"
 						title="Edit PR">
 					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
@@ -469,7 +478,8 @@ function populatePRList() {
 				</button>
 			</div>
 		</div>
-	`).join('');
+		`;
+	}).join('');
 
 	// Add event listeners to edit/delete buttons
 	prList.querySelectorAll('.edit-pr-btn').forEach(btn => {
@@ -591,7 +601,8 @@ function handlePRFormSubmit(e) {
 
 	// Save the new/updated PR
 	const date = prDateInput.value || null;
-	const notes = prNotesInput.value.trim() || null;
+	const rawNotes = prNotesInput.value.trim();
+	const notes = rawNotes ? stripHTML(rawNotes) : null;
 	const success = pr.setPR(validation.distance, validation.unit, validation.timeSeconds, date, notes);
 
 	if (success) {
