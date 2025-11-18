@@ -4,6 +4,7 @@ import { stateManager } from "./state.js";
 import "./style.css";
 import { initTouch } from "./touch.js";
 import { initUI } from "./ui.js";
+import { initUIEnhancements } from "./ui-enhancements.js";
 
 /**
  * Main application initialization
@@ -23,6 +24,10 @@ async function initApp() {
 		// Initialize core UI first (tabs, forms, validation, etc.)
 		await initUI();
 		console.log('✅ UI initialized');
+
+		// Initialize modern UI enhancements (toasts, confetti, animations)
+		initUIEnhancements();
+		console.log('✅ UI enhancements initialized');
 
 		// Initialize settings system (modals, theme, preferences)
 		initSettings();

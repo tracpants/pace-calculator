@@ -7,6 +7,7 @@ import { createSplitsAccordion, setupSplitsAccordion } from "./splits.js";
 import { state, stateManager } from "./state.js";
 import { getSegmentedTimeValue, getSegmentedPaceValue, validateSegmentedTime, validateSegmentedPace } from "./utils/time-utils.js";
 import { ErrorManager, validateInput } from "./utils/validation-utils.js";
+import { showToast, celebrateSuccess } from "./ui-enhancements.js";
 
 // DOM Elements (will be initialized in initUI)
 let form, resultDiv, resultLabel, resultValue, loadingDiv, copyBtn, copyIcon, checkIcon, copyFeedback, savePrBtn, updatePrBtn;
@@ -431,6 +432,9 @@ function generateComprehensiveResult() {
 }
 
 function animateCopySuccess() {
+        // Show toast notification
+        showToast('📋 Result copied to clipboard', 'success');
+
         // Animate copy icon out
         copyIcon.classList.add('animate-icon-transition-out');
         copyBtn.classList.add('animate-pulse-success');
@@ -715,7 +719,9 @@ function handleFormSubmit(e) {
 		showResult(label, value, 'success');
 	} catch (err) {
 		hideLoading();
-		showResult('Error', err.message || "Please check your inputs. All fields are required.", 'error');
+		const errorMessage = err.message || "Please check your inputs. All fields are required.";
+		showResult('Error', errorMessage, 'error');
+		showToast(errorMessage, 'error');
 	}
 }, 300); // 300ms delay for loading effect
 }
@@ -871,7 +877,12 @@ function handleSavePR() {
 	const success = pr.setPR(distance, state.distanceUnit, timeSeconds);
 
 	if (success) {
-		// Show brief success feedback
+		// Show success toast and celebration
+		const distanceName = pr.getDistanceName(distance, state.distanceUnit);
+		showToast(`🎉 New PR saved for ${distanceName}!`, 'success');
+		celebrateSuccess();
+
+		// Show brief success feedback on button
 		savePrBtn.style.color = 'var(--color-status-success)';
 		savePrBtn.title = 'Personal Record Saved!';
 
@@ -896,7 +907,12 @@ function handleUpdatePR() {
 	const success = pr.setPR(distance, state.distanceUnit, timeSeconds);
 
 	if (success) {
-		// Show brief success feedback
+		// Show success toast and celebration
+		const distanceName = pr.getDistanceName(distance, state.distanceUnit);
+		showToast(`🚀 PR updated for ${distanceName}!`, 'success');
+		celebrateSuccess();
+
+		// Show brief success feedback on button
 		updatePrBtn.style.color = 'var(--color-status-success)';
 		updatePrBtn.title = 'Personal Record Updated!';
 
