@@ -3,9 +3,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { state } from '../../src/state.js';
 
 vi.mock('../../src/settings.js', () => ({
-	applyDefaultDistance: vi.fn(),
-	loadSettings: vi.fn(() => ({ distanceUnit: 'km' })),
-	saveSettings: vi.fn()
+	applyDefaultDistance: vi.fn()
 }));
 
 vi.mock('../../src/calculator.js', () => ({

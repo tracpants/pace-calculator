@@ -6,14 +6,6 @@ import { state, stateManager } from "./state.js";
 import { populatePresetSelects, updateCalculatedResult, updateHintTexts } from "./ui.js";
 import { validateSegmentedTime, setSegmentedTimeValue } from "./utils/time-utils.js";
 
-// Settings preferences with defaults
-const defaultSettings = {
-	distanceUnit: 'km',
-	theme: 'system', // 'light', 'dark', or 'system'
-	defaultDistance: null, // no default distance initially (user can set their preference)
-	accentColor: 'indigo' // default accent color
-};
-
 let settingsModal, closeSettingsBtn, themeRadios, unitToggles, accentColorOptions, defaultDistanceSelect;
 let menuBtn, menuDropdown, prMenuBtn, settingsMenuBtn;
 let helpBtn, helpModal, closeHelpBtn;
@@ -21,16 +13,37 @@ let prManagementModal, closePrManagementBtn, closePrManagementBtnSecondary, prEm
 let prModal, prModalTitle, addPrBtn, addPrBtnSecondary, closePrModalBtn, cancelPrBtn, prForm, prList, prListActions;
 let prDistanceInput, prUnitSelect, prDateInput, prNotesInput;
 
+/**
+ * Migrate legacy monolithic settings to StateManager
+ * This ensures backward compatibility with existing user data
+ */
+function migrateLegacySettings() {
+	const legacyKey = 'pace-calculator-settings';
+	const savedSettings = localStorage.getItem(legacyKey);
 
-// Load settings from localStorage
-function loadSettings() {
-	const savedSettings = localStorage.getItem('pace-calculator-settings');
-	return savedSettings ? { ...defaultSettings, ...JSON.parse(savedSettings) } : defaultSettings;
-}
+	if (savedSettings) {
+		try {
+			const settings = JSON.parse(savedSettings);
 
-// Save settings to localStorage
-function saveSettings(settings) {
-	localStorage.setItem('pace-calculator-settings', JSON.stringify(settings));
+			if (settings.distanceUnit) {
+				stateManager.set('settings.distanceUnit', settings.distanceUnit);
+			}
+			if (settings.theme) {
+				stateManager.set('settings.theme', settings.theme);
+			}
+			if (settings.defaultDistance !== undefined) {
+				stateManager.set('settings.defaultDistance', settings.defaultDistance);
+			}
+			if (settings.accentColor) {
+				stateManager.set('settings.accentColor', settings.accentColor);
+			}
+
+			localStorage.removeItem(legacyKey);
+			console.log('Successfully migrated legacy settings to StateManager');
+		} catch (e) {
+			console.warn('Failed to migrate legacy settings:', e);
+		}
+	}
 }
 
 // Apply theme based on preference
@@ -78,14 +91,12 @@ function updateAccentColorUI(accentColor) {
 // Handle theme selection with auto-apply
 function handleThemeChange(e) {
 	const selectedTheme = e.target.value;
-	const currentSettings = loadSettings();
 
 	// Apply theme immediately
 	applyTheme(selectedTheme);
 
-	// Save immediately
-	currentSettings.theme = selectedTheme;
-	saveSettings(currentSettings);
+	// Save immediately via StateManager
+	stateManager.set('settings.theme', selectedTheme);
 }
 
 
@@ -97,10 +108,8 @@ function handleAccentColorSelect(e) {
 		updateAccentColorUI(selectedColor);
 		// Apply the color theme
 		applyAccentColor(selectedColor);
-		// Save immediately
-		const currentSettings = loadSettings();
-		currentSettings.accentColor = selectedColor;
-		saveSettings(currentSettings);
+		// Save immediately via StateManager
+		stateManager.set('settings.accentColor', selectedColor);
 	}
 }
 
@@ -148,47 +157,52 @@ function populateDefaultDistanceSelect() {
 	if (!defaultDistanceSelect) return;
 
 	const unit = state.distanceUnit;
+	const unitEscaped = escapeHTML(unit);
 	const raceDistances = getRaceDistances();
 
-	// Build options HTML
-	const options =
-		`<option value="">No default (leave blank)</option>${
-		Object.entries(raceDistances)
-			.map(([key, value]) => {
-				const displayName = getDistanceDisplayName(key);
-				const distance = calc.formatDistance(value[unit], 3);
-				return `<option value="${key}">${displayName} (${distance} ${unit})</option>`;
-			})
-			.join("")}`;
+	// Clear existing options
+	defaultDistanceSelect.innerHTML = '';
 
-	defaultDistanceSelect.innerHTML = options;
+	// Add default "no default" option
+	const defaultOption = document.createElement('option');
+	defaultOption.value = '';
+	defaultOption.textContent = 'No default (leave blank)';
+	defaultDistanceSelect.appendChild(defaultOption);
+
+	// Add race distance options using safe DOM methods
+	Object.entries(raceDistances).forEach(([key, value]) => {
+		const option = document.createElement('option');
+		option.value = key;
+		const displayName = getDistanceDisplayName(key);
+		const distance = calc.formatDistance(value[unit], 3);
+		option.textContent = `${displayName} (${distance} ${unitEscaped})`;
+		defaultDistanceSelect.appendChild(option);
+	});
 }
 
 // Handle default distance selection change
 function handleDefaultDistanceChange(e) {
 	const selectedPreset = e.target.value;
 
-	// Save the setting immediately
-        const currentSettings = loadSettings();
-        currentSettings.defaultDistance = selectedPreset || null;
-        saveSettings(currentSettings);
+	// Save the setting immediately via StateManager
+	stateManager.set('settings.defaultDistance', selectedPreset || null);
 
-        // Immediately apply the selected default distance
-        applyDefaultDistance();
+	// Immediately apply the selected default distance
+	applyDefaultDistance();
 }
 
 // Apply default distance to all distance input fields if set
 function applyDefaultDistance(forceApply = false) {
-	const settings = loadSettings();
+	const defaultDistance = stateManager.get('settings.defaultDistance');
 
-	if (!settings.defaultDistance) {
+	if (!defaultDistance) {
 		console.log('No default distance set');
 		return; // No default set
 	}
 
-	const distance = getDistanceValue(settings.defaultDistance, state.distanceUnit);
+	const distance = getDistanceValue(defaultDistance, state.distanceUnit);
 	if (!distance) {
-		console.log('Invalid preset:', settings.defaultDistance);
+		console.log('Invalid preset:', defaultDistance);
 		return; // Invalid preset
 	}
 
@@ -210,8 +224,8 @@ function applyDefaultDistance(forceApply = false) {
 				const tabPrefix = inputId.split('-')[0]; // 'pace' or 'time'
 				const presetSelect = document.getElementById(`${tabPrefix}-preset`);
 				if (presetSelect) {
-					presetSelect.value = settings.defaultDistance;
-					console.log(`Set ${tabPrefix}-preset to ${settings.defaultDistance}`);
+					presetSelect.value = defaultDistance;
+					console.log(`Set ${tabPrefix}-preset to ${defaultDistance}`);
 				}
 			}
 		} else {
@@ -224,24 +238,27 @@ function applyDefaultDistance(forceApply = false) {
 function openSettings() {
 	closeMenu();
 
-	const settings = loadSettings();
+	const theme = stateManager.get('settings.theme');
+	const distanceUnit = stateManager.get('settings.distanceUnit');
+	const defaultDistance = stateManager.get('settings.defaultDistance');
+	const accentColor = stateManager.get('settings.accentColor');
 
 	// Set current theme radio
 	themeRadios.forEach(radio => {
-		radio.checked = radio.value === settings.theme;
+		radio.checked = radio.value === theme;
 	});
 
 	// Set current unit toggles
-	applyDistanceUnit(settings.distanceUnit);
+	applyDistanceUnit(distanceUnit);
 
 	// Populate and set default distance
 	populateDefaultDistanceSelect();
 	if (defaultDistanceSelect) {
-		defaultDistanceSelect.value = settings.defaultDistance || '';
+		defaultDistanceSelect.value = defaultDistance || '';
 	}
 
 	// Set current accent color
-	updateAccentColorUI(settings.accentColor);
+	updateAccentColorUI(accentColor);
 
 
 
@@ -339,8 +356,8 @@ function handleDocumentClick(e) {
 
 // Listen for system theme changes
 function handleSystemThemeChange(_e) {
-	const settings = loadSettings();
-	if (settings.theme === 'system') {
+	const theme = stateManager.get('settings.theme');
+	if (theme === 'system') {
 		applyTheme('system');
 	}
 }
@@ -431,62 +448,77 @@ function populatePRList() {
 	prEmptyState.classList.add('hidden');
 	prListActions.classList.remove('hidden');
 
-	prList.innerHTML = prs.map(prRecord => {
-		const displayName = escapeHTML(prRecord.displayName || `${prRecord.distance} ${prRecord.unit}`);
-		const timeFormatted = escapeHTML(prRecord.timeFormatted);
-		const dateFormatted = prRecord.dateSet ? escapeHTML(pr.formatDate(prRecord.dateSet)) : '';
-		const notesEscaped = escapeHTML(prRecord.notes || '');
-		const notesForData = escapeHTML(prRecord.notes || '');
-		const dateForData = escapeHTML(prRecord.dateSet || '');
+	// Clear the list
+	prList.innerHTML = '';
 
-		return `
-		<div class="flex justify-between items-center p-2 rounded-lg" style="background-color: var(--color-surface-secondary);">
-			<div>
-				<div>
-					<span class="font-medium modal-title">
-						${displayName}
-					</span>
-					<span class="ml-2 modal-text">${timeFormatted}</span>
-				</div>
-				${prRecord.dateSet ? `<div class="text-xs mt-1 modal-text-tertiary">
-					${dateFormatted}
-				</div>` : ''}
-				${prRecord.notes ? `<div class="text-xs mt-1 italic modal-text-tertiary">
-					"${notesEscaped}"
-				</div>` : ''}
-			</div>
-			<div class="flex gap-1">
-				<button class="edit-pr-btn p-1 rounded"
-						data-distance="${prRecord.distance}"
-						data-unit="${prRecord.unit}"
-						data-time="${prRecord.timeSeconds}"
-						data-date="${dateForData}"
-						data-notes="${notesForData}"
-						title="Edit PR">
-					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-					</svg>
-				</button>
-				<button class="delete-pr-btn p-1 rounded"
-						data-distance="${prRecord.distance}"
-						data-unit="${prRecord.unit}"
-						title="Delete PR">
-					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-					</svg>
-				</button>
-			</div>
-		</div>
-		`;
-	}).join('');
+	// Build PR items using safe DOM methods
+	prs.forEach(prRecord => {
+		const container = document.createElement('div');
+		container.className = 'flex justify-between items-center p-2 rounded-lg';
+		container.style.backgroundColor = 'var(--color-surface-secondary)';
 
-	// Add event listeners to edit/delete buttons
-	prList.querySelectorAll('.edit-pr-btn').forEach(btn => {
-		btn.addEventListener('click', handleEditPR);
-	});
+		// Left section (info)
+		const infoDiv = document.createElement('div');
 
-	prList.querySelectorAll('.delete-pr-btn').forEach(btn => {
-		btn.addEventListener('click', handleDeletePR);
+		// Name and time row
+		const nameTimeDiv = document.createElement('div');
+		const nameSpan = document.createElement('span');
+		nameSpan.className = 'font-medium modal-title';
+		nameSpan.textContent = prRecord.displayName || `${prRecord.distance} ${prRecord.unit}`;
+		const timeSpan = document.createElement('span');
+		timeSpan.className = 'ml-2 modal-text';
+		timeSpan.textContent = prRecord.timeFormatted;
+		nameTimeDiv.appendChild(nameSpan);
+		nameTimeDiv.appendChild(timeSpan);
+		infoDiv.appendChild(nameTimeDiv);
+
+		// Date row (if exists)
+		if (prRecord.dateSet) {
+			const dateDiv = document.createElement('div');
+			dateDiv.className = 'text-xs mt-1 modal-text-tertiary';
+			dateDiv.textContent = pr.formatDate(prRecord.dateSet);
+			infoDiv.appendChild(dateDiv);
+		}
+
+		// Notes row (if exists)
+		if (prRecord.notes) {
+			const notesDiv = document.createElement('div');
+			notesDiv.className = 'text-xs mt-1 italic modal-text-tertiary';
+			notesDiv.textContent = `"${prRecord.notes}"`;
+			infoDiv.appendChild(notesDiv);
+		}
+
+		// Right section (buttons)
+		const buttonsDiv = document.createElement('div');
+		buttonsDiv.className = 'flex gap-1';
+
+		// Edit button
+		const editBtn = document.createElement('button');
+		editBtn.className = 'edit-pr-btn p-1 rounded';
+		editBtn.dataset.distance = String(prRecord.distance);
+		editBtn.dataset.unit = prRecord.unit;
+		editBtn.dataset.time = String(prRecord.timeSeconds);
+		editBtn.dataset.date = prRecord.dateSet || '';
+		editBtn.dataset.notes = prRecord.notes || '';
+		editBtn.title = 'Edit PR';
+		editBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>';
+		editBtn.addEventListener('click', handleEditPR);
+
+		// Delete button
+		const deleteBtn = document.createElement('button');
+		deleteBtn.className = 'delete-pr-btn p-1 rounded';
+		deleteBtn.dataset.distance = String(prRecord.distance);
+		deleteBtn.dataset.unit = prRecord.unit;
+		deleteBtn.title = 'Delete PR';
+		deleteBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>';
+		deleteBtn.addEventListener('click', handleDeletePR);
+
+		buttonsDiv.appendChild(editBtn);
+		buttonsDiv.appendChild(deleteBtn);
+
+		container.appendChild(infoDiv);
+		container.appendChild(buttonsDiv);
+		prList.appendChild(container);
 	});
 }
 
@@ -684,12 +716,17 @@ export function initSettings() {
 	prDateInput = document.getElementById("pr-date");
 	prNotesInput = document.getElementById("pr-notes");
 
-	const settings = loadSettings();
+	// Migrate legacy settings before applying
+	migrateLegacySettings();
+
+	const theme = stateManager.get('settings.theme');
+	const distanceUnit = stateManager.get('settings.distanceUnit');
+	const accentColor = stateManager.get('settings.accentColor');
 
 	// Apply initial settings
-	applyTheme(settings.theme);
-	applyDistanceUnit(settings.distanceUnit);
-	applyAccentColor(settings.accentColor);
+	applyTheme(theme);
+	applyDistanceUnit(distanceUnit);
+	applyAccentColor(accentColor);
 
 	// Event listeners (with null checks)
 	if (closeSettingsBtn) {
@@ -813,4 +850,4 @@ export function initSettings() {
 }
 
 // Export functions for use in other modules
-export { applyDefaultDistance, applyDistanceUnit, applyTheme, loadSettings, saveSettings };
+export { applyDefaultDistance, applyDistanceUnit, applyTheme };

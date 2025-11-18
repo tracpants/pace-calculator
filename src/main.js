@@ -2,9 +2,9 @@ import { initAutoAdvance } from "./auto-advance.js";
 import * as calc from "./calculator.js";
 import { getRaceDistances } from "./distances.js";
 import { sanitizeHTML } from "./sanitizer.js";
-import { applyTheme, initSettings, loadSettings, saveSettings } from "./settings.js";
+import { applyTheme, initSettings } from "./settings.js";
 import { createSplitsAccordion, setupSplitsAccordion } from "./splits.js";
-import { state } from "./state.js";
+import { state, stateManager } from "./state.js";
 import "./style.css";
 
 // ============================================================================
@@ -354,11 +354,7 @@ function setupUnitToggle() {
 		toggle.addEventListener('click', () => {
 			const {unit} = toggle.dataset;
 			state.distanceUnit = unit;
-
-			// Update settings
-			const currentSettings = loadSettings();
-			currentSettings.distanceUnit = unit;
-			saveSettings(currentSettings);
+			// Settings automatically saved via StateManager
 
 			// Update UI
 			document.querySelectorAll('[data-unit]').forEach(t => {
@@ -495,10 +491,11 @@ function initApp() {
                 return;
         }
 
-	// Load and apply settings
-	const settings = loadSettings();
-	applyTheme(settings.theme);
-	state.distanceUnit = settings.distanceUnit;
+	// Load and apply settings from StateManager
+	const theme = stateManager.get('settings.theme');
+	const distanceUnit = stateManager.get('settings.distanceUnit');
+	applyTheme(theme);
+	state.distanceUnit = distanceUnit;
 
 	// Setup event listeners
 	form.addEventListener('submit', handleCalculation);
@@ -524,8 +521,8 @@ function initApp() {
 
         // Listen for system theme changes
         window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', () => {
-                const currentSettings = loadSettings();
-                if (currentSettings.theme === 'system') {
+                const theme = stateManager.get('settings.theme');
+                if (theme === 'system') {
                         applyTheme('system');
                 }
         });

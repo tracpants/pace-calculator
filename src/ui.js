@@ -2,7 +2,7 @@ import * as calc from "./calculator.js";
 import { findDistanceKey, getDistanceDisplayName, getDistanceSuggestions, getRaceDistances } from "./distances.js";
 import { robustInit, safeAddEventListener, safeGetElements } from "./dom-ready.js";
 import * as pr from "./pr.js";
-import { sanitizeHTML } from "./sanitizer.js";
+import { sanitizeHTML, escapeHTML } from "./sanitizer.js";
 import { state } from "./state.js";
 import { getSegmentedTimeValue, getSegmentedPaceValue, validateSegmentedTime, validateSegmentedPace } from "./utils/time-utils.js";
 import { ErrorManager, validateInput } from "./utils/validation-utils.js";
@@ -235,10 +235,18 @@ function updateTabNavigation() {
 function populateAutocomplete() {
 	const datalist = document.getElementById('distance-suggestions');
 	const suggestions = getDistanceSuggestions()[state.distanceUnit];
+	const unitEscaped = escapeHTML(state.distanceUnit);
 
-	datalist.innerHTML = suggestions
-		.map(distance => `<option value="${distance}">${distance} ${state.distanceUnit}</option>`)
-		.join('');
+	// Clear existing options
+	datalist.innerHTML = '';
+
+	// Use safe DOM methods instead of innerHTML
+	suggestions.forEach(distance => {
+		const option = document.createElement('option');
+		option.value = distance;
+		option.textContent = `${distance} ${unitEscaped}`;
+		datalist.appendChild(option);
+	});
 }
 
 function updateHintTexts() {
@@ -738,21 +746,29 @@ function scrollToExpandedSplits() {
 
 function populatePresetSelects() {
 	const unit = state.distanceUnit;
+	const unitEscaped = escapeHTML(unit);
 	const raceDistances = getRaceDistances();
-	const options =
-		`<option value="">-- Pick an event --</option>${
-		Object.entries(raceDistances)
-			.map(
-				([key, value]) =>
-					`<option value="${key}">${getDistanceDisplayName(key)} (${
-						calc.formatDistance(value[unit], 3)
-					} ${unit})</option>`
-			)
-			.join("")}`;
 
-	document
-		.querySelectorAll(".preset-select")
-		.forEach(select => (select.innerHTML = options));
+	document.querySelectorAll(".preset-select").forEach(select => {
+		// Clear existing options
+		select.innerHTML = '';
+
+		// Add default option
+		const defaultOption = document.createElement('option');
+		defaultOption.value = '';
+		defaultOption.textContent = '-- Pick an event --';
+		select.appendChild(defaultOption);
+
+		// Add race distance options using safe DOM methods
+		Object.entries(raceDistances).forEach(([key, value]) => {
+			const option = document.createElement('option');
+			option.value = key;
+			const displayName = getDistanceDisplayName(key);
+			const formattedDistance = calc.formatDistance(value[unit], 3);
+			option.textContent = `${displayName} (${formattedDistance} ${unitEscaped})`;
+			select.appendChild(option);
+		});
+	});
 }
 
 function handleFormSubmit(e) {

@@ -6,6 +6,9 @@ const INPUT_CONFIGS = {
 	seconds: { maxLength: 2, maxValue: 59, prevField: 'minutes' }
 };
 
+// Store listener references for cleanup
+const listenerRegistry = new Map();
+
 /**
  * Initialize auto-advance for all segmented time inputs
  */
@@ -72,31 +75,43 @@ function getAvailableSegments(prefix) {
  */
 function setupAutoAdvanceInput(input, segment, prefix, segments, segmentIndex) {
 	const config = INPUT_CONFIGS[segment];
-	
-	// Input event for auto-advance
-	input.addEventListener('input', e => {
+
+	// Create listener functions
+	const inputHandler = (e) => {
 		handleAutoAdvance(e, input, segment, prefix, segments, segmentIndex, config);
-	});
-	
-	// Keydown event for backspace handling
-	input.addEventListener('keydown', e => {
+	};
+
+	const keydownHandler = (e) => {
 		handleBackspace(e, input, segment, prefix, segments, segmentIndex);
-	});
-	
-	// Focus event to select all text for easy editing and track previous value
-	input.addEventListener('focus', e => {
+	};
+
+	const focusHandler = (e) => {
 		const previousValuesMap = stateManager.get('autoAdvance.previousValues');
 		previousValuesMap.set(e.target, e.target.value);
 
 		setTimeout(() => {
 			e.target.select();
 		}, 10);
-	});
-	
-	// Paste event handling
-	input.addEventListener('paste', e => {
+	};
+
+	const pasteHandler = (e) => {
 		handlePaste(e, input, segment, prefix, segments, segmentIndex);
+	};
+
+	// Store listeners for cleanup
+	const inputId = input.id;
+	listenerRegistry.set(inputId, {
+		input: inputHandler,
+		keydown: keydownHandler,
+		focus: focusHandler,
+		paste: pasteHandler
 	});
+
+	// Add event listeners
+	input.addEventListener('input', inputHandler);
+	input.addEventListener('keydown', keydownHandler);
+	input.addEventListener('focus', focusHandler);
+	input.addEventListener('paste', pasteHandler);
 }
 
 /**
@@ -296,8 +311,31 @@ function advanceToNext(currentInput, prefix, segments, segmentIndex, prefillValu
 	}
 }
 
+/**
+ * Clean up all event listeners and reset state
+ */
 export function cleanupAutoAdvance() {
+	const enabledInputs = stateManager.get('autoAdvance.enabledInputs');
+
+	// Remove all event listeners
+	enabledInputs.forEach(inputId => {
+		const input = document.getElementById(inputId);
+		const listeners = listenerRegistry.get(inputId);
+
+		if (input && listeners) {
+			input.removeEventListener('input', listeners.input);
+			input.removeEventListener('keydown', listeners.keydown);
+			input.removeEventListener('focus', listeners.focus);
+			input.removeEventListener('paste', listeners.paste);
+		}
+	});
+
+	// Clear registry
+	listenerRegistry.clear();
+
+	// Reset state
 	stateManager.reset('autoAdvance.enabledInputs');
+	stateManager.reset('autoAdvance.previousValues');
 }
 
 /**

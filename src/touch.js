@@ -8,6 +8,9 @@ const SWIPE_CONFIG = {
 
 const tabOrder = ['pace', 'time', 'distance'];
 
+// Store listener references for cleanup
+let touchListeners = null;
+
 // Get next/previous tab
 function getNextTab(currentTab, direction) {
 	const currentIndex = tabOrder.indexOf(currentTab);
@@ -93,15 +96,45 @@ function addSwipeIndicator() {
 // Initialize touch gestures
 export function initTouch() {
 	if (!isTouchDevice()) return;
-	
+
+	// Clean up existing listeners first
+	cleanupTouch();
+
 	// Add touch event listeners to the main app container
 	const app = document.getElementById('app');
 	if (app) {
+		// Store listeners for cleanup
+		touchListeners = {
+			element: app,
+			touchstart: handleTouchStart,
+			touchmove: handleTouchMove,
+			touchend: handleTouchEnd
+		};
+
 		app.addEventListener('touchstart', handleTouchStart, { passive: false });
 		app.addEventListener('touchmove', handleTouchMove, { passive: false });
 		app.addEventListener('touchend', handleTouchEnd, { passive: true });
 	}
-	
+
 	// Add visual indicator
 	addSwipeIndicator();
+}
+
+/**
+ * Clean up touch event listeners
+ */
+export function cleanupTouch() {
+	if (touchListeners && touchListeners.element) {
+		const { element, touchstart, touchmove, touchend } = touchListeners;
+		element.removeEventListener('touchstart', touchstart);
+		element.removeEventListener('touchmove', touchmove);
+		element.removeEventListener('touchend', touchend);
+		touchListeners = null;
+	}
+
+	// Reset touch state
+	stateManager.set('touch.isTracking', false);
+	stateManager.set('touch.startX', 0);
+	stateManager.set('touch.startY', 0);
+	stateManager.set('touch.startTime', 0);
 }
