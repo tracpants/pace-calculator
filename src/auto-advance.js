@@ -1,24 +1,10 @@
-// Auto-advance functionality for segmented time inputs
-// Handles automatic advancement between HH:MM:SS and MM:SS input fields
+import { stateManager } from './state-manager.js';
 
-/**
- * Sets up auto-advance functionality for segmented time inputs
- * Auto-advances to next field when user completes current field
- * Handles backspace to go to previous field when current field is empty
- */
-
-// Configuration for different input types
 const INPUT_CONFIGS = {
 	hours: { maxLength: 2, maxValue: 23, nextField: 'minutes' },
 	minutes: { maxLength: 2, maxValue: 59, nextField: 'seconds', prevField: 'hours' },
 	seconds: { maxLength: 2, maxValue: 59, prevField: 'minutes' }
 };
-
-// Track which inputs have auto-advance enabled
-const autoAdvanceInputs = new Set();
-
-// Track previous values to prevent auto-advance when using arrow keys/spinners
-const previousValues = new WeakMap();
 
 /**
  * Initialize auto-advance for all segmented time inputs
@@ -49,10 +35,12 @@ function setupAutoAdvanceGroup(prefix) {
 	segments.forEach((segment, index) => {
 		const inputId = `${prefix}-${segment}`;
 		const input = document.getElementById(inputId);
-		
-		if (input && !autoAdvanceInputs.has(inputId)) {
+
+		const enabledInputs = stateManager.get('autoAdvance.enabledInputs');
+		if (input && !enabledInputs.has(inputId)) {
 			setupAutoAdvanceInput(input, segment, prefix, segments, index);
-			autoAdvanceInputs.add(inputId);
+			enabledInputs.add(inputId);
+			stateManager.set('autoAdvance.enabledInputs', enabledInputs);
 		}
 	});
 }
@@ -97,10 +85,9 @@ function setupAutoAdvanceInput(input, segment, prefix, segments, segmentIndex) {
 	
 	// Focus event to select all text for easy editing and track previous value
 	input.addEventListener('focus', e => {
-		// Store the current value as the previous value for this input
-		previousValues.set(e.target, e.target.value);
+		const previousValuesMap = stateManager.get('autoAdvance.previousValues');
+		previousValuesMap.set(e.target, e.target.value);
 
-		// Small delay to ensure the focus has fully completed
 		setTimeout(() => {
 			e.target.select();
 		}, 10);
@@ -123,29 +110,24 @@ function setupAutoAdvanceInput(input, segment, prefix, segments, segmentIndex) {
  * @param config
  */
 function handleAutoAdvance(e, input, segment, prefix, segments, segmentIndex, config) {
-	// Get previous value to determine if we should auto-advance
-	const prevValue = previousValues.get(e.target) || '';
+	const previousValuesMap = stateManager.get('autoAdvance.previousValues');
+	const prevValue = previousValuesMap.get(e.target) || '';
 	const prevLength = prevValue.replace(/\D/g, '').length;
 
 	let {value} = e.target;
 
-	// Remove non-numeric characters
 	value = value.replace(/\D/g, '');
 
-	// Enforce max length
 	if (value.length > config.maxLength) {
 		value = value.slice(0, config.maxLength);
 	}
 
-	// Validate max value
 	const numValue = parseInt(value);
 	if (!isNaN(numValue) && numValue > config.maxValue) {
-		// If value exceeds max, take the valid part and auto-advance with remainder
 		if (value.length === 2) {
 			const firstDigit = value[0];
 			const secondDigit = value[1];
 
-			// For minutes/seconds: if first digit makes it impossible to be valid (e.g., 6X), use just first digit
 			if (segment === 'minutes' || segment === 'seconds') {
 				if (parseInt(firstDigit) > 5) {
 					value = firstDigit;
@@ -155,7 +137,6 @@ function handleAutoAdvance(e, input, segment, prefix, segments, segmentIndex, co
 					advanceToNext(input, prefix, segments, segmentIndex);
 				}
 			} else if (segment === 'hours') {
-				// For hours: 24+ hours, take first digit and advance with second
 				if (numValue > 23) {
 					value = firstDigit;
 					advanceToNext(input, prefix, segments, segmentIndex, secondDigit);
@@ -166,16 +147,10 @@ function handleAutoAdvance(e, input, segment, prefix, segments, segmentIndex, co
 		}
 	}
 
-	// Update the input value
 	e.target.value = value;
 
-	// Store the new value as previous for next input event
-	previousValues.set(e.target, value);
+	previousValuesMap.set(e.target, value);
 
-	// Only auto-advance if:
-	// 1. The value is now at max length
-	// 2. We're not at the last segment
-	// 3. The previous value was NOT already at max length (prevents auto-advance on arrow key edits)
 	const shouldAutoAdvance =
 		value.length === config.maxLength &&
 		segmentIndex < segments.length - 1 &&
@@ -321,11 +296,8 @@ function advanceToNext(currentInput, prefix, segments, segmentIndex, prefillValu
 	}
 }
 
-/**
- * Cleanup auto-advance functionality (for dynamic content)
- */
 export function cleanupAutoAdvance() {
-	autoAdvanceInputs.clear();
+	stateManager.reset('autoAdvance.enabledInputs');
 }
 
 /**

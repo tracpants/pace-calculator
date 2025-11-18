@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { state } from '../../src/state.js';
+import { state, stateManager } from '../../src/state.js';
 
 describe('State Management', () => {
   beforeEach(() => {
@@ -11,6 +11,7 @@ describe('State Management', () => {
       </form>
     `;
     localStorage.clear();
+    stateManager.resetAll();
     state.currentTab = 'pace';
     state.distanceUnit = 'km';
     state.lastResult = null;

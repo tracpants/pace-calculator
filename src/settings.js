@@ -2,7 +2,7 @@ import * as calc from "./calculator.js";
 import { getDistanceDisplayName, getDistanceValue, getRaceDistances } from "./distances.js";
 import * as pr from "./pr.js";
 import { escapeHTML, stripHTML } from "./sanitizer.js";
-import { state } from "./state.js";
+import { state, stateManager } from "./state.js";
 import { populatePresetSelects, updateCalculatedResult, updateHintTexts } from "./ui.js";
 import { validateSegmentedTime, setSegmentedTimeValue } from "./utils/time-utils.js";
 
@@ -14,14 +14,12 @@ const defaultSettings = {
 	accentColor: 'indigo' // default accent color
 };
 
-// DOM Elements (will be initialized in initSettings)
 let settingsModal, closeSettingsBtn, themeRadios, unitToggles, accentColorOptions, defaultDistanceSelect;
 let menuBtn, menuDropdown, prMenuBtn, settingsMenuBtn;
 let helpBtn, helpModal, closeHelpBtn;
 let prManagementModal, closePrManagementBtn, closePrManagementBtnSecondary, prEmptyState;
 let prModal, prModalTitle, addPrBtn, addPrBtnSecondary, closePrModalBtn, cancelPrBtn, prForm, prList, prListActions;
 let prDistanceInput, prUnitSelect, prDateInput, prNotesInput;
-let editingPR = null;
 
 
 // Load settings from localStorage
@@ -509,26 +507,22 @@ function openPRModal(isEdit = false) {
 function closePRModal() {
 	prModal.classList.add('hidden');
 
-	// Reset form
 	prForm.reset();
-	editingPR = null;
+	stateManager.set('prManagement.editingPR', null);
 
-	// Clear errors
 	document.querySelectorAll('#pr-modal [id$="-error"]').forEach(error => {
 		error.classList.add('hidden');
 		error.textContent = '';
 	});
 
-	// Clear segmented time input errors
 	clearPRTimeErrors();
 
-	// Restore body scroll
 	document.body.style.overflow = '';
 }
 
 function handleEditPR(e) {
 	const btn = e.currentTarget;
-	editingPR = {
+	const editingPR = {
 		distance: parseFloat(btn.dataset.distance),
 		unit: btn.dataset.unit,
 		timeSeconds: parseFloat(btn.dataset.time),
@@ -536,7 +530,8 @@ function handleEditPR(e) {
 		notes: btn.dataset.notes
 	};
 
-	// Populate form
+	stateManager.set('prManagement.editingPR', editingPR);
+
 	prDistanceInput.value = editingPR.distance;
 	prUnitSelect.value = editingPR.unit;
 	setPRSegmentedTimeValue(editingPR.timeSeconds);
@@ -595,19 +590,18 @@ function handlePRFormSubmit(e) {
 	const validation = validatePRForm();
 	if (!validation) return;
 
-	// If editing, remove the old PR first
+	const editingPR = stateManager.get('prManagement.editingPR');
 	if (editingPR) {
 		pr.removePR(editingPR.distance, editingPR.unit);
 	}
 
-	// Save the new/updated PR
 	const date = prDateInput.value || null;
 	const rawNotes = prNotesInput.value.trim();
 	const notes = rawNotes ? stripHTML(rawNotes) : null;
 	const success = pr.setPR(validation.distance, validation.unit, validation.timeSeconds, date, notes);
 
 	if (success) {
-		populatePRList(); // Refresh the PR list in management modal
+		populatePRList();
 		closePRModal();
 	} else {
 		alert('Failed to save PR. Please try again.');
