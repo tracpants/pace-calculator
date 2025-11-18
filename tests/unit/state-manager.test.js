@@ -276,7 +276,8 @@ describe('StateManager', () => {
 			localStorage.setItem('pace-calculator-settings-theme', '"dark"');
 
 			// Create a new StateManager instance (simulates app initialization)
-			const newStateManager = new (require('../../src/state-manager.js').stateManager.constructor)();
+			const StateManagerClass = stateManager.constructor;
+			const newStateManager = new StateManagerClass();
 
 			// Verify the existing localStorage value is preserved
 			expect(localStorage.getItem('pace-calculator-settings-theme')).toBe('"dark"');
