@@ -943,7 +943,13 @@ function populatePresetSelects() {
 
 	document
 		.querySelectorAll(".preset-select")
-		.forEach(select => (select.innerHTML = options));
+		.forEach(select => {
+			const currentValue = select.value;
+			select.innerHTML = options;
+			if (currentValue) {
+				select.value = currentValue;
+			}
+		});
 }
 
 function handleFormSubmit(e) {

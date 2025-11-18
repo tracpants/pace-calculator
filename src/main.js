@@ -307,7 +307,11 @@ function setupPresetDropdowns() {
 	}`;
 
 	document.querySelectorAll('.preset-select').forEach(select => {
+		const currentValue = select.value;
 		select.innerHTML = options;
+		if (currentValue) {
+			select.value = currentValue;
+		}
 		select.addEventListener('change', e => {
 			const preset = e.target.value;
 			if (preset) {
@@ -337,6 +341,12 @@ function setupQuickPresets() {
 
 					if (presetSelect) {
 						presetSelect.value = presetKey;
+
+						// Save preset selection to tab state
+						if (!state.tabStates[tabName]) {
+							state.tabStates[tabName] = { inputs: {}, validationStates: {}, result: null, presetSelection: "" };
+						}
+						state.tabStates[tabName].presetSelection = presetKey;
 					}
 
 					clearFieldErrors();
