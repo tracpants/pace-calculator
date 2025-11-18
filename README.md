@@ -1,6 +1,7 @@
 # Pace Calculator
 
-[![Vitest](https://img.shields.io/badge/Tests-115%2B%20passing-brightgreen.svg)](https://vitest.dev/)
+[![Tests](https://img.shields.io/badge/Tests-153%20passing-brightgreen.svg)](https://vitest.dev/)
+[![Coverage](./badges/coverage-total.svg)](https://vitest.dev/)
 [![Accessibility](https://img.shields.io/badge/WCAG-2.1%20AA-blue.svg)](https://www.w3.org/WAI/WCAG21/quickref/)
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)](https://github.com/actions)
 

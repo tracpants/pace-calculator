@@ -96,6 +96,18 @@ jobs:
       - name: Run unit tests
         run: npm run test:run
 
+      - name: Generate coverage badges
+        run: npm run badges
+
+      - name: Commit badge updates
+        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add badges/ README.md || true
+          git diff --staged --quiet || git commit -m "docs: update test and coverage badges [skip ci]"
+          git push || true
+
       - name: Build project
         run: npm run build
 
