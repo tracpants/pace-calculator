@@ -167,13 +167,8 @@ describe('Settings Module', () => {
     it('should apply default distance to empty fields', () => {
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
-      const settings = {
-        distanceUnit: 'km',
-        theme: 'system',
-        defaultDistance: '5k',
-        accentColor: 'indigo'
-      };
-      localStorage.setItem('pace-calculator-settings', JSON.stringify(settings));
+      stateManager.set('settings.distanceUnit', 'km');
+      stateManager.set('settings.defaultDistance', '5k');
 
       applyDefaultDistance();
 
@@ -187,30 +182,20 @@ describe('Settings Module', () => {
     });
 
     it('should not overwrite existing values when forceApply is false', () => {
-      const settings = {
-        distanceUnit: 'km',
-        theme: 'system',
-        defaultDistance: '10k',
-        accentColor: 'indigo'
-      };
-      localStorage.setItem('pace-calculator-settings', JSON.stringify(settings));
+      stateManager.set('settings.distanceUnit', 'km');
+      stateManager.set('settings.defaultDistance', '10k');
 
       const paceDistance = document.getElementById('pace-distance');
       paceDistance.value = '5';
 
       applyDefaultDistance(false);
 
-      expect(paceDistance.value).toBe('5');
+      expect(paceDistance.value).toBe('5');  // Should NOT overwrite non-empty field
     });
 
     it('should overwrite existing values when forceApply is true', () => {
-      const settings = {
-        distanceUnit: 'km',
-        theme: 'system',
-        defaultDistance: '10k',
-        accentColor: 'indigo'
-      };
-      localStorage.setItem('pace-calculator-settings', JSON.stringify(settings));
+      stateManager.set('settings.distanceUnit', 'km');
+      stateManager.set('settings.defaultDistance', '10k');
 
       const paceDistance = document.getElementById('pace-distance');
       paceDistance.value = '5';
@@ -223,13 +208,8 @@ describe('Settings Module', () => {
     it('should apply distance values from default setting', () => {
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
-      const settings = {
-        distanceUnit: 'km',
-        theme: 'system',
-        defaultDistance: 'half-marathon',
-        accentColor: 'indigo'
-      };
-      localStorage.setItem('pace-calculator-settings', JSON.stringify(settings));
+      stateManager.set('settings.distanceUnit', 'km');
+      stateManager.set('settings.defaultDistance', 'half-marathon');
 
       applyDefaultDistance();
 
@@ -245,25 +225,15 @@ describe('Settings Module', () => {
     it('should handle missing input fields gracefully', () => {
       document.body.innerHTML = '';
 
-      const settings = {
-        distanceUnit: 'km',
-        theme: 'system',
-        defaultDistance: '5k',
-        accentColor: 'indigo'
-      };
-      localStorage.setItem('pace-calculator-settings', JSON.stringify(settings));
+      stateManager.set('settings.distanceUnit', 'km');
+      stateManager.set('settings.defaultDistance', '5k');
 
       expect(() => applyDefaultDistance()).not.toThrow();
     });
 
     it('should handle invalid preset gracefully', () => {
-      const settings = {
-        distanceUnit: 'km',
-        theme: 'system',
-        defaultDistance: 'invalid-preset',
-        accentColor: 'indigo'
-      };
-      localStorage.setItem('pace-calculator-settings', JSON.stringify(settings));
+      stateManager.set('settings.distanceUnit', 'km');
+      stateManager.set('settings.defaultDistance', 'invalid-preset');
 
       applyDefaultDistance();
 
@@ -272,14 +242,8 @@ describe('Settings Module', () => {
     });
 
     it('should work with miles unit', () => {
-      const settings = {
-        distanceUnit: 'miles',
-        theme: 'system',
-        defaultDistance: '5k',
-        accentColor: 'indigo'
-      };
-      localStorage.setItem('pace-calculator-settings', JSON.stringify(settings));
-
+      stateManager.set('settings.distanceUnit', 'miles');
+      stateManager.set('settings.defaultDistance', '5k');
       state.distanceUnit = 'miles';
 
       applyDefaultDistance();
