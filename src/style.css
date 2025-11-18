@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "notyf/notyf.min.css";
 
 /* ===================================
    MODERN PACE CALCULATOR DESIGN
@@ -1099,5 +1100,42 @@ body {
   }
   50% {
     box-shadow: 0 0 0 8px rgba(16, 185, 129, 0.3);
+  }
+}
+
+/* Notyf custom styles to match design system */
+.notyf__toast {
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-xl) !important;
+  padding: 1rem 1.25rem !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+.notyf__toast--success {
+  background-color: var(--color-status-success) !important;
+}
+
+.notyf__toast--error {
+  background-color: var(--color-status-error) !important;
+}
+
+.notyf__ripple {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.notyf__wrapper {
+  padding: 0.5rem !important;
+}
+
+@media (max-width: 640px) {
+  .notyf {
+    padding: 0.75rem !important;
+  }
+
+  .notyf__toast {
+    max-width: calc(100vw - 1.5rem) !important;
   }
 }

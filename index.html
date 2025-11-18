@@ -127,9 +127,7 @@
 					<!-- Menu Button -->
 					<div class="relative z-10">
 						<button id="menu-btn" class="btn-icon" aria-label="Open menu" title="Menu" tabindex="0">
-							<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
-							</svg>
+							<i data-lucide="MoreVertical" class="w-6 h-6"></i>
 						</button>
 
 						<!-- Dropdown Menu -->
@@ -137,16 +135,11 @@
 							<div class="dropdown-content rounded-lg shadow-lg overflow-hidden">
 								<div class="py-1">
                                                                         <button id="pr-menu-item" type="button" class="btn-menu flex items-center">
-										<svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24">
-											<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-										</svg>
+										<i data-lucide="Award" class="w-5 h-5 mr-3"></i>
 										<span>Personal Records</span>
 									</button>
                                                                         <button id="settings-menu-item" type="button" class="btn-menu flex items-center">
-										<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-										</svg>
+										<i data-lucide="Settings" class="w-5 h-5 mr-3"></i>
 										<span>Settings</span>
 									</button>
 								</div>
@@ -161,9 +154,7 @@
 
 					<!-- Help Button -->
 					<button id="help-btn" class="relative z-10 btn-icon" aria-label="Open help" title="Help" tabindex="0">
-						<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-						</svg>
+						<i data-lucide="HelpCircle" class="w-6 h-6"></i>
 					</button>
 				</div>
 
@@ -519,12 +510,8 @@
                                                         aria-label="Copy result to clipboard"
                                                         title="Copy result to clipboard"
                                                 >
-                                                <svg id="copy-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                                                </svg>
-                                                <svg id="check-icon" class="w-4 h-4 hidden" style="color: var(--color-status-success);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                                </svg>
+                                                <i id="copy-icon" data-lucide="Copy" class="w-4 h-4"></i>
+                                                <i id="check-icon" data-lucide="Check" class="w-4 h-4 hidden" style="color: var(--color-status-success);"></i>
                                         </button>
                                         <span id="copy-feedback" class="sr-only" role="status" aria-live="polite"></span>
                                 </div>
@@ -547,15 +534,11 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h2 id="help-title">
-					<svg class="modal-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-					</svg>
+					<i data-lucide="HelpCircle" class="modal-icon"></i>
 					How to Use
 				</h2>
 				<button id="close-help" class="modal-close" aria-label="Close help">
-					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-					</svg>
+					<i data-lucide="X" class="w-6 h-6"></i>
 				</button>
 			</div>
 
@@ -601,16 +584,11 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h2 id="settings-title">
-					<svg class="modal-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-					</svg>
+					<i data-lucide="Settings" class="modal-icon"></i>
 					Settings
 				</h2>
 				<button id="close-settings" class="modal-close" aria-label="Close settings">
-					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-					</svg>
+					<i data-lucide="X" class="w-6 h-6"></i>
 				</button>
 			</div>
 
@@ -678,30 +656,22 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h2 id="pr-management-title">
-					<svg class="modal-icon" fill="currentColor" viewBox="0 0 24 24">
-						<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-					</svg>
+					<i data-lucide="Award" class="modal-icon"></i>
 					Personal Records
 				</h2>
 				<button id="close-pr-management" class="modal-close" aria-label="Close Personal Records">
-					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-					</svg>
+					<i data-lucide="X" class="w-6 h-6"></i>
 				</button>
 			</div>
 
 			<div class="modal-body">
 				<!-- Empty State -->
 				<div id="pr-empty-state" class="text-center py-8">
-					<svg class="w-16 h-16 mx-auto mb-4" style="color: var(--color-text-tertiary);" fill="currentColor" viewBox="0 0 24 24">
-						<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-					</svg>
+					<i data-lucide="Award" class="w-16 h-16 mx-auto mb-4" style="color: var(--color-text-tertiary);"></i>
 					<h3 class="text-lg font-semibold modal-text mb-2">No Personal Records Yet</h3>
 					<p class="modal-text-tertiary mb-4">Start tracking your best times by adding your first PR</p>
 					<button id="add-pr-btn" class="btn-primary">
-						<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-						</svg>
+						<i data-lucide="Plus" class="w-4 h-4 mr-2"></i>
 						Add Personal Record
 					</button>
 				</div>
@@ -714,9 +684,7 @@
 				<!-- Add PR Button (when PRs exist) -->
 				<div id="pr-list-actions" class="hidden mt-6 pt-4 border-t text-center" style="border-color: var(--color-border-subtle);">
 					<button id="add-pr-btn-secondary" class="btn-secondary">
-						<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-						</svg>
+						<i data-lucide="Plus" class="w-4 h-4 mr-2"></i>
 						Add Another PR
 					</button>
 				</div>
@@ -734,9 +702,7 @@
 				<div class="modal-header">
 					<h2 id="pr-modal-title">Add Personal Record</h2>
 					<button id="close-pr-modal" class="modal-close" aria-label="Close PR form">
-						<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-						</svg>
+						<i data-lucide="X" class="w-6 h-6"></i>
 					</button>
 				</div>
 
