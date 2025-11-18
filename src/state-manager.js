@@ -104,7 +104,7 @@ class StateManager {
 
 		const cloned = {};
 		for (const key in obj) {
-			if (obj.hasOwnProperty(key)) {
+			if (Object.prototype.hasOwnProperty.call(obj, key)) {
 				cloned[key] = this._deepClone(obj[key]);
 			}
 		}

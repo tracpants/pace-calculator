@@ -107,6 +107,7 @@ describe('StateManager', () => {
 		});
 
 		it('should validate type for string fields', () => {
+			// eslint-disable-next-line custom/no-hardcoded-colors
 			expect(() => stateManager.set('settings.accentColor', 'blue')).not.toThrow();
 			expect(() => stateManager.set('settings.accentColor', 123)).toThrow();
 		});
@@ -141,13 +142,13 @@ describe('StateManager', () => {
 	describe('Update', () => {
 		it('should update value using updater function', () => {
 			stateManager.set('touch.startX', 100);
-			stateManager.update('touch.startX', (current) => current + 50);
+			stateManager.update('touch.startX', current => current + 50);
 			expect(stateManager.get('touch.startX')).toBe(150);
 		});
 
 		it('should pass current value to updater', () => {
 			stateManager.set('app.currentTab', 'pace');
-			stateManager.update('app.currentTab', (current) => {
+			stateManager.update('app.currentTab', current => {
 				expect(current).toBe('pace');
 				return 'time';
 			});
@@ -238,7 +239,9 @@ describe('StateManager', () => {
 		});
 
 		it('should persist accentColor to localStorage', () => {
+			// eslint-disable-next-line custom/no-hardcoded-colors
 			stateManager.set('settings.accentColor', 'blue');
+			// eslint-disable-next-line custom/no-hardcoded-colors
 			expect(localStorage.getItem('pace-calculator-settings-accent-color')).toBe('"blue"');
 		});
 
@@ -246,6 +249,7 @@ describe('StateManager', () => {
 			localStorage.setItem('pace-calculator-settings-unit', '"miles"');
 			localStorage.setItem('pace-calculator-settings-theme', '"dark"');
 			localStorage.setItem('pace-calculator-settings-default-distance', '"10k"');
+			// eslint-disable-next-line custom/no-hardcoded-colors
 			localStorage.setItem('pace-calculator-settings-accent-color', '"purple"');
 
 			stateManager.hydrate();
@@ -253,6 +257,7 @@ describe('StateManager', () => {
 			expect(stateManager.get('settings.distanceUnit')).toBe('miles');
 			expect(stateManager.get('settings.theme')).toBe('dark');
 			expect(stateManager.get('settings.defaultDistance')).toBe('10k');
+			// eslint-disable-next-line custom/no-hardcoded-colors
 			expect(stateManager.get('settings.accentColor')).toBe('purple');
 		});
 
