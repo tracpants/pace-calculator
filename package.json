@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "predev": "node -e \"try { require.resolve('dompurify'); require.resolve('vite') } catch(e) { console.error('\\n❌ Missing dependencies! Run: npm install\\n'); process.exit(1) }\"",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
