@@ -24,13 +24,13 @@ A modern, accessible running pace calculator built with vanilla JavaScript and W
 - **Tab isolation**: Each calculation tab maintains independent state
 
 ### Theming & Accessibility
-- **6 Theme System**: Light, Dark, System (auto-detect), AMOLED (pure black), High-Contrast, Monochrome
+- **3 Theme System**: Light, Dark, System (auto-detect based on OS preference)
 - **Semantic design tokens**: Automatic theme adaptation with WCAG AA contrast compliance
-- **Accent color customization**: Multiple color options (disabled for accessibility themes)
-- **OpenDyslexic font**: Optional dyslexia-friendly typeface
 - **Screen reader support**: Comprehensive ARIA labels and live regions
 - **Focus management**: Visible focus indicators and logical tab order
+- **Keyboard navigation**: Full accessibility with arrow keys, Enter, and Escape
 - **Responsive design**: Works at 200% zoom without horizontal scrolling
+- **WCAG 2.1 AA compliant**: Meets accessibility standards for contrast and usability
 
 ## Technology Stack
 
@@ -147,7 +147,7 @@ pace-calculator/
 ## Architecture
 
 ### Design Token System
-Semantic CSS custom properties that automatically adapt to all 6 themes:
+Semantic CSS custom properties that automatically adapt to all themes:
 
 ```css
 /* Semantic tokens that change based on theme */
@@ -160,9 +160,9 @@ Semantic CSS custom properties that automatically adapt to all 6 themes:
 ```
 
 **Theme Architecture**:
-- **Base themes**: Light, Dark, System (auto-detects user preference)
-- **Accessibility themes**: AMOLED (pure black for OLED), High-Contrast, Monochrome
-- **Accent colors**: Disabled for accessibility themes to ensure WCAG AA compliance
+- **3 themes**: Light, Dark, System (auto-detects OS preference)
+- **Automatic switching**: System theme responds to OS dark mode changes
+- **WCAG AA compliance**: All themes meet 4.5:1 contrast ratio minimum
 - **Automated validation**: `npm run validate:tokens` checks for hardcoded colors
 
 ### Modular JavaScript Architecture
