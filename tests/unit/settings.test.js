@@ -355,10 +355,15 @@ describe('Settings Module', () => {
       };
       localStorage.setItem('pace-calculator-settings', JSON.stringify(savedSettings));
 
-      const { initSettings } = await import('../../src/settings.js');
+      const { initSettings, applyTheme } = await import('../../src/settings.js');
       initSettings();
 
+      // Check that settings were migrated to state
       expect(state.distanceUnit).toBe('miles');
+      expect(stateManager.get('settings.theme')).toBe('dark');
+      
+      // Apply the migrated theme (as would happen in main.js)
+      applyTheme(stateManager.get('settings.theme'));
       expect(document.documentElement.classList.contains('dark')).toBe(true);
     });
   });
