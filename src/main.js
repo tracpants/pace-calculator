@@ -330,9 +330,14 @@ function setupQuickPresets() {
 			if (presetKey && raceDistances[presetKey]) {
 				const distanceValue = raceDistances[presetKey][state.distanceUnit];
 				const distanceInput = document.getElementById(`${tabName}-distance`);
+				const presetSelect = document.getElementById(`${tabName}-preset`);
 
 				if (distanceInput) {
 					distanceInput.value = distanceValue;
+
+					if (presetSelect) {
+						presetSelect.value = presetKey;
+					}
 
 					clearFieldErrors();
 
