@@ -53,6 +53,36 @@ Object.defineProperty(window, 'localStorage', {
   writable: true
 })
 
+// Provide a minimal TouchEvent polyfill for jsdom environment
+if (typeof window.TouchEvent === 'undefined') {
+  class MockTouchEvent extends Event {
+    constructor(type, params = {}) {
+      super(type, params)
+
+      const {
+        touches = [],
+        targetTouches = [],
+        changedTouches = [],
+        altKey = false,
+        metaKey = false,
+        ctrlKey = false,
+        shiftKey = false
+      } = params
+
+      this.touches = touches
+      this.targetTouches = targetTouches
+      this.changedTouches = changedTouches
+      this.altKey = altKey
+      this.metaKey = metaKey
+      this.ctrlKey = ctrlKey
+      this.shiftKey = shiftKey
+    }
+  }
+
+  window.TouchEvent = MockTouchEvent
+  global.TouchEvent = MockTouchEvent
+}
+
 // Reset DOM and localStorage before each test
 beforeEach(() => {
   document.body.innerHTML = ''

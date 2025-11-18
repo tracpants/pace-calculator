@@ -89,35 +89,55 @@
 		</style>
 
 		<!-- Synchronous theme detection script -->
-		<script>
-			(function() {
-				// Get saved theme from new state manager format or legacy format
-				let theme = localStorage.getItem('pace-calculator-settings-theme');
+                <script>
+                        (function() {
+                                const themeKey = 'pace-calculator-settings-theme'
 
-				// Fallback to legacy format for migration
-				if (!theme) {
-					const savedSettings = localStorage.getItem('pace-calculator-settings');
-					if (savedSettings) {
-						try {
-							const settings = JSON.parse(savedSettings);
-							theme = settings.theme || 'system';
+                                const parseTheme = (rawValue) => {
+                                        if (!rawValue) return null
+
+                                        try {
+                                                const parsed = JSON.parse(rawValue)
+                                                return typeof parsed === 'string' ? parsed : null
+                                        } catch (error) {
+                                                // Fallback to handling legacy raw string values (e.g., "dark")
+                                                return typeof rawValue === 'string'
+                                                        ? rawValue.replace(/^"|"$/g, '')
+                                                        : null
+                                        }
+                                }
+
+                                // Get saved theme from new state manager format or legacy format
+                                let theme = parseTheme(localStorage.getItem(themeKey))
+
+                                // Fallback to legacy format for migration
+                                if (!theme) {
+                                        const savedSettings = localStorage.getItem('pace-calculator-settings');
+                                        if (savedSettings) {
+                                                try {
+                                                        const settings = JSON.parse(savedSettings);
+                                                        theme = settings.theme || 'system';
 						} catch (e) {
 							theme = 'system';
 						}
 					} else {
 						theme = 'system';
 					}
-				}
+                                }
 
-				// Apply theme immediately
-				const html = document.documentElement;
-				html.classList.remove('dark');
+                                if (!theme) {
+                                        theme = 'system'
+                                }
 
-				if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-					html.classList.add('dark');
-				}
-			})();
-		</script>
+                                // Apply theme immediately
+                                const html = document.documentElement;
+                                html.classList.remove('dark');
+
+                                if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                                        html.classList.add('dark');
+                                }
+                        })();
+                </script>
 
 	</head>
 	<body>
