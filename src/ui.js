@@ -277,16 +277,8 @@ function updateHintTexts() {
 }
 
 function saveCurrentTabState() {
-	// Ensure tab state exists
-	if (!state.tabStates[state.currentTab]) {
-		state.tabStates[state.currentTab] = {
-			inputs: {},
-			validationStates: {},
-			result: null,
-			presetSelection: ""
-		};
-	}
-	const currentTabState = state.tabStates[state.currentTab];
+	const {tabStates} = state;
+	const currentTabState = tabStates[state.currentTab];
 
 	// Save all input values for current tab
 	const currentSection = document.querySelector(`[data-section="${state.currentTab}"]`);
@@ -312,18 +304,12 @@ function saveCurrentTabState() {
 	if (state.lastResult && state.lastResult.type === state.currentTab) {
 		currentTabState.result = state.lastResult;
 	}
+
+	// Update state through state manager
+	state.tabStates = tabStates;
 }
 
 function restoreTabState(tabName) {
-	// Ensure tab state exists
-	if (!state.tabStates[tabName]) {
-		state.tabStates[tabName] = {
-			inputs: {},
-			validationStates: {},
-			result: null,
-			presetSelection: ""
-		};
-	}
 	const tabState = state.tabStates[tabName];
 	const targetSection = document.querySelector(`[data-section="${tabName}"]`);
 
@@ -634,7 +620,9 @@ function handleFormSubmit(e) {
 				data: { pacePerKm, pacePerMile, prComparison }
 			};
 			state.lastResult = result;
-			state.tabStates[state.currentTab].result = result;
+			const {tabStates} = state;
+			tabStates[state.currentTab].result = result;
+			state.tabStates = tabStates;
 		} else if (state.currentTab === "time") {
 			const distInput = document.getElementById("time-distance");
 
@@ -667,7 +655,9 @@ function handleFormSubmit(e) {
 				data: { totalSeconds }
 			};
 			state.lastResult = result;
-			state.tabStates[state.currentTab].result = result;
+			const {tabStates} = state;
+			tabStates[state.currentTab].result = result;
+			state.tabStates = tabStates;
 		} else if (state.currentTab === "distance") {
 			// Validate inputs
 			const timeValidation = validateSegmentedInput('distance-time', true);
@@ -701,7 +691,9 @@ function handleFormSubmit(e) {
 				data: { km, miles }
 			};
 			state.lastResult = result;
-			state.tabStates[state.currentTab].result = result;
+			const {tabStates} = state;
+			tabStates[state.currentTab].result = result;
+			state.tabStates = tabStates;
 		}
 		hideLoading();
 		showResult(label, value, 'success');
@@ -970,9 +962,9 @@ function clearCurrentTab() {
 		resultDiv.classList.remove('show', 'success', 'error');
 		state.lastResult = null;
 		// Also clear from tab state
-		if (state.tabStates[currentTab]) {
-			state.tabStates[currentTab].result = null;
-		}
+		const {tabStates} = state;
+		tabStates[currentTab].result = null;
+		state.tabStates = tabStates;
 	}
 
 	// Hide loading if visible
@@ -1121,10 +1113,9 @@ async function coreInitUI() {
 				distanceInput.value = raceDistances[presetKey][state.distanceUnit];
 
 				// Save preset selection to tab state
-				if (!state.tabStates[state.currentTab]) {
-					state.tabStates[state.currentTab] = { inputs: {}, validationStates: {}, result: null, presetSelection: "" };
-				}
-				state.tabStates[state.currentTab].presetSelection = presetKey;
+				const {tabStates} = state;
+				tabStates[state.currentTab].presetSelection = presetKey;
+				state.tabStates = tabStates;
 
 				// Validate the new value
 				validateInput(distanceInput, calc.validateDistanceInput);

@@ -29,7 +29,6 @@ describe('Quick Preset Buttons', () => {
 	beforeEach(async () => {
 		state.currentTab = 'pace';
 		state.distanceUnit = 'km';
-		state.tabStates = {};
 		state.lastResult = null;
 
 		const { getRaceDistances } = await import('../../src/distances.js');

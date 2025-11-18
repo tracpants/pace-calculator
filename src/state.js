@@ -22,6 +22,13 @@ export const state = {
 		stateManager.set('app.lastResult', value);
 	},
 
+	get tabStates() {
+		return stateManager.get('app.tabStates');
+	},
+	set tabStates(value) {
+		stateManager.set('app.tabStates', value);
+	},
+
 	getFormData() {
 		const form = document.getElementById('calculator-form');
 		return form ? new FormData(form) : new FormData();

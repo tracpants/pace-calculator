@@ -9,11 +9,6 @@ describe('UI Module', () => {
     state.currentTab = 'pace';
     state.distanceUnit = 'km';
     state.lastResult = null;
-    state.tabStates = {
-      pace: { inputs: {}, validationStates: {}, result: null, presetSelection: '' },
-      time: { inputs: {}, validationStates: {}, result: null, presetSelection: '' },
-      distance: { inputs: {}, validationStates: {}, result: null, presetSelection: '' }
-    };
 
     // Setup minimal DOM
     document.body.innerHTML = `

@@ -10,11 +10,6 @@ describe('UI Module Extended Coverage', () => {
     state.currentTab = 'pace';
     state.distanceUnit = 'km';
     state.lastResult = null;
-    state.tabStates = {
-      pace: { inputs: {}, validationStates: {}, result: null, presetSelection: '' },
-      time: { inputs: {}, validationStates: {}, result: null, presetSelection: '' },
-      distance: { inputs: {}, validationStates: {}, result: null, presetSelection: '' }
-    };
 
     // Setup comprehensive DOM
     document.body.innerHTML = `

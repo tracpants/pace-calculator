@@ -12,7 +12,15 @@
 const STATE_SCHEMA = {
 	app: {
 		currentTab: { type: 'string', enum: ['pace', 'time', 'distance'], default: 'pace' },
-		lastResult: { type: 'object', nullable: true, default: null }
+		lastResult: { type: 'object', nullable: true, default: null },
+		tabStates: {
+			type: 'object',
+			default: () => ({
+				pace: { inputs: {}, validationStates: {}, result: null, presetSelection: '' },
+				time: { inputs: {}, validationStates: {}, result: null, presetSelection: '' },
+				distance: { inputs: {}, validationStates: {}, result: null, presetSelection: '' }
+			})
+		}
 	},
 	settings: {
 		distanceUnit: { type: 'string', enum: ['km', 'miles'], default: 'km' },
