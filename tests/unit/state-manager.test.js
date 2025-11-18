@@ -270,6 +270,22 @@ describe('StateManager', () => {
 			const retrieved = stateManager.get('autoAdvance.enabledInputs');
 			expect(retrieved.has('test-input')).toBe(true);
 		});
+
+		it('should not overwrite existing localStorage values when setting up persistence', () => {
+			// Pre-populate localStorage with a theme value
+			localStorage.setItem('pace-calculator-settings-theme', '"dark"');
+
+			// Create a new StateManager instance (simulates app initialization)
+			const StateManagerClass = stateManager.constructor;
+			const newStateManager = new StateManagerClass();
+
+			// Verify the existing localStorage value is preserved
+			expect(localStorage.getItem('pace-calculator-settings-theme')).toBe('"dark"');
+			expect(newStateManager.get('settings.theme')).toBe('dark');
+
+			// Clean up
+			localStorage.removeItem('pace-calculator-settings-theme');
+		});
 	});
 
 	describe('Reset', () => {
