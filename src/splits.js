@@ -1,11 +1,6 @@
 import * as calc from "./calculator.js";
 import { state } from "./state.js";
-
-function getPaceValue(prefix) {
-  const minutes = parseInt(document.getElementById(`${prefix}-minutes`)?.value || "0", 10) || 0;
-  const seconds = parseInt(document.getElementById(`${prefix}-seconds`)?.value || "0", 10) || 0;
-  return minutes * 60 + seconds;
-}
+import { getSegmentedPaceValue } from "./utils/time-utils.js";
 
 function generateRaceSplits() {
   if (!state.lastResult) return null;
@@ -21,10 +16,10 @@ function generateRaceSplits() {
   } else if (type === "time") {
     const distInput = document.getElementById("time-distance");
     distance = parseFloat(distInput?.value);
-    pacePerUnit = getPaceValue("time-pace");
+    pacePerUnit = getSegmentedPaceValue("time-pace");
   } else if (type === "distance") {
     distance = state.distanceUnit === "km" ? state.lastResult.km : state.lastResult.miles;
-    pacePerUnit = getPaceValue("distance-pace");
+    pacePerUnit = getSegmentedPaceValue("distance-pace");
   } else {
     return null;
   }

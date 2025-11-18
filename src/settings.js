@@ -1,9 +1,10 @@
 import * as calc from "./calculator.js";
 import { getDistanceDisplayName, getDistanceValue, getRaceDistances } from "./distances.js";
 import * as pr from "./pr.js";
+import { escapeHTML, stripHTML } from "./sanitizer.js";
 import { state } from "./state.js";
 import { populatePresetSelects, updateCalculatedResult, updateHintTexts } from "./ui.js";
-import { escapeHTML, stripHTML } from "./sanitizer.js";
+import { validateSegmentedTime, setSegmentedTimeValue } from "./utils/time-utils.js";
 
 // Settings preferences with defaults
 const defaultSettings = {
@@ -615,34 +616,11 @@ function handlePRFormSubmit(e) {
 
 // PR Time Validation Functions
 function validatePRSegmentedTime() {
-	const hours = parseInt(document.getElementById('pr-time-hours').value) || 0;
-	const minutes = parseInt(document.getElementById('pr-time-minutes').value) || 0;
-	const seconds = parseInt(document.getElementById('pr-time-seconds').value) || 0;
-
-	if (hours === 0 && minutes === 0 && seconds === 0) {
-		return { valid: false, message: 'Please enter a valid time' };
-	}
-
-	if (minutes >= 60 || seconds >= 60) {
-		return { valid: false, message: 'Minutes and seconds must be less than 60' };
-	}
-
-	if (hours < 0 || minutes < 0 || seconds < 0) {
-		return { valid: false, message: 'Time values cannot be negative' };
-	}
-
-	const totalSeconds = hours * 3600 + minutes * 60 + seconds;
-	return { valid: true, value: totalSeconds };
+	return validateSegmentedTime('pr-time');
 }
 
 function setPRSegmentedTimeValue(totalSeconds) {
-	const hours = Math.floor(totalSeconds / 3600);
-	const minutes = Math.floor((totalSeconds % 3600) / 60);
-	const seconds = totalSeconds % 60;
-
-	document.getElementById('pr-time-hours').value = hours > 0 ? hours : '';
-	document.getElementById('pr-time-minutes').value = minutes;
-	document.getElementById('pr-time-seconds').value = seconds;
+	setSegmentedTimeValue('pr-time', totalSeconds);
 }
 
 function showPRTimeError(message) {

@@ -213,7 +213,7 @@ describe('sanitizer - XSS Prevention', () => {
 
 	describe('Performance and edge cases', () => {
 		it('should handle very long strings', () => {
-			const longString = 'A'.repeat(10000) + '<script>alert(1)</script>';
+			const longString = `${'A'.repeat(10000)}<script>alert(1)</script>`;
 			const result = stripHTML(longString);
 			expect(result).not.toContain('<script>');
 			expect(result.length).toBeGreaterThan(9000);

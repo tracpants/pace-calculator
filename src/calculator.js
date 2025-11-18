@@ -1,173 +1,18 @@
-// Conversion constants for consistent calculations across the application
-const METERS_PER_KM = 1000;
-const METERS_PER_MILE = 1609.344; // Exact international mile
-const SECONDS_PER_MINUTE = 60;
-const SECONDS_PER_HOUR = 3600;
-const SECONDS_PER_DAY = 86400;
-const MAX_SECONDS_SINGLE_DAY = 86400; // 24 hours for regular races
-const MAX_SECONDS_MULTIDAY = 604800; // 7 days maximum for ultra events
+import {
+	METERS_PER_KM,
+	METERS_PER_MILE,
+	roundToDecimalPlaces
+} from './utils/constants.js';
+import {
+	parseTime,
+	formatTime
+} from './utils/time-utils.js';
+import {
+	validateTimeInput,
+	validateDistanceInput
+} from './utils/validation-utils.js';
 
-// Precision helpers
-const roundToDecimalPlaces = (num, places) => {
-	const factor = Math.pow(10, places);
-	return Math.round((num + Number.EPSILON) * factor) / factor;
-};
-
-export function parseTime(timeStr) {
-	if (!timeStr || typeof timeStr !== 'string') return 0;
-	const trimmed = timeStr.trim();
-	if (!trimmed) return 0;
-
-	// Handle decimal format (e.g., "4.5" = 4:30)
-	if (/^\d+(\.\d+)?$/.test(trimmed)) {
-                const decimal = parseFloat(trimmed);
-                const minutes = Math.floor(decimal);
-                const seconds = Math.round((decimal - minutes) * SECONDS_PER_MINUTE);
-                return minutes * SECONDS_PER_MINUTE + seconds;
-        }
-
-	// Handle space-separated format (e.g., "4 30" = 4:30 or "2 1 23 45" = 2 days 1:23:45)
-	if (/^\d+\s+\d+(\s+\d+)?(\s+\d+)?$/.test(trimmed)) {
-		const parts = trimmed.split(/\s+/).map(p => parseInt(p) || 0);
-		if (parts.length === 4) {
-			// Days Hours Minutes Seconds
-			return parts[0] * SECONDS_PER_DAY + parts[1] * SECONDS_PER_HOUR + parts[2] * SECONDS_PER_MINUTE + parts[3];
-		}
-		if (parts.length === 3) {
-			// Hours Minutes Seconds
-			return parts[0] * SECONDS_PER_HOUR + parts[1] * SECONDS_PER_MINUTE + parts[2];
-		}
-		if (parts.length === 2) {
-			// Minutes Seconds
-			return parts[0] * SECONDS_PER_MINUTE + parts[1];
-		}
-		return 0;
-	}
-
-	// Handle colon-separated format (e.g., "4:30", "1:23:45", or "2:1:23:45")
-	if (trimmed.includes(':')) {
-		const parts = trimmed.split(":").map(p => parseInt(p) || 0);
-		if (parts.length === 4) {
-			// Days:Hours:Minutes:Seconds
-			return parts[0] * SECONDS_PER_DAY + parts[1] * SECONDS_PER_HOUR + parts[2] * SECONDS_PER_MINUTE + parts[3];
-		}
-		if (parts.length === 3) {
-			// Hours:Minutes:Seconds
-			return parts[0] * SECONDS_PER_HOUR + parts[1] * SECONDS_PER_MINUTE + parts[2];
-		}
-		if (parts.length === 2) {
-			// Minutes:Seconds
-			return parts[0] * SECONDS_PER_MINUTE + parts[1];
-		}
-		return 0;
-	}
-
-	// Handle single number as minutes
-	const singleNumber = parseInt(trimmed);
-	if (!isNaN(singleNumber)) return singleNumber * SECONDS_PER_MINUTE;
-
-	return 0;
-}
-
-export function validateTimeInput(timeStr, allowMultiday = false) {
-	if (!timeStr || typeof timeStr !== 'string') return { valid: false, message: "Time is required" };
-	const trimmed = timeStr.trim();
-	if (!trimmed) return { valid: false, message: "Time is required" };
-
-	// Check for valid formats including multi-day
-	const validFormats = [
-		/^\d+(\.\d+)?$/, // Decimal: 4.5
-		/^\d+\s+\d+(\s+\d+)?(\s+\d+)?$/, // Space: 4 30, 1 23 45, or 2 1 23 45 (days hours mins secs)
-		/^\d+:\d+(:\d+)?(:\d+)?$/, // Colon: 4:30, 1:23:45, or 2:1:23:45 (days:hours:mins:secs)
-		/^\d+$/ // Single number
-	];
-
-	const isValidFormat = validFormats.some(format => format.test(trimmed));
-	if (!isValidFormat) {
-		return { valid: false, message: "Invalid format. Use MM:SS, H:MM:SS, or D:H:MM:SS for multi-day events" };
-	}
-
-	const parsed = parseTime(timeStr);
-	if (parsed <= 0) {
-		return { valid: false, message: "Time must be greater than 0" };
-	}
-
-	// Check for reasonable limits based on context
-	if (allowMultiday) {
-		if (parsed > MAX_SECONDS_MULTIDAY) {
-			return { valid: false, message: "Time cannot exceed 7 days" };
-		}
-	} else {
-		// For single-day mode, reject anything > 24 hours (allow exactly 24 hours for backward compatibility)
-		if (parsed > MAX_SECONDS_SINGLE_DAY) {
-			return { valid: false, message: "Time cannot exceed 24 hours" };
-		}
-	}
-
-	return { valid: true, value: parsed };
-}
-
-export function validateDistanceInput(distanceStr) {
-	if (!distanceStr || typeof distanceStr !== 'string') return { valid: false, message: "Distance is required" };
-	const trimmed = distanceStr.trim();
-	if (!trimmed) return { valid: false, message: "Distance is required" };
-
-	// Check for valid number format (including decimals)
-	if (!/^\d*\.?\d+$/.test(trimmed)) {
-		return { valid: false, message: "Please enter a valid number (e.g., 10 or 10.5)" };
-	}
-
-	const distance = parseFloat(trimmed);
-
-	if (isNaN(distance)) {
-		return { valid: false, message: "Please enter a valid number" };
-	}
-
-	if (distance <= 0) {
-		return { valid: false, message: "Distance must be greater than 0" };
-	}
-
-	if (distance > 1000) {
-		return { valid: false, message: "Distance seems unreasonably large" };
-	}
-
-	return { valid: true, value: distance };
-}
-
-export function formatTime(seconds, includeHours = false, allowMultiday = false) {
-	if (isNaN(seconds) || seconds < 0) return "00:00";
-
-	// Round to nearest second to avoid display inconsistencies
-	const totalSeconds = Math.round(seconds);
-
-	// Calculate time components
-	const days = Math.floor(totalSeconds / SECONDS_PER_DAY);
-	const remainingAfterDays = totalSeconds % SECONDS_PER_DAY;
-	const hours = Math.floor(remainingAfterDays / SECONDS_PER_HOUR);
-	const minutes = Math.floor((remainingAfterDays % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
-	const secs = remainingAfterDays % SECONDS_PER_MINUTE;
-
-	// Multi-day formatting (≥ 24 hours)
-	if (allowMultiday && totalSeconds >= SECONDS_PER_DAY) {
-		const dayText = days === 1 ? "day" : "days";
-		return `${days} ${dayText} ${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
-	}
-
-        // Single-day formatting
-        if (includeHours) {
-                const totalHours = Math.floor(totalSeconds / SECONDS_PER_HOUR);
-                const remainingMinutes = Math.floor((totalSeconds % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
-                const remainingSecs = totalSeconds % SECONDS_PER_MINUTE;
-
-                return `${String(totalHours).padStart(2, "0")}:${String(remainingMinutes).padStart(2, "0")}:${String(remainingSecs).padStart(2, "0")}`;
-        }
-
-        // For times < 1 hour or when hours aren't requested, show MM:SS
-        const totalMinutes = Math.floor(totalSeconds / SECONDS_PER_MINUTE);
-        const remainingSecs = totalSeconds % SECONDS_PER_MINUTE;
-
-        return `${String(totalMinutes).padStart(2, "0")}:${String(remainingSecs).padStart(2, "0")}`;
-}
+export { parseTime, formatTime, validateTimeInput, validateDistanceInput };
 
 export function calculatePace(totalSeconds, distance, unit) {
 	// Convert distance to meters using consistent conversion factors
