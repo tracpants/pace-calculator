@@ -1,6 +1,7 @@
 import { initAutoAdvance } from "./auto-advance.js";
 import * as calc from "./calculator.js";
 import { getRaceDistances } from "./distances.js";
+import { sanitizeHTML } from "./sanitizer.js";
 import { applyTheme, initSettings, loadSettings, saveSettings } from "./settings.js";
 import { createSplitsAccordion, setupSplitsAccordion } from "./splits.js";
 import { state } from "./state.js";
@@ -187,13 +188,13 @@ function hideLoading() {
 
 function showResult(label, value, isError = false) {
         resultLabel.textContent = label;
-        resultValue.innerHTML = value;
+        resultValue.innerHTML = sanitizeHTML(value);
         resultDiv.classList.toggle('error', isError);
 
         if (!isError) {
                 const splitsHtml = createSplitsAccordion();
                 if (splitsHtml) {
-                        resultValue.innerHTML += splitsHtml;
+                        resultValue.innerHTML += sanitizeHTML(splitsHtml);
                         setTimeout(() => {
                                 setupSplitsAccordion();
                         }, 0);
