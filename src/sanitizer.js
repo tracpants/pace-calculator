@@ -2,8 +2,12 @@ import DOMPurify from 'dompurify';
 
 export function sanitizeHTML(html) {
   return DOMPurify.sanitize(html, {
-    ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'span', 'div', 'br'],
-    ALLOWED_ATTR: ['class', 'style'],
+    ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'span', 'div', 'br', 'button', 'svg', 'path', 'h3', 'p'],
+    ALLOWED_ATTR: [
+      'class', 'style', 'id', 'role', 'title',
+      'aria-expanded', 'aria-controls', 'aria-hidden', 'aria-label', 'aria-describedby',
+      'fill', 'stroke', 'viewBox', 'stroke-linecap', 'stroke-linejoin', 'stroke-width', 'd'
+    ],
     KEEP_CONTENT: true,
     RETURN_TRUSTED_TYPE: false
   });
