@@ -173,7 +173,7 @@ describe('Settings Module', () => {
       `;
 
       state.distanceUnit = 'km';
-
+    });
 
     it('should not apply if no default distance is set', () => {
       const settings = {
@@ -353,6 +353,83 @@ describe('Settings Module', () => {
       const loaded = loadSettings();
       expect(loaded.distanceUnit).toBe('miles');
       expect(state.distanceUnit).toBe('miles');
+    });
+  });
+
+  describe('initSettings', () => {
+    beforeEach(() => {
+      document.body.innerHTML = `
+        <div id="settings-modal" class="hidden"></div>
+        <button id="close-settings"></button>
+        <input type="radio" class="theme-radio" value="light" />
+        <input type="radio" class="theme-radio" value="dark" />
+        <div data-unit="km"></div>
+        <div data-unit="miles"></div>
+        <div class="accent-color-option" data-accent="indigo"></div>
+        <div class="accent-color-option" data-accent="blue"></div>
+        <select id="default-distance-select"></select>
+        <button id="menu-btn"></button>
+        <div id="menu-dropdown" class="hidden"></div>
+        <button id="pr-menu-item"></button>
+        <button id="settings-menu-item"></button>
+        <button id="help-btn"></button>
+        <div id="help-modal" class="hidden"></div>
+        <button id="close-help"></button>
+        <div id="pr-management-modal" class="hidden"></div>
+        <button id="close-pr-management"></button>
+        <button id="close-pr-management-btn"></button>
+        <div id="pr-empty-state"></div>
+        <div id="pr-list"></div>
+        <div id="pr-list-actions"></div>
+        <div id="pr-modal" class="hidden"></div>
+        <h2 id="pr-modal-title"></h2>
+        <button id="add-pr-btn"></button>
+        <button id="add-pr-btn-secondary"></button>
+        <button id="close-pr-modal"></button>
+        <button id="cancel-pr"></button>
+        <form id="pr-form"></form>
+        <input id="pr-distance" />
+        <select id="pr-unit"></select>
+        <input id="pr-date" type="date" />
+        <textarea id="pr-notes"></textarea>
+        <input id="pr-time-hours" />
+        <input id="pr-time-minutes" />
+        <input id="pr-time-seconds" />
+        <div id="pr-distance-error" class="hidden"></div>
+        <div id="pr-time-error" class="hidden"></div>
+      `;
+
+      window.matchMedia = vi.fn(() => ({
+        matches: false,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn()
+      }));
+
+      // Mock ui.js functions
+      window.populatePresetSelects = vi.fn();
+      window.updateCalculatedResult = vi.fn();
+      window.updateHintTexts = vi.fn();
+    });
+
+    it('should initialize without errors', async () => {
+      const { initSettings } = await import('../../src/settings.js');
+      expect(() => initSettings()).not.toThrow();
+    });
+
+    it('should apply initial settings from localStorage', async () => {
+      const savedSettings = {
+        distanceUnit: 'miles',
+        theme: 'dark',
+        defaultDistance: '5k',
+        accentColor: 'blue'
+      };
+      localStorage.setItem('pace-calculator-settings', JSON.stringify(savedSettings));
+
+      const { initSettings } = await import('../../src/settings.js');
+      initSettings();
+
+      expect(state.distanceUnit).toBe('miles');
+      expect(document.documentElement.classList.contains('dark')).toBe(true);
     });
   });
 });
