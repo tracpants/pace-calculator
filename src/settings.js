@@ -4,6 +4,7 @@ import * as pr from "./pr.js";
 import { escapeHTML, stripHTML } from "./sanitizer.js";
 import { state, stateManager } from "./state.js";
 import { populatePresetSelects, updateCalculatedResult, updateHintTexts } from "./ui.js";
+import { logger } from "./utils/logger.js";
 import { validateSegmentedTime, setSegmentedTimeValue } from "./utils/time-utils.js";
 
 let settingsModal, closeSettingsBtn, themeRadios, unitToggles, accentColorOptions, defaultDistanceSelect;
@@ -39,9 +40,9 @@ function migrateLegacySettings() {
 			}
 
 			localStorage.removeItem(legacyKey);
-			console.log('Successfully migrated legacy settings to StateManager');
+			logger.log('Successfully migrated legacy settings to StateManager');
 		} catch (e) {
-			console.warn('Failed to migrate legacy settings:', e);
+			logger.warn('Failed to migrate legacy settings:', e);
 		}
 	}
 }
@@ -141,7 +142,7 @@ function applyDistanceUnit(unit) {
         updateCalculatedResult();
     } catch (err) {
         // Non-fatal during early init; UI will refresh after first calculation.
-        console.warn('updateCalculatedResult skipped during init:', err?.message || err);
+        logger.warn('updateCalculatedResult skipped during init:', err?.message || err);
     }
     updateHintTexts();
 
@@ -196,40 +197,40 @@ function applyDefaultDistance(forceApply = false) {
 	const defaultDistance = stateManager.get('settings.defaultDistance');
 
 	if (!defaultDistance) {
-		console.log('No default distance set');
+		logger.log('No default distance set');
 		return; // No default set
 	}
 
 	const distance = getDistanceValue(defaultDistance, state.distanceUnit);
 	if (!distance) {
-		console.log('Invalid preset:', defaultDistance);
+		logger.log('Invalid preset:', defaultDistance);
 		return; // Invalid preset
 	}
 
-	console.log('Applying default distance:', distance, state.distanceUnit, forceApply ? '(forced)' : '(empty fields only)');
+	logger.log('Applying default distance:', distance, state.distanceUnit, forceApply ? '(forced)' : '(empty fields only)');
 
 	// Apply to all distance input fields
 	['pace-distance', 'time-distance'].forEach(inputId => {
 		const input = document.getElementById(inputId);
 		if (input) {
 			const isEmpty = !input.value || input.value.trim() === '';
-			console.log(`Field ${inputId}: exists=${!!input}, isEmpty=${isEmpty}, currentValue="${input.value}"`);
+			logger.log(`Field ${inputId}: exists=${!!input}, isEmpty=${isEmpty}, currentValue="${input.value}"`);
 
 			// Apply if field is empty OR if force apply is enabled (for fresh page loads)
 			if (isEmpty || forceApply) {
 				input.value = distance;
-				console.log(`Set ${inputId} to ${distance}${forceApply ? ' (forced)' : ''}`);
+				logger.log(`Set ${inputId} to ${distance}${forceApply ? ' (forced)' : ''}`);
 
 				// Update corresponding preset dropdown
 				const tabPrefix = inputId.split('-')[0]; // 'pace' or 'time'
 				const presetSelect = document.getElementById(`${tabPrefix}-preset`);
 				if (presetSelect) {
 					presetSelect.value = defaultDistance;
-					console.log(`Set ${tabPrefix}-preset to ${defaultDistance}`);
+					logger.log(`Set ${tabPrefix}-preset to ${defaultDistance}`);
 				}
 			}
 		} else {
-			console.log(`Field ${inputId} not found`);
+			logger.log(`Field ${inputId} not found`);
 		}
 	});
 }

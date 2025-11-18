@@ -1,8 +1,10 @@
 // Modal Positioning Fix Module
 // Ensures all modals are properly positioned at body level with correct styling
 
+import { logger } from "./utils/logger.js";
+
 export function ensureModalPositioning() {
-    console.log('🔧 Ensuring modal positioning...');
+    logger.log('🔧 Ensuring modal positioning...');
     
     // Step 1: Move any modals that are inside the app container to body level
     const appContainer = document.getElementById('app');
@@ -11,14 +13,14 @@ export function ensureModalPositioning() {
     
     modals.forEach(modal => {
         if (appContainer && appContainer.contains(modal)) {
-            console.log(`📦 Moving ${modal.id} to body level...`);
+            logger.log(`📦 Moving ${modal.id} to body level...`);
             document.body.appendChild(modal);
             moved++;
         }
     });
     
     if (moved > 0) {
-        console.log(`✅ Moved ${moved} modals to body level`);
+        logger.log(`✅ Moved ${moved} modals to body level`);
     }
     
     // Step 2: Apply critical CSS fixes for modal positioning
@@ -63,7 +65,7 @@ function applyModalCSS() {
     `;
     
     document.head.appendChild(styleElement);
-    console.log('✅ Applied modal positioning CSS fixes');
+    logger.log('✅ Applied modal positioning CSS fixes');
 }
 
 function verifyModalPositioning() {
@@ -92,18 +94,18 @@ function verifyModalPositioning() {
     });
     
     if (issues.length > 0) {
-        console.warn('⚠️  Modal positioning issues found:');
-        issues.forEach(issue => console.warn(`  ${issue}`));
+        logger.warn('⚠️  Modal positioning issues found:');
+        issues.forEach(issue => logger.warn(`  ${issue}`));
         return false;
     } else {
-        console.log('✅ All modals positioned correctly');
+        logger.log('✅ All modals positioned correctly');
         return true;
     }
 }
 
 // Function to fix modal issues on demand
 export function fixModalIssues() {
-    console.log('🔧 Fixing modal issues...');
+    logger.log('🔧 Fixing modal issues...');
     
     // Re-run positioning check and fix
     ensureModalPositioning();
@@ -133,12 +135,12 @@ export function fixModalIssues() {
         modal.style.removeProperty('z-index');
     });
     
-    console.log('✅ Modal fixes applied');
+    logger.log('✅ Modal fixes applied');
 }
 
 // Debug function to inspect modal state
 export function debugModalState() {
-    console.log('\n🔍 Modal State Debug:');
+    logger.log('\n🔍 Modal State Debug:');
     
     const modals = document.querySelectorAll('.modal-container');
     
@@ -146,16 +148,16 @@ export function debugModalState() {
         const style = window.getComputedStyle(modal);
         const parent = modal.parentElement;
         
-        console.log(`\n📋 ${modal.id}:`);
-        console.log(`  Parent: ${parent?.tagName}${parent?.id ? `#${parent.id}` : ''}`);
-        console.log(`  Classes: ${modal.className}`);
-        console.log(`  Position: ${style.position}`);
-        console.log(`  Display: ${style.display}`);
-        console.log(`  Z-index: ${style.zIndex}`);
-        console.log(`  Background: ${style.backgroundColor}`);
-        console.log(`  Backdrop-filter: ${style.backdropFilter}`);
-        console.log(`  Viewport: ${style.top} ${style.left} ${style.right} ${style.bottom}`);
-        console.log(`  At body level: ${parent === document.body ? '✅' : '❌'}`);
+        logger.log(`\n📋 ${modal.id}:`);
+        logger.log(`  Parent: ${parent?.tagName}${parent?.id ? `#${parent.id}` : ''}`);
+        logger.log(`  Classes: ${modal.className}`);
+        logger.log(`  Position: ${style.position}`);
+        logger.log(`  Display: ${style.display}`);
+        logger.log(`  Z-index: ${style.zIndex}`);
+        logger.log(`  Background: ${style.backgroundColor}`);
+        logger.log(`  Backdrop-filter: ${style.backdropFilter}`);
+        logger.log(`  Viewport: ${style.top} ${style.left} ${style.right} ${style.bottom}`);
+        logger.log(`  At body level: ${parent === document.body ? '✅' : '❌'}`);
     });
 }
 

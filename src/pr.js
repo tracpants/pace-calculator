@@ -1,5 +1,6 @@
 import * as calc from "./calculator.js";
 import { getRaceDistancesKm, getDistanceDisplayName, normalizeDistanceToKm, findDistanceKey } from "./distances.js";
+import { logger } from "./utils/logger.js";
 
 // PR storage key
 const PR_STORAGE_KEY = 'pace-calculator-prs';
@@ -10,7 +11,7 @@ export function loadPRs() {
 		const stored = localStorage.getItem(PR_STORAGE_KEY);
 		return stored ? JSON.parse(stored) : {};
 	} catch (error) {
-		console.error('Error loading PRs:', error);
+		logger.error('Error loading PRs:', error);
 		return {};
 	}
 }
@@ -21,7 +22,7 @@ export function savePRs(prs) {
 		localStorage.setItem(PR_STORAGE_KEY, JSON.stringify(prs));
 		return true;
 	} catch (error) {
-		console.error('Error saving PRs:', error);
+		logger.error('Error saving PRs:', error);
 		return false;
 	}
 }

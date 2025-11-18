@@ -1,5 +1,6 @@
-import { Notyf } from 'notyf';
 import confetti from 'canvas-confetti';
+import { Notyf } from 'notyf';
+import { logger } from "./utils/logger.js";
 
 let notyf = null;
 
@@ -13,7 +14,7 @@ function isTestEnvironment() {
 
 export function initUIEnhancements() {
 	if (isTestEnvironment()) {
-		console.log('✅ UI enhancements skipped in test environment');
+		logger.log('✅ UI enhancements skipped in test environment');
 		return;
 	}
 

@@ -9,6 +9,8 @@
  * - Path-based state access
  */
 
+import { logger } from "./utils/logger.js";
+
 const STATE_SCHEMA = {
 	app: {
 		currentTab: { type: 'string', enum: ['pace', 'time', 'distance'], default: 'pace' },
@@ -184,7 +186,7 @@ class StateManager {
 	set(path, value) {
 		const validation = this._validateValue(path, value);
 		if (!validation.valid) {
-			console.error(`State validation error: ${validation.message}`);
+			logger.error(`State validation error: ${validation.message}`);
 			throw new Error(validation.message);
 		}
 
@@ -236,7 +238,7 @@ class StateManager {
 				try {
 					callback(newValue, oldValue);
 				} catch (error) {
-					console.error(`Error in state listener for ${path}:`, error);
+					logger.error(`Error in state listener for ${path}:`, error);
 				}
 			});
 		}
@@ -251,7 +253,7 @@ class StateManager {
 					try {
 						callback(parentValue, parentValue);
 					} catch (error) {
-						console.error(`Error in parent listener for ${parentPath}:`, error);
+						logger.error(`Error in parent listener for ${parentPath}:`, error);
 					}
 				});
 			}
@@ -273,13 +275,13 @@ class StateManager {
 
 		try {
 			if (value instanceof Set || value instanceof WeakMap) {
-				console.warn(`Cannot persist ${path}: Sets and WeakMaps are not serializable`);
+				logger.warn(`Cannot persist ${path}: Sets and WeakMaps are not serializable`);
 				return;
 			}
 
 			localStorage.setItem(storageKey, JSON.stringify(value));
 		} catch (error) {
-			console.error(`Failed to persist ${path} to localStorage:`, error);
+			logger.error(`Failed to persist ${path} to localStorage:`, error);
 		}
 	}
 
@@ -293,7 +295,7 @@ class StateManager {
 					this._state = this._setNestedValue(this._state, pathArray, value);
 				}
 			} catch (error) {
-				console.warn(`Failed to hydrate ${path} from localStorage:`, error);
+				logger.warn(`Failed to hydrate ${path} from localStorage:`, error);
 			}
 		}
 	}
@@ -302,7 +304,7 @@ class StateManager {
 		const pathArray = this._parsePath(path);
 
 		if (pathArray.length !== 2) {
-			console.error('Reset requires a full path (category.field)');
+			logger.error('Reset requires a full path (category.field)');
 			return;
 		}
 
@@ -310,7 +312,7 @@ class StateManager {
 		const schema = STATE_SCHEMA[category]?.[field];
 
 		if (!schema) {
-			console.error(`Unknown state path: ${path}`);
+			logger.error(`Unknown state path: ${path}`);
 			return;
 		}
 
@@ -330,7 +332,7 @@ class StateManager {
 				try {
 					callback(value, undefined);
 				} catch (error) {
-					console.error(`Error in reset listener for ${path}:`, error);
+					logger.error(`Error in reset listener for ${path}:`, error);
 				}
 			});
 		});

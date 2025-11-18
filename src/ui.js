@@ -5,9 +5,10 @@ import * as pr from "./pr.js";
 import { sanitizeHTML, escapeHTML } from "./sanitizer.js";
 import { createSplitsAccordion, setupSplitsAccordion } from "./splits.js";
 import { state, stateManager } from "./state.js";
+import { showToast, celebrateSuccess } from "./ui-enhancements.js";
+import { logger } from "./utils/logger.js";
 import { getSegmentedTimeValue, getSegmentedPaceValue, validateSegmentedTime, validateSegmentedPace } from "./utils/time-utils.js";
 import { ErrorManager, validateInput } from "./utils/validation-utils.js";
-import { showToast, celebrateSuccess } from "./ui-enhancements.js";
 
 // DOM Elements (will be initialized in initUI)
 let form, resultDiv, resultLabel, resultValue, loadingDiv, copyBtn, copyIcon, checkIcon, copyFeedback, savePrBtn, updatePrBtn;
@@ -499,7 +500,7 @@ async function copyToClipboard(text) {
 			animateCopySuccess();
 			return true;
 		} catch (fallbackErr) {
-			console.error('Failed to copy text:', fallbackErr);
+			logger.error('Failed to copy text:', fallbackErr);
 			return false;
 		}
 	}
@@ -516,7 +517,7 @@ async function shareContent(text) {
 			return true;
 		} catch (err) {
 			// User cancelled sharing or share failed
-			console.log('Share cancelled or failed:', err);
+			logger.log('Share cancelled or failed:', err);
 			return false;
 		}
 	}
@@ -1012,7 +1013,7 @@ export { populateAutocomplete, populatePresetSelects, updateCalculatedResult, up
  * Core UI initialization logic (called by robustInitUI)
  */
 async function coreInitUI() {
-	console.log('🚀 Starting core UI initialization');
+	logger.log('🚀 Starting core UI initialization');
 
 
 
@@ -1066,7 +1067,7 @@ async function coreInitUI() {
 		throw new Error('No section elements found - check [data-section] selectors');
 	}
 
-	console.log(`✅ Found ${tabElements.length} tab elements and ${sectionElements.length} section elements`);
+	logger.log(`✅ Found ${tabElements.length} tab elements and ${sectionElements.length} section elements`);
 
 	// Initial setup
 	updateTabNavigation();
@@ -1107,7 +1108,7 @@ async function coreInitUI() {
 				if (targetSection) {
 					targetSection.classList.remove("hidden");
 				} else {
-					console.error('Target section not found for:', state.currentTab);
+					logger.error('Target section not found for:', state.currentTab);
 				}
 
 				if (loadingDiv) loadingDiv.classList.add("hidden");
@@ -1118,7 +1119,7 @@ async function coreInitUI() {
 
 				// Removed auto-focus to preserve natural tab order
 			} catch (error) {
-				console.error('Error in tab click handler:', error);
+				logger.error('Error in tab click handler:', error);
 			}
 		}, `tab-${index}`);
 
@@ -1188,7 +1189,7 @@ async function coreInitUI() {
 
 	// Removed auto-focus to preserve natural tab order for accessibility
 
-	console.log('✅ Core UI initialization completed successfully');
+	logger.log('✅ Core UI initialization completed successfully');
 }
 
 /**
@@ -1201,7 +1202,7 @@ export async function initUI() {
 			await coreInitUI();
 			return;
 		} catch (error) {
-			console.error('❌ Test UI initialization failed:', error);
+			logger.error('❌ Test UI initialization failed:', error);
 			throw error;
 		}
 	}
@@ -1225,7 +1226,7 @@ export async function initUI() {
 		});
 		return result;
 	} catch (error) {
-		console.error('❌ Browser UI initialization failed:', error);
+		logger.error('❌ Browser UI initialization failed:', error);
 		throw error;
 	}
 }

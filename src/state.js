@@ -1,4 +1,5 @@
 import { stateManager } from './state-manager.js';
+import { logger } from "./utils/logger.js";
 
 export const state = {
 	get currentTab() {
@@ -62,7 +63,7 @@ export const state = {
 					if (field) field.value = value;
 				});
 			} catch (e) {
-				console.warn('Failed to restore form state:', e);
+				logger.warn('Failed to restore form state:', e);
 			}
 		}
 	}
