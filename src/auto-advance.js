@@ -77,15 +77,15 @@ function setupAutoAdvanceInput(input, segment, prefix, segments, segmentIndex) {
 	const config = INPUT_CONFIGS[segment];
 
 	// Create listener functions
-	const inputHandler = (e) => {
+	const inputHandler = e => {
 		handleAutoAdvance(e, input, segment, prefix, segments, segmentIndex, config);
 	};
 
-	const keydownHandler = (e) => {
+	const keydownHandler = e => {
 		handleBackspace(e, input, segment, prefix, segments, segmentIndex);
 	};
 
-	const focusHandler = (e) => {
+	const focusHandler = e => {
 		const previousValuesMap = stateManager.get('autoAdvance.previousValues');
 		previousValuesMap.set(e.target, e.target.value);
 
@@ -94,7 +94,7 @@ function setupAutoAdvanceInput(input, segment, prefix, segments, segmentIndex) {
 		}, 10);
 	};
 
-	const pasteHandler = (e) => {
+	const pasteHandler = e => {
 		handlePaste(e, input, segment, prefix, segments, segmentIndex);
 	};
 

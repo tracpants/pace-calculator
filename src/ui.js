@@ -4,12 +4,27 @@ import { robustInit, safeAddEventListener, safeGetElements } from "./dom-ready.j
 import * as pr from "./pr.js";
 import { sanitizeHTML, escapeHTML } from "./sanitizer.js";
 import { createSplitsAccordion, setupSplitsAccordion } from "./splits.js";
-import { state } from "./state.js";
+import { state, stateManager } from "./state.js";
 import { getSegmentedTimeValue, getSegmentedPaceValue, validateSegmentedTime, validateSegmentedPace } from "./utils/time-utils.js";
 import { ErrorManager, validateInput } from "./utils/validation-utils.js";
 
 // DOM Elements (will be initialized in initUI)
 let form, resultDiv, resultLabel, resultValue, loadingDiv, copyBtn, copyIcon, checkIcon, copyFeedback, savePrBtn, updatePrBtn;
+
+/**
+ * Helper function to update current tab state immutably
+ * @param {object} updates - Object containing fields to update in the current tab state
+ */
+function updateCurrentTabState(updates) {
+	const {currentTab} = state;
+	stateManager.update('app.tabStates', tabStates => ({
+		...tabStates,
+		[currentTab]: {
+			...tabStates[currentTab],
+			...updates
+		}
+	}));
+}
 
 function validateSegmentedInput(prefix, isTimeInput = true) {
 	if (isTimeInput) {
@@ -277,36 +292,43 @@ function updateHintTexts() {
 }
 
 function saveCurrentTabState() {
-	const {tabStates} = state;
-	const currentTabState = tabStates[state.currentTab];
+	const {currentTab} = state;
+	const currentSection = document.querySelector(`[data-section="${currentTab}"]`);
+
+	if (!currentSection) return;
+
+	// Collect all updates to apply immutably
+	const updates = {
+		inputs: {},
+		validationStates: {},
+		presetSelection: '',
+		result: null
+	};
 
 	// Save all input values for current tab
-	const currentSection = document.querySelector(`[data-section="${state.currentTab}"]`);
-	if (currentSection) {
-		const inputs = currentSection.querySelectorAll('input[type="text"]');
-		inputs.forEach(input => {
-			currentTabState.inputs[input.id] = input.value;
-			// Save validation states
-			currentTabState.validationStates[input.id] = {
-				hasError: input.classList.contains('error'),
-				hasValid: input.classList.contains('valid')
-			};
-		});
+	const inputs = currentSection.querySelectorAll('input[type="text"]');
+	inputs.forEach(input => {
+		updates.inputs[input.id] = input.value;
+		// Save validation states
+		updates.validationStates[input.id] = {
+			hasError: input.classList.contains('error'),
+			hasValid: input.classList.contains('valid')
+		};
+	});
 
-		// Save preset selection
-		const presetSelect = currentSection.querySelector('.preset-select');
-		if (presetSelect) {
-			currentTabState.presetSelection = presetSelect.value;
-		}
+	// Save preset selection
+	const presetSelect = currentSection.querySelector('.preset-select');
+	if (presetSelect) {
+		updates.presetSelection = presetSelect.value;
 	}
 
 	// Save current result if it exists
-	if (state.lastResult && state.lastResult.type === state.currentTab) {
-		currentTabState.result = state.lastResult;
+	if (state.lastResult && state.lastResult.type === currentTab) {
+		updates.result = state.lastResult;
 	}
 
-	// Update state through state manager
-	state.tabStates = tabStates;
+	// Update state immutably through state manager
+	updateCurrentTabState(updates);
 }
 
 function restoreTabState(tabName) {
@@ -620,9 +642,7 @@ function handleFormSubmit(e) {
 				data: { pacePerKm, pacePerMile, prComparison }
 			};
 			state.lastResult = result;
-			const {tabStates} = state;
-			tabStates[state.currentTab].result = result;
-			state.tabStates = tabStates;
+			updateCurrentTabState({ result });
 		} else if (state.currentTab === "time") {
 			const distInput = document.getElementById("time-distance");
 
@@ -655,9 +675,7 @@ function handleFormSubmit(e) {
 				data: { totalSeconds }
 			};
 			state.lastResult = result;
-			const {tabStates} = state;
-			tabStates[state.currentTab].result = result;
-			state.tabStates = tabStates;
+			updateCurrentTabState({ result });
 		} else if (state.currentTab === "distance") {
 			// Validate inputs
 			const timeValidation = validateSegmentedInput('distance-time', true);
@@ -691,9 +709,7 @@ function handleFormSubmit(e) {
 				data: { km, miles }
 			};
 			state.lastResult = result;
-			const {tabStates} = state;
-			tabStates[state.currentTab].result = result;
-			state.tabStates = tabStates;
+			updateCurrentTabState({ result });
 		}
 		hideLoading();
 		showResult(label, value, 'success');
@@ -962,9 +978,7 @@ function clearCurrentTab() {
 		resultDiv.classList.remove('show', 'success', 'error');
 		state.lastResult = null;
 		// Also clear from tab state
-		const {tabStates} = state;
-		tabStates[currentTab].result = null;
-		state.tabStates = tabStates;
+		updateCurrentTabState({ result: null });
 	}
 
 	// Hide loading if visible
@@ -1113,9 +1127,7 @@ async function coreInitUI() {
 				distanceInput.value = raceDistances[presetKey][state.distanceUnit];
 
 				// Save preset selection to tab state
-				const {tabStates} = state;
-				tabStates[state.currentTab].presetSelection = presetKey;
-				state.tabStates = tabStates;
+				updateCurrentTabState({ presetSelection: presetKey });
 
 				// Validate the new value
 				validateInput(distanceInput, calc.validateDistanceInput);
