@@ -56,7 +56,13 @@ describe('Quick Preset Buttons', () => {
 							</button>
 						</div>
 						<input id="pace-distance" type="text" value="" />
-						<select id="pace-preset" class="preset-select"></select>
+						<select id="pace-preset" class="preset-select">
+							<option value="">-- Pick an event --</option>
+							<option value="5k">5K</option>
+							<option value="10k">10K</option>
+							<option value="half-marathon">Half Marathon</option>
+							<option value="marathon">Marathon</option>
+						</select>
 						<div id="pace-distance-error" class="hidden"></div>
 					</div>
 
@@ -77,7 +83,13 @@ describe('Quick Preset Buttons', () => {
 							</button>
 						</div>
 						<input id="time-distance" type="text" value="" />
-						<select id="time-preset" class="preset-select"></select>
+						<select id="time-preset" class="preset-select">
+							<option value="">-- Pick an event --</option>
+							<option value="5k">5K</option>
+							<option value="10k">10K</option>
+							<option value="half-marathon">Half Marathon</option>
+							<option value="marathon">Marathon</option>
+						</select>
 						<div id="time-distance-error" class="hidden"></div>
 					</div>
 
@@ -104,9 +116,15 @@ describe('Quick Preset Buttons', () => {
 					if (presetKey && raceDistances[presetKey]) {
 						const distanceValue = raceDistances[presetKey][state.distanceUnit];
 						const distanceInput = document.getElementById(`${tabName}-distance`);
+						const presetSelect = document.getElementById(`${tabName}-preset`);
 
 						if (distanceInput) {
 							distanceInput.value = distanceValue;
+
+							if (presetSelect) {
+								presetSelect.value = presetKey;
+							}
+
 							clearFieldErrors();
 							updateButtonStateQuietly();
 						}
@@ -219,5 +237,74 @@ describe('Quick Preset Buttons', () => {
 		fireEvent.click(fiveKButton);
 
 		expect(clearFieldErrors).toHaveBeenCalled();
+	});
+
+	it('should update preset dropdown when 5K quick preset button is clicked in pace tab', () => {
+		const pacePresetSelect = document.getElementById('pace-preset');
+		const fiveKButton = document.querySelector('[data-quick-preset="5k"][data-tab="pace"]');
+
+		expect(pacePresetSelect.value).toBe('');
+
+		fireEvent.click(fiveKButton);
+
+		expect(pacePresetSelect.value).toBe('5k');
+	});
+
+	it('should update preset dropdown when 10K quick preset button is clicked in pace tab', () => {
+		const pacePresetSelect = document.getElementById('pace-preset');
+		const tenKButton = document.querySelector('[data-quick-preset="10k"][data-tab="pace"]');
+
+		expect(pacePresetSelect.value).toBe('');
+
+		fireEvent.click(tenKButton);
+
+		expect(pacePresetSelect.value).toBe('10k');
+	});
+
+	it('should update preset dropdown when half marathon quick preset button is clicked in pace tab', () => {
+		const pacePresetSelect = document.getElementById('pace-preset');
+		const halfMarathonButton = document.querySelector('[data-quick-preset="half-marathon"][data-tab="pace"]');
+
+		expect(pacePresetSelect.value).toBe('');
+
+		fireEvent.click(halfMarathonButton);
+
+		expect(pacePresetSelect.value).toBe('half-marathon');
+	});
+
+	it('should update preset dropdown when marathon quick preset button is clicked in pace tab', () => {
+		const pacePresetSelect = document.getElementById('pace-preset');
+		const marathonButton = document.querySelector('[data-quick-preset="marathon"][data-tab="pace"]');
+
+		expect(pacePresetSelect.value).toBe('');
+
+		fireEvent.click(marathonButton);
+
+		expect(pacePresetSelect.value).toBe('marathon');
+	});
+
+	it('should update preset dropdown when quick preset button is clicked in time tab', () => {
+		const timePresetSelect = document.getElementById('time-preset');
+		const fiveKButton = document.querySelector('[data-quick-preset="5k"][data-tab="time"]');
+
+		expect(timePresetSelect.value).toBe('');
+
+		fireEvent.click(fiveKButton);
+
+		expect(timePresetSelect.value).toBe('5k');
+	});
+
+	it('should update both distance input and preset dropdown synchronously', () => {
+		const paceDistanceInput = document.getElementById('pace-distance');
+		const pacePresetSelect = document.getElementById('pace-preset');
+		const fiveKButton = document.querySelector('[data-quick-preset="5k"][data-tab="pace"]');
+
+		expect(paceDistanceInput.value).toBe('');
+		expect(pacePresetSelect.value).toBe('');
+
+		fireEvent.click(fiveKButton);
+
+		expect(paceDistanceInput.value).toBe('5');
+		expect(pacePresetSelect.value).toBe('5k');
 	});
 });
