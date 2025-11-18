@@ -1,8 +1,8 @@
 import { createIcons,
-	MoreVertical,
+	EllipsisVertical,
 	Award,
 	Settings,
-	HelpCircle,
+	CircleQuestionMark,
 	X,
 	Copy,
 	Check,
@@ -16,10 +16,10 @@ export function initIcons() {
 	// Initialize Lucide icons - replaces all <i data-lucide="icon-name"></i> elements
 	createIcons({
 		icons: {
-			MoreVertical,
+			EllipsisVertical,
 			Award,
 			Settings,
-			HelpCircle,
+			CircleQuestionMark,
 			X,
 			Copy,
 			Check,
@@ -33,10 +33,10 @@ export function initIcons() {
 
 // Export for programmatic icon creation
 export {
-	MoreVertical,
+	EllipsisVertical,
 	Award,
 	Settings,
-	HelpCircle,
+	CircleQuestionMark,
 	X,
 	Copy,
 	Check,
