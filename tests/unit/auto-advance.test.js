@@ -357,25 +357,172 @@ describe('Auto-Advance Functionality', () => {
     it('should handle missing input elements gracefully', () => {
       // Remove some inputs
       document.getElementById('pace-time-seconds').remove()
-      
+
       // Reinitialize
       expect(() => reinitAutoAdvance()).not.toThrow()
-      
+
       // Should still work for existing inputs
       const minutesInput = document.getElementById('pace-time-minutes')
       fireEvent.input(minutesInput, { target: { value: '30' } })
-      
+
       // Should not throw error when trying to advance to removed field
       expect(minutesInput.value).toBe('30')
     })
 
     it('should handle duplicate initialization calls', () => {
       initAutoAdvance()
-      
+
       // Initialize again - should not add duplicate event listeners
       expect(() => initAutoAdvance()).not.toThrow()
     })
 
     // Tests that relied on non-numeric characters are intentionally omitted.
+  })
+
+  describe('Arrow Key / Spinner Behavior', () => {
+    beforeEach(() => {
+      initAutoAdvance()
+    })
+
+    it('should NOT auto-advance when modifying an already-complete field', async () => {
+      const minutesInput = document.getElementById('pace-time-minutes')
+      const secondsInput = document.getElementById('pace-time-seconds')
+
+      // Mock focus and select methods
+      secondsInput.focus = vi.fn()
+      secondsInput.select = vi.fn()
+
+      // Set initial value of "04" (complete field)
+      minutesInput.value = '04'
+      // Simulate focus event to store previous value
+      fireEvent.focus(minutesInput)
+
+      await vi.advanceTimersByTimeAsync(15)
+
+      // Now simulate user pressing up arrow (or spinner) to change to "05"
+      minutesInput.value = '05'
+      fireEvent.input(minutesInput, { target: { value: '05' } })
+
+      await vi.advanceTimersByTimeAsync(15)
+
+      // Should NOT advance to seconds since field was already complete
+      expect(secondsInput.focus).not.toHaveBeenCalled()
+      expect(minutesInput.value).toBe('05')
+    })
+
+    it('should auto-advance when completing a previously incomplete field', async () => {
+      const minutesInput = document.getElementById('pace-time-minutes')
+      const secondsInput = document.getElementById('pace-time-seconds')
+
+      // Mock focus and select methods
+      secondsInput.focus = vi.fn()
+      secondsInput.select = vi.fn()
+
+      // Set initial value of "4" (incomplete field)
+      minutesInput.value = '4'
+      // Simulate focus event to store previous value
+      fireEvent.focus(minutesInput)
+
+      await vi.advanceTimersByTimeAsync(15)
+
+      // Now simulate user typing another digit to complete the field
+      minutesInput.value = '45'
+      fireEvent.input(minutesInput, { target: { value: '45' } })
+
+      await vi.advanceTimersByTimeAsync(15)
+
+      // SHOULD advance to seconds since field was incomplete and now complete
+      expect(secondsInput.focus).toHaveBeenCalled()
+      expect(minutesInput.value).toBe('45')
+    })
+
+    it('should NOT auto-advance when changing from "59" to "58" via down arrow', async () => {
+      const secondsInput = document.getElementById('time-pace-seconds')
+
+      // Set initial value of "59" (complete field)
+      secondsInput.value = '59'
+      // Simulate focus event to store previous value
+      fireEvent.focus(secondsInput)
+
+      await vi.advanceTimersByTimeAsync(15)
+
+      // Simulate user pressing down arrow to change to "58"
+      secondsInput.value = '58'
+      fireEvent.input(secondsInput, { target: { value: '58' } })
+
+      await vi.advanceTimersByTimeAsync(15)
+
+      // Value should be updated but no auto-advance (it's the last field anyway)
+      expect(secondsInput.value).toBe('58')
+    })
+
+    it('should auto-advance when typing from empty to complete field', async () => {
+      const minutesInput = document.getElementById('time-pace-minutes')
+      const secondsInput = document.getElementById('time-pace-seconds')
+
+      // Mock focus and select methods
+      secondsInput.focus = vi.fn()
+      secondsInput.select = vi.fn()
+
+      // Start with empty field
+      minutesInput.value = ''
+      // Simulate focus event to store previous value
+      fireEvent.focus(minutesInput)
+
+      await vi.advanceTimersByTimeAsync(15)
+
+      // User types first digit
+      minutesInput.value = '3'
+      fireEvent.input(minutesInput, { target: { value: '3' } })
+
+      await vi.advanceTimersByTimeAsync(15)
+
+      // Should not advance yet (incomplete)
+      expect(secondsInput.focus).not.toHaveBeenCalled()
+
+      // User types second digit
+      minutesInput.value = '30'
+      fireEvent.input(minutesInput, { target: { value: '30' } })
+
+      await vi.advanceTimersByTimeAsync(15)
+
+      // NOW should advance (complete)
+      expect(secondsInput.focus).toHaveBeenCalled()
+    })
+
+    it('should handle rapid up arrow presses without auto-advancing', async () => {
+      const minutesInput = document.getElementById('pace-time-minutes')
+      const secondsInput = document.getElementById('pace-time-seconds')
+
+      // Mock focus and select methods
+      secondsInput.focus = vi.fn()
+      secondsInput.select = vi.fn()
+
+      // Set initial value of "45" (complete field)
+      minutesInput.value = '45'
+      fireEvent.focus(minutesInput)
+
+      await vi.advanceTimersByTimeAsync(15)
+
+      // Simulate multiple up arrow presses
+      minutesInput.value = '46'
+      fireEvent.input(minutesInput, { target: { value: '46' } })
+
+      await vi.advanceTimersByTimeAsync(15)
+
+      minutesInput.value = '47'
+      fireEvent.input(minutesInput, { target: { value: '47' } })
+
+      await vi.advanceTimersByTimeAsync(15)
+
+      minutesInput.value = '48'
+      fireEvent.input(minutesInput, { target: { value: '48' } })
+
+      await vi.advanceTimersByTimeAsync(15)
+
+      // Should NEVER advance since field was already complete
+      expect(secondsInput.focus).not.toHaveBeenCalled()
+      expect(minutesInput.value).toBe('48')
+    })
   })
 })
