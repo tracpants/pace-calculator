@@ -16,16 +16,14 @@ function updateReadmeBadge() {
     let readme = readFileSync(readmePath, 'utf8');
     
     // Calculate total number of tests
-    const totalTests = testResults.testResults.reduce((total, file) => {
-      return total + file.assertionResults.length;
-    }, 0);
+    const totalTests = testResults.testResults.reduce((total, file) => total + file.assertionResults.length, 0);
     
     // Check if all tests passed
     const allPassed = testResults.testResults.every(file => 
       file.assertionResults.every(test => test.status === 'passed')
     );
     
-    const color = allPassed ? 'brightgreen' : 'red';
+    const color = allPassed ? 'brightgreen' : 'crimson';
     const status = allPassed ? 'passing' : 'failing';
     
     // Generate new badge URL
@@ -33,7 +31,7 @@ function updateReadmeBadge() {
     const newBadge = `[![Tests](${newBadgeUrl})](https://vitest.dev/)`;
     
     // Replace the test badge in README (look for the existing test badge pattern)
-    const badgePattern = /\[\!\[Tests\]\(https:\/\/img\.shields\.io\/badge\/Tests-\d+%20(passing|failing)-\w+\.svg\)\]\(https:\/\/vitest\.dev\/\)/;
+    const badgePattern = /\[!\[Tests\]\(https:\/\/img\.shields\.io\/badge\/Tests-\d+%20(passing|failing)-\w+\.svg\)\]\(https:\/\/vitest\.dev\/\)/;
     
     if (badgePattern.test(readme)) {
       readme = readme.replace(badgePattern, newBadge);

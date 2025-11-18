@@ -20,16 +20,14 @@ function generateTestBadge() {
     const testResults = JSON.parse(readFileSync(testResultsPath, 'utf8'));
     
     // Calculate total number of tests
-    const totalTests = testResults.testResults.reduce((total, file) => {
-      return total + file.assertionResults.length;
-    }, 0);
+    const totalTests = testResults.testResults.reduce((total, file) => total + file.assertionResults.length, 0);
     
     // Check if all tests passed
     const allPassed = testResults.testResults.every(file => 
       file.assertionResults.every(test => test.status === 'passed')
     );
     
-    const color = allPassed ? 'brightgreen' : 'red';
+    const color = allPassed ? 'brightgreen' : 'crimson';
     const status = allPassed ? 'passing' : 'failing';
     
     // Generate shields.io badge URL

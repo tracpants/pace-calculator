@@ -269,6 +269,17 @@ export default [
     }
   },
   {
+    // Specific rules for utility scripts
+    files: ['scripts/**/*.js'],
+    rules: {
+      'no-console': 'off',
+      'custom/no-hardcoded-colors': 'off',
+      'jsdoc/require-description': 'off',
+      'jsdoc/require-param': 'off',
+      'jsdoc/require-returns': 'off'
+    }
+  },
+  {
     // Ignore patterns
     ignores: [
       'dist/**',
