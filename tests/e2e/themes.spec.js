@@ -21,7 +21,7 @@ test.describe("Theme System Tests", () => {
       page,
     }) => {
       // Apply theme by adding class to html element (as per CLAUDE.md)
-      await page.evaluate((themeClass) => {
+      await page.evaluate(themeClass => {
         document.documentElement.className = "";
         document.documentElement.classList.add(themeClass);
       }, theme.class);
@@ -125,7 +125,7 @@ test.describe("Theme System Tests", () => {
 
     for (const theme of accessibilityThemes) {
       // Apply accessibility theme
-      await page.evaluate((themeClass) => {
+      await page.evaluate(themeClass => {
         document.documentElement.className = "";
         document.documentElement.classList.add(themeClass);
       }, theme);
@@ -138,7 +138,7 @@ test.describe("Theme System Tests", () => {
       // Verify button is visible and has some form of styling
       await expect(buttons).toBeVisible();
       
-      const buttonStyles = await buttons.evaluate((el) => {
+      const buttonStyles = await buttons.evaluate(el => {
         const styles = window.getComputedStyle(el);
         const hasBackground = styles.backgroundColor !== "rgba(0, 0, 0, 0)" && styles.backgroundColor !== "transparent"; // eslint-disable-line custom/no-hardcoded-colors
         const hasBorder = styles.borderWidth !== "0px" && styles.borderColor !== "rgba(0, 0, 0, 0)"; // eslint-disable-line custom/no-hardcoded-colors
@@ -160,7 +160,7 @@ test.describe("Theme System Tests", () => {
 
     for (const theme of accessibilityThemes) {
       // Apply accessibility theme
-      await page.evaluate((themeClass) => {
+      await page.evaluate(themeClass => {
         document.documentElement.className = "";
         document.documentElement.classList.add(themeClass);
       }, theme);
