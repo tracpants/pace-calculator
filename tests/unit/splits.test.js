@@ -15,7 +15,7 @@ describe('Race Splits', () => {
       document.body.innerHTML = '<input id="pace-distance" value="5" />';
       state.currentTab = 'pace';
       state.distanceUnit = 'km';
-      state.lastResult = { type: 'pace', pacePerKm: 300, pacePerMile: 483 };
+      state.lastResult = { type: 'pace', data: { pacePerKm: 300, pacePerMile: 483 } };
 
       const data = generateRaceSplits();
 
@@ -30,7 +30,7 @@ describe('Race Splits', () => {
       document.body.innerHTML = '<input id="pace-distance" value="3.1" />';
       state.currentTab = 'pace';
       state.distanceUnit = 'miles';
-      state.lastResult = { type: 'pace', pacePerKm: 300, pacePerMile: 483 };
+      state.lastResult = { type: 'pace', data: { pacePerKm: 300, pacePerMile: 483 } };
 
       const data = generateRaceSplits();
 
@@ -49,7 +49,7 @@ describe('Race Splits', () => {
       `;
       state.currentTab = 'time';
       state.distanceUnit = 'km';
-      state.lastResult = { type: 'time', totalTime: 3300 };
+      state.lastResult = { type: 'time', data: { totalTime: 3300 } };
 
       const data = generateRaceSplits();
 
@@ -66,7 +66,7 @@ describe('Race Splits', () => {
       `;
       state.currentTab = 'distance';
       state.distanceUnit = 'km';
-      state.lastResult = { type: 'distance', km: 8.5, miles: 5.28 };
+      state.lastResult = { type: 'distance', data: { km: 8.5, miles: 5.28 } };
 
       const data = generateRaceSplits();
 
@@ -80,7 +80,7 @@ describe('Race Splits', () => {
       document.body.innerHTML = '<input id="pace-distance" value="5.5" />';
       state.currentTab = 'pace';
       state.distanceUnit = 'km';
-      state.lastResult = { type: 'pace', pacePerKm: 300, pacePerMile: 483 };
+      state.lastResult = { type: 'pace', data: { pacePerKm: 300, pacePerMile: 483 } };
 
       const data = generateRaceSplits();
 
@@ -94,7 +94,7 @@ describe('Race Splits', () => {
       document.body.innerHTML = '<input id="pace-distance" value="10" />';
       state.currentTab = 'pace';
       state.distanceUnit = 'km';
-      state.lastResult = { type: 'pace', pacePerKm: 300, pacePerMile: 483 };
+      state.lastResult = { type: 'pace', data: { pacePerKm: 300, pacePerMile: 483 } };
 
       const data = generateRaceSplits();
 
@@ -114,7 +114,7 @@ describe('Race Splits', () => {
     it('should return null if distance is too small', () => {
       document.body.innerHTML = '<input id="pace-distance" value="0.4" />';
       state.currentTab = 'pace';
-      state.lastResult = { type: 'pace', pacePerKm: 300, pacePerMile: 483 };
+      state.lastResult = { type: 'pace', data: { pacePerKm: 300, pacePerMile: 483 } };
 
       const data = generateRaceSplits();
       expect(data).toBeNull();
@@ -122,7 +122,7 @@ describe('Race Splits', () => {
 
     it('should return null if distance input not found', () => {
       state.currentTab = 'pace';
-      state.lastResult = { type: 'pace', pacePerKm: 300, pacePerMile: 483 };
+      state.lastResult = { type: 'pace', data: { pacePerKm: 300, pacePerMile: 483 } };
 
       const data = generateRaceSplits();
       expect(data).toBeNull();
@@ -131,7 +131,7 @@ describe('Race Splits', () => {
     it('should return null if distance is NaN', () => {
       document.body.innerHTML = '<input id="pace-distance" value="invalid" />';
       state.currentTab = 'pace';
-      state.lastResult = { type: 'pace', pacePerKm: 300, pacePerMile: 483 };
+      state.lastResult = { type: 'pace', data: { pacePerKm: 300, pacePerMile: 483 } };
 
       const data = generateRaceSplits();
       expect(data).toBeNull();
@@ -141,7 +141,7 @@ describe('Race Splits', () => {
       document.body.innerHTML = '<input id="pace-distance" value="3" />';
       state.currentTab = 'pace';
       state.distanceUnit = 'km';
-      state.lastResult = { type: 'pace', pacePerKm: 300, pacePerMile: 483 };
+      state.lastResult = { type: 'pace', data: { pacePerKm: 300, pacePerMile: 483 } };
 
       const data = generateRaceSplits();
 
@@ -154,7 +154,7 @@ describe('Race Splits', () => {
       document.body.innerHTML = '<input id="pace-distance" value="42.195" />';
       state.currentTab = 'pace';
       state.distanceUnit = 'km';
-      state.lastResult = { type: 'pace', pacePerKm: 300, pacePerMile: 483 };
+      state.lastResult = { type: 'pace', data: { pacePerKm: 300, pacePerMile: 483 } };
 
       const data = generateRaceSplits();
 
@@ -168,7 +168,7 @@ describe('Race Splits', () => {
     it('should handle missing pace inputs for time type', () => {
       document.body.innerHTML = '<input id="time-distance" value="10" />';
       state.currentTab = 'time';
-      state.lastResult = { type: 'time', totalTime: 3300 };
+      state.lastResult = { type: 'time', data: { totalTime: 3300 } };
 
       const data = generateRaceSplits();
       expect(data).toBeNull();
@@ -180,7 +180,7 @@ describe('Race Splits', () => {
       document.body.innerHTML = '<input id="pace-distance" value="5" />';
       state.currentTab = 'pace';
       state.distanceUnit = 'km';
-      state.lastResult = { type: 'pace', pacePerKm: 300, pacePerMile: 0 };
+      state.lastResult = { type: 'pace', data: { pacePerKm: 300, pacePerMile: 0 } };
 
       const html = createSplitsAccordion();
 
@@ -194,7 +194,7 @@ describe('Race Splits', () => {
       document.body.innerHTML = '<input id="pace-distance" value="5" />';
       state.currentTab = 'pace';
       state.distanceUnit = 'km';
-      state.lastResult = { type: 'pace', pacePerKm: 300, pacePerMile: 0 };
+      state.lastResult = { type: 'pace', data: { pacePerKm: 300, pacePerMile: 0 } };
 
       const html = createSplitsAccordion();
       const container = document.createElement('div');
@@ -208,7 +208,7 @@ describe('Race Splits', () => {
       document.body.innerHTML = '<input id="pace-distance" value="5.5" />';
       state.currentTab = 'pace';
       state.distanceUnit = 'km';
-      state.lastResult = { type: 'pace', pacePerKm: 300, pacePerMile: 0 };
+      state.lastResult = { type: 'pace', data: { pacePerKm: 300, pacePerMile: 0 } };
 
       const html = createSplitsAccordion();
 
@@ -227,7 +227,7 @@ describe('Race Splits', () => {
       document.body.innerHTML = '<input id="pace-distance" value="5" />';
       state.currentTab = 'pace';
       state.distanceUnit = 'km';
-      state.lastResult = { type: 'pace', pacePerKm: 300, pacePerMile: 0 };
+      state.lastResult = { type: 'pace', data: { pacePerKm: 300, pacePerMile: 0 } };
 
       const html = createSplitsAccordion();
 
@@ -238,7 +238,7 @@ describe('Race Splits', () => {
       document.body.innerHTML = '<input id="pace-distance" value="5" />';
       state.currentTab = 'pace';
       state.distanceUnit = 'km';
-      state.lastResult = { type: 'pace', pacePerKm: 300, pacePerMile: 0 };
+      state.lastResult = { type: 'pace', data: { pacePerKm: 300, pacePerMile: 0 } };
 
       const html = createSplitsAccordion();
 
