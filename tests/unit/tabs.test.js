@@ -46,7 +46,6 @@ describe('Tab Functionality', () => {
     // Reset state
     state.currentTab = 'pace'
     state.distanceUnit = 'km'
-    state.tabStates = {}
     state.lastResult = null
     
     // Create minimal HTML structure needed for tabs
