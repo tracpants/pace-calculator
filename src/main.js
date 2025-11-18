@@ -1,4 +1,5 @@
 import { initAutoAdvance } from "./auto-advance.js";
+import { initIcons } from "./icons.js";
 import { applyTheme, initSettings } from "./settings.js";
 import { stateManager } from "./state.js";
 import "./style.css";
@@ -24,6 +25,10 @@ async function initApp() {
 		// Initialize core UI first (tabs, forms, validation, etc.)
 		await initUI();
 		console.log('✅ UI initialized');
+
+		// Initialize Lucide icons
+		initIcons();
+		console.log('✅ Icons initialized');
 
 		// Initialize modern UI enhancements (toasts, confetti, animations)
 		initUIEnhancements();

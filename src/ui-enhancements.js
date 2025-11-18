@@ -1,13 +1,18 @@
 import { Notyf } from 'notyf';
 import confetti from 'canvas-confetti';
-import { CountUp } from 'countup.js';
 
 let notyf = null;
 
-const isTestEnvironment = typeof process !== 'undefined' && process.env?.NODE_ENV === 'test';
+function isTestEnvironment() {
+	try {
+		return typeof process !== 'undefined' && process.env?.NODE_ENV === 'test';
+	} catch {
+		return false;
+	}
+}
 
 export function initUIEnhancements() {
-	if (isTestEnvironment) {
+	if (isTestEnvironment()) {
 		console.log('✅ UI enhancements skipped in test environment');
 		return;
 	}
@@ -41,7 +46,7 @@ export function initUIEnhancements() {
 }
 
 export function showToast(message, type = 'success') {
-	if (isTestEnvironment || !notyf) return;
+	if (isTestEnvironment() || !notyf) return;
 
 	notyf.open({
 		type,
@@ -50,7 +55,7 @@ export function showToast(message, type = 'success') {
 }
 
 export function celebrateSuccess() {
-	if (isTestEnvironment) return;
+	if (isTestEnvironment()) return;
 
 	const duration = 2000;
 	const animationEnd = Date.now() + duration;
@@ -80,32 +85,4 @@ export function celebrateSuccess() {
 			origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
 		});
 	}, 250);
-}
-
-export function animateNumber(element, finalNumber, options = {}) {
-	const {
-		decimals = 0,
-		duration = 1,
-		separator = '',
-		prefix = '',
-		suffix = ''
-	} = options;
-
-	const countUp = new CountUp(element, finalNumber, {
-		startVal: 0,
-		decimalPlaces: decimals,
-		duration,
-		separator,
-		prefix,
-		suffix,
-		useEasing: true,
-		useGrouping: false,
-	});
-
-	if (!countUp.error) {
-		countUp.start();
-	} else {
-		console.error('CountUp error:', countUp.error);
-		element.textContent = prefix + finalNumber.toFixed(decimals) + suffix;
-	}
 }
