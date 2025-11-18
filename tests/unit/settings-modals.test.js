@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { state } from '../../src/state.js';
+import { state, stateManager } from '../../src/state.js';
 
 describe('Settings Modals and UI Interactions', () => {
   let initSettings;
@@ -485,8 +485,8 @@ describe('Settings Modals and UI Interactions', () => {
 
       expect(document.documentElement.classList.contains('dark')).toBe(true);
 
-      const settings = JSON.parse(localStorage.getItem('pace-calculator-settings'));
-      expect(settings.theme).toBe('dark');
+      const theme = stateManager.get('settings.theme');
+      expect(theme).toBe('dark');
     });
   });
 
@@ -499,8 +499,8 @@ describe('Settings Modals and UI Interactions', () => {
       const blueOption = document.querySelector('.accent-color-option[data-accent="blue"]');
       blueOption.click();
 
-      const settings = JSON.parse(localStorage.getItem('pace-calculator-settings'));
-      expect(settings.accentColor).toBe('blue');
+      const accentColor = stateManager.get('settings.accentColor');
+      expect(accentColor).toBe('blue');
       expect(blueOption.classList.contains('selected')).toBe(true);
     });
   });
@@ -559,8 +559,8 @@ describe('Settings Modals and UI Interactions', () => {
       select.value = '5k';
       select.dispatchEvent(new Event('change'));
 
-      const settings = JSON.parse(localStorage.getItem('pace-calculator-settings'));
-      expect(settings.defaultDistance).toBe('5k');
+      const defaultDistance = stateManager.get('settings.defaultDistance');
+      expect(defaultDistance).toBe('5k');
     });
 
     it('should clear default distance when empty option selected', () => {
@@ -576,8 +576,8 @@ describe('Settings Modals and UI Interactions', () => {
       select.value = '';
       select.dispatchEvent(new Event('change'));
 
-      const settings = JSON.parse(localStorage.getItem('pace-calculator-settings'));
-      expect(settings.defaultDistance).toBeNull();
+      const defaultDistance = stateManager.get('settings.defaultDistance');
+      expect(defaultDistance).toBeNull();
     });
   });
 
