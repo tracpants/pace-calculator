@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { state } from '../../src/state.js';
 import * as calc from '../../src/calculator.js';
+import { state } from '../../src/state.js';
 
 describe('UI Module - Race Splits and Scrolling', () => {
   beforeEach(() => {
