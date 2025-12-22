@@ -41,7 +41,7 @@
     "@tailwindcss/postcss": "^4.1.18",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/user-event": "^14.6.1",
-    "@vitest/coverage-v8": "^4.0.15",
+    "@vitest/coverage-v8": "^4.0.16",
     "@vitest/ui": "^4.0.10",
     "autoprefixer": "^10.4.23",
     "eslint": "^9.39.1",
