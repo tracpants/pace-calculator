@@ -361,10 +361,29 @@ describe('Settings Module', () => {
       // Check that settings were migrated to state
       expect(state.distanceUnit).toBe('miles');
       expect(stateManager.get('settings.theme')).toBe('dark');
-      
+
       // Apply the migrated theme (as would happen in main.js)
       applyTheme(stateManager.get('settings.theme'));
       expect(document.documentElement.classList.contains('dark')).toBe(true);
+    });
+
+    it('should set max date attribute on PR date input to prevent future dates', async () => {
+      const { initSettings } = await import('../../src/settings.js');
+      initSettings();
+
+      const prDateInput = document.getElementById('pr-date');
+      expect(prDateInput).toBeTruthy();
+
+      // Verify max attribute is set
+      const maxDate = prDateInput.getAttribute('max');
+      expect(maxDate).toBeTruthy();
+
+      // Verify max date is in YYYY-MM-DD format
+      expect(maxDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+
+      // Verify max date is today or earlier (accounting for timing)
+      const today = new Date().toISOString().split('T')[0];
+      expect(maxDate).toBe(today);
     });
   });
 });

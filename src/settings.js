@@ -717,6 +717,12 @@ export function initSettings() {
 	prDateInput = document.getElementById("pr-date");
 	prNotesInput = document.getElementById("pr-notes");
 
+	// Set max date to today to prevent future dates
+	if (prDateInput) {
+		const today = new Date().toISOString().split('T')[0];
+		prDateInput.setAttribute('max', today);
+	}
+
 	// Migrate legacy settings before applying
 	migrateLegacySettings();
 
