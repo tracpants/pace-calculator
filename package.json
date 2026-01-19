@@ -50,7 +50,7 @@
     "husky": "^9.1.7",
     "jsdom": "^27.3.0",
     "lint-staged": "^16.2.7",
-    "node-coverage-badges": "^1.5.2",
+    "node-coverage-badges": "^1.6.2",
     "postcss": "^8.5.6",
     "stylelint": "^16.26.1",
     "stylelint-config-standard": "^39.0.1",
