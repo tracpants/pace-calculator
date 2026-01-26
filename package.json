@@ -62,7 +62,7 @@
   "dependencies": {
     "canvas-confetti": "^1.9.4",
     "dompurify": "^3.3.1",
-    "lucide": "^0.562.0",
+    "lucide": "^0.563.0",
     "notyf": "^3.10.0"
   }
 }
